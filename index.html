@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cora · MVP Clínica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#F6F4EF;--panel:#fff;--ink:#2B2620;--ink-soft:#6B6358;--sage:#6F7A5E;--sage-deep:#4F5A40;--sage-pale:#E3E7DA;--terra:#BD5B3D;--terra-pale:#F4DFD5;--line:#E6E1D6;--gold:#C9A24B;--gold-pale:#F4EBD2;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  .app{max-width:900px;margin:0 auto;padding:22px 16px 80px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:8px;}
+  .brand{display:flex;align-items:center;gap:9px;}
+  .bmark{width:26px;height:26px;border-radius:7px;background:var(--sage-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;}
+  .bname{font-family:'Fraunces',serif;font-size:17px;font-weight:500;}
+  .cname{font-size:11px;color:var(--ink-soft);}
+  .tabs{display:flex;gap:3px;margin-bottom:20px;flex-wrap:wrap;}
+  .tab-btn{border:none;background:transparent;color:var(--ink-soft);padding:7px 13px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .tab-btn.active{background:var(--sage-deep);color:#fff;}
+  .view{display:none;}.view.active{display:block;}
+  h1.pt{font-family:'Fraunces',serif;font-size:21px;font-weight:500;margin-bottom:3px;}
+  .ps{color:var(--ink-soft);font-size:12.5px;margin-bottom:18px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
+  .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+  .ch h2{font-family:'Fraunces',serif;font-size:14.5px;font-weight:500;}
+  .btn{border:none;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .bp{background:var(--sage-deep);color:#fff;}
+  .bg{background:transparent;color:var(--sage-deep);border:1px solid var(--sage-pale);}
+  .bd{background:var(--terra-pale);color:var(--terra);border:none;}
+  .bsm{padding:4px 9px;font-size:11px;}
+  .pill{font-family:'JetBrains Mono',monospace;font-weight:500;padding:2px 7px;border-radius:5px;font-size:11px;display:inline-block;}
+  .pg{background:var(--sage-pale);color:var(--sage-deep);}
+  .pw{background:var(--terra-pale);color:var(--terra);}
+  .po{background:var(--gold-pale);color:#7A5A1A;}
+  .fg{color:var(--sage-deep);font-weight:600;}
+  .fw{color:var(--terra);font-weight:600;}
+  .fg2{color:var(--sage-deep);}
+  .fw2{color:var(--terra);}
+  .form-group{margin-bottom:12px;}
+  .form-group label{display:block;font-size:11px;font-weight:600;color:var(--ink-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;}
+  .form-group input,.form-group select{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);outline:none;}
+  .form-group input:focus,.form-group select:focus{border-color:var(--sage);}
+  .fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(43,38,32,.45);z-index:100;align-items:center;justify-content:center;padding:14px;}
+  .overlay.open{display:flex;}
+  .modal{background:var(--panel);border-radius:16px;padding:22px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;}
+  .modal h3{font-family:'Fraunces',serif;font-size:17px;font-weight:500;margin-bottom:14px;}
+  .ma{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+  .divider{border:none;border-top:1px solid var(--line);margin:12px 0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  /* summary */
+  .sb{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+  .sb4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+  .sc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;}
+  .sc.hero{background:var(--sage-deep);color:#fff;border:none;}
+  .sc.warn{background:var(--terra-pale);border:none;}
+  .sl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);font-weight:600;margin-bottom:5px;}
+  .sc.hero .sl{color:#D7DECB;}
+  .sc.warn .sl{color:var(--terra);}
+  .sv{font-family:'Fraunces',serif;font-size:20px;font-weight:500;}
+  .sc.hero .sv{font-size:26px;}
+  .sc.warn .sv{color:var(--terra);}
+  .ss{font-size:10.5px;color:var(--ink-soft);margin-top:3px;}
+  .sc.hero .ss{color:#C2CBB3;}
+  /* proc */
+  .pi{border-top:1px solid var(--line);padding:12px 0;}
+  .pi:first-child{border-top:none;padding-top:0;}
+  .ptop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;}
+  .pn{font-size:13.5px;font-weight:600;}
+  .pmarg{display:flex;align-items:center;gap:8px;margin-top:8px;}
+  .mbar{flex:1;height:5px;background:var(--sage-pale);border-radius:3px;overflow:hidden;display:flex;}
+  .mbc{background:var(--terra);height:100%;}
+  .mbm{background:var(--sage);height:100%;}
+  .minfo{font-size:10.5px;color:var(--ink-soft);}
+  .ititle{font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;margin:7px 0 4px;}
+  .itag{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:2px 7px;font-size:11px;margin:2px 2px 2px 0;}
+  /* estoque */
+  .ei{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line);flex-wrap:wrap;gap:6px;}
+  .ei:first-child{border-top:none;}
+  .en{font-size:13px;font-weight:600;}
+  .ed{font-size:11px;color:var(--ink-soft);margin-top:1px;}
+  .er{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .ebar{width:60px;height:5px;background:var(--sage-pale);border-radius:3px;overflow:hidden;}
+  .ebarfill{height:100%;border-radius:3px;}
+  /* agenda */
+  .ai{display:flex;gap:10px;padding:11px 0;border-top:1px solid var(--line);align-items:center;flex-wrap:wrap;}
+  .ai:first-child{border-top:none;}
+  .atime{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);width:40px;flex-shrink:0;}
+  .adot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .ainfo{flex:1;min-width:110px;}
+  .acl{font-size:13px;font-weight:600;}
+  .apr{font-size:11px;color:var(--ink-soft);margin-top:1px;}
+  .aact{display:flex;gap:4px;flex-wrap:wrap;}
+  .sbtn{border:none;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;text-transform:uppercase;}
+  .s-conf{background:var(--sage-pale);color:var(--sage-deep);}
+  .s-falt{background:var(--terra-pale);color:var(--terra);}
+  .s-canc{background:var(--gold-pale);color:#7A5A1A;}
+  /* financeiro */
+  .finrow{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr .8fr;align-items:center;gap:6px;padding:11px 0;border-top:1px solid var(--line);font-size:12.5px;cursor:pointer;}
+  .finrow:first-child{border-top:none;}
+  .finhead{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;padding-bottom:8px;cursor:default;}
+  .finnome{font-weight:600;}
+  .finsub{font-size:10.5px;color:var(--ink-soft);margin-top:1px;}
+  .bwrap{background:var(--sage-pale);border-radius:3px;height:5px;width:100%;overflow:hidden;display:flex;}
+  .bcost{background:var(--terra);height:100%;}
+  .bmg{background:var(--sage);height:100%;}
+  .findet{display:none;margin-top:10px;padding:12px;background:var(--bg);border-radius:8px;}
+  .findet.open{display:block;}
+  .fdgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;}
+  .fdl{font-size:10.5px;color:var(--ink-soft);}
+  .fdv{font-family:'Fraunces',serif;font-size:16px;margin-top:1px;}
+  /* despesas */
+  .desp-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap;gap:6px;}
+  .desp-item:first-child{border-top:none;}
+  .desp-nome{font-size:13px;font-weight:600;}
+  .desp-tipo{font-size:10.5px;margin-top:1px;}
+  .desp-right{display:flex;align-items:center;gap:8px;}
+  /* reserva */
+  .reserva-goal{background:var(--sage-pale);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+  .rg-label{font-size:11px;color:var(--sage-deep);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+  .rg-bar-wrap{background:#fff;border-radius:5px;height:10px;overflow:hidden;margin:8px 0;}
+  .rg-bar-fill{background:var(--sage-deep);height:100%;border-radius:5px;transition:width .4s;}
+  .rg-info{display:flex;justify-content:space-between;font-size:11px;color:var(--sage-deep);}
+  .reserva-tip{font-size:12px;color:var(--ink-soft);line-height:1.5;padding:12px 14px;background:var(--bg);border-radius:8px;border-left:3px solid var(--sage-pale);}
+  .ab{display:flex;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:8px;align-items:flex-start;}
+  .ab.w{background:var(--terra-pale);}
+  .ab.o{background:var(--sage-pale);}
+  .abi{font-size:12px;font-weight:700;flex-shrink:0;}
+  .ab.w .abi{color:var(--terra);}
+  .ab.o .abi{color:var(--sage-deep);}
+  .abt{font-size:12px;line-height:1.4;}
+  .abt strong{font-weight:700;}
+  @media(max-width:600px){
+    .fr2,.fr3{grid-template-columns:1fr;}
+    .sb{grid-template-columns:1fr 1fr;}
+    .sb4{grid-template-columns:1fr 1fr;}
+    .finrow{grid-template-columns:1fr;gap:3px;}
+    .finhead{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="bmark">C</div><div class="bname">Cora</div></div>
+    <div class="cname">MVP · Clínica de Estética</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('procedimentos',this)">Procedimentos</button>
+    <button class="tab-btn" onclick="showTab('estoque',this)">Estoque</button>
+    <button class="tab-btn" onclick="showTab('agenda',this)">Agenda</button>
+    <button class="tab-btn" onclick="showTab('financeiro',this)">Financeiro</button>
+    <button class="tab-btn" onclick="showTab('despesas',this)">Despesas</button>
+    <button class="tab-btn" onclick="showTab('reserva',this)">Reserva</button>
+  </div>
+
+  <!-- PROCEDIMENTOS -->
+  <div class="view active" id="view-procedimentos">
+    <h1 class="pt">Procedimentos</h1>
+    <p class="ps">Margem real = preço de venda menos custo dos insumos</p>
+    <div class="sb">
+      <div class="sc"><div class="sl">Cadastrados</div><div class="sv" id="total-procs">0</div></div>
+      <div class="sc"><div class="sl">Melhor margem</div><div class="sv" id="best-margin">—</div><div class="ss fg2" id="best-name"></div></div>
+      <div class="sc"><div class="sl">Atenção</div><div class="sv fw" id="warn-count">0</div><div class="ss">abaixo de 50%</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h2>Lista de procedimentos</h2><button class="btn bp" onclick="openModal('modal-proc')">+ Novo</button></div>
+      <div id="proc-list"></div>
+    </div>
+  </div>
+
+  <!-- ESTOQUE -->
+  <div class="view" id="view-estoque">
+    <h1 class="pt">Estoque</h1>
+    <p class="ps">Alertas quando produto atingir a quantidade mínima definida</p>
+    <div id="estoque-alerts"></div>
+    <div class="card">
+      <div class="ch"><h2>Produtos</h2><button class="btn bp" onclick="openModal('modal-estoque')">+ Novo produto</button></div>
+      <div id="estoque-list"></div>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="view" id="view-agenda">
+    <h1 class="pt">Agenda</h1>
+    <p class="ps">Confirme presença, registre falta ou cancelamento</p>
+    <div class="sb">
+      <div class="sc"><div class="sl">Hoje</div><div class="sv" id="agenda-total">0</div></div>
+      <div class="sc"><div class="sl">Faltas mês</div><div class="sv fw" id="agenda-faltas">0</div><div class="ss">sem aviso</div></div>
+      <div class="sc"><div class="sl">Presença</div><div class="sv" id="agenda-taxa">—</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h2>Hoje</h2><button class="btn bp" onclick="openModal('modal-agenda')">+ Agendar</button></div>
+      <div id="agenda-list"></div>
+    </div>
+  </div>
+
+  <!-- FINANCEIRO -->
+  <div class="view" id="view-financeiro">
+    <h1 class="pt">Financeiro</h1>
+    <p class="ps">Resultado real: receita menos insumos e despesas · clique numa linha para detalhar</p>
+    <div class="sb4">
+      <div class="sc hero"><div class="sl">Receita bruta</div><div class="sv" id="fin-receita">R$ 0</div><div class="ss" id="fin-atend">0 atendimentos</div></div>
+      <div class="sc"><div class="sl">Custo insumos</div><div class="sv" id="fin-custo">R$ 0</div></div>
+      <div class="sc"><div class="sl">Despesas totais</div><div class="sv fw" id="fin-desp">R$ 0</div><div class="ss" id="fin-desp-sub"></div></div>
+      <div class="sc"><div class="sl">Lucro líquido</div><div class="sv" id="fin-lucro">R$ 0</div><div class="ss" id="fin-margem-geral"></div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h2>Por procedimento</h2></div>
+      <div class="finrow finhead"><div>Procedimento</div><div>Preço</div><div>Custo</div><div>Proporção</div><div>Margem</div></div>
+      <div id="fin-list"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h2>Resumo do mês</h2></div>
+      <div id="fin-resumo"></div>
+    </div>
+  </div>
+
+  <!-- DESPESAS -->
+  <div class="view" id="view-despesas">
+    <h1 class="pt">Despesas</h1>
+    <p class="ps">Fixas (todo mês) e variáveis (avulsas) — impactam seu lucro real</p>
+    <div class="sb">
+      <div class="sc"><div class="sl">Fixas / mês</div><div class="sv fw" id="desp-fixas-total">R$ 0</div></div>
+      <div class="sc"><div class="sl">Variáveis / mês</div><div class="sv fw" id="desp-var-total">R$ 0</div></div>
+      <div class="sc"><div class="sl">Total despesas</div><div class="sv fw" id="desp-total">R$ 0</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h2>Despesas fixas</h2><button class="btn bp" onclick="openModal('modal-desp');document.getElementById('desp-tipo-input').value='fixa';">+ Nova fixa</button></div>
+      <div id="desp-fixas-list"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h2>Despesas variáveis</h2><button class="btn bp" onclick="openModal('modal-desp');document.getElementById('desp-tipo-input').value='variavel';">+ Nova variável</button></div>
+      <div id="desp-var-list"></div>
+    </div>
+  </div>
+
+  <!-- RESERVA -->
+  <div class="view" id="view-reserva">
+    <h1 class="pt">Plano de Reserva</h1>
+    <p class="ps">Quanto guardar por mês para ter segurança financeira no negócio</p>
+    <div id="reserva-content"></div>
+  </div>
+</div>
+
+<!-- MODAL: PROCEDIMENTO -->
+<div class="overlay" id="modal-proc">
+  <div class="modal">
+    <h3>Novo procedimento</h3>
+    <div class="form-group"><label>Nome</label><input type="text" id="proc-nome" placeholder="Ex: Botox, Limpeza..."></div>
+    <div class="fr2">
+      <div class="form-group"><label>Preço (R$)</label><input type="number" id="proc-preco" placeholder="0"></div>
+      <div class="form-group"><label>Duração (min)</label><input type="number" id="proc-duracao" placeholder="60"></div>
+    </div>
+    <hr class="divider">
+    <div class="form-group">
+      <label>Insumos</label>
+      <div id="proc-insumos-inputs">
+        <div class="fr2" style="margin-bottom:7px;"><input type="text" placeholder="Nome do produto"><input type="number" placeholder="Custo (R$)"></div>
+      </div>
+      <button class="btn bg bsm" onclick="addInsumoField()" style="margin-top:3px;">+ Adicionar</button>
+    </div>
+    <div class="ma"><button class="btn bg" onclick="closeModal('modal-proc')">Cancelar</button><button class="btn bp" onclick="salvarProcedimento()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: PRODUTO -->
+<div class="overlay" id="modal-estoque">
+  <div class="modal">
+    <h3>Novo produto</h3>
+    <div class="form-group"><label>Nome</label><input type="text" id="est-nome" placeholder="Ex: Ácido hialurônico 1ml"></div>
+    <div class="fr2">
+      <div class="form-group"><label>Quantidade atual</label><input type="number" id="est-qtd" placeholder="0"></div>
+      <div class="form-group"><label>Mínimo (alerta)</label><input type="number" id="est-min" placeholder="0"></div>
+    </div>
+    <div class="form-group"><label>Unidade</label>
+      <select id="est-unidade"><option>unidades</option><option>ml</option><option>g</option><option>ampolas</option><option>kits</option></select>
+    </div>
+    <div class="ma"><button class="btn bg" onclick="closeModal('modal-estoque')">Cancelar</button><button class="btn bp" onclick="salvarEstoque()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: REPOR -->
+<div class="overlay" id="modal-repor">
+  <div class="modal">
+    <h3>Repor estoque</h3>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;" id="repor-label"></p>
+    <div class="form-group"><label>Quantidade a adicionar</label><input type="number" id="repor-qtd" placeholder="0" min="1"></div>
+    <div class="ma"><button class="btn bg" onclick="closeModal('modal-repor')">Cancelar</button><button class="btn bp" onclick="confirmarRepor()">Confirmar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: AGENDAR -->
+<div class="overlay" id="modal-agenda">
+  <div class="modal">
+    <h3>Novo agendamento</h3>
+    <div class="form-group"><label>Cliente</label><input type="text" id="ag-cliente" placeholder="Nome completo"></div>
+    <div class="form-group"><label>Procedimento</label><select id="ag-proc"><option value="">Selecionar...</option></select></div>
+    <div class="fr2">
+      <div class="form-group"><label>Horário</label><input type="time" id="ag-hora" value="09:00"></div>
+      <div class="form-group"><label>Data</label><input type="date" id="ag-data"></div>
+    </div>
+    <div class="ma"><button class="btn bg" onclick="closeModal('modal-agenda')">Cancelar</button><button class="btn bp" onclick="salvarAgendamento()">Agendar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: DESPESA -->
+<div class="overlay" id="modal-desp">
+  <div class="modal">
+    <h3>Nova despesa</h3>
+    <input type="hidden" id="desp-tipo-input" value="fixa">
+    <div class="form-group"><label>Descrição</label><input type="text" id="desp-nome" placeholder="Ex: Aluguel, Água, Internet..."></div>
+    <div class="fr2">
+      <div class="form-group"><label>Valor (R$)</label><input type="number" id="desp-valor" placeholder="0"></div>
+      <div class="form-group"><label>Tipo</label>
+        <select id="desp-tipo-sel">
+          <option value="fixa">Fixa (todo mês)</option>
+          <option value="variavel">Variável (avulsa)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Categoria</label>
+      <select id="desp-cat">
+        <option>Infraestrutura</option><option>Serviços</option><option>Marketing</option><option>Equipamento</option><option>Pessoal</option><option>Outros</option>
+      </select>
+    </div>
+    <div class="ma"><button class="btn bg" onclick="closeModal('modal-desp')">Cancelar</button><button class="btn bp" onclick="salvarDespesa()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: META RESERVA -->
+<div class="overlay" id="modal-reserva">
+  <div class="modal">
+    <h3>Configurar meta de reserva</h3>
+    <div class="form-group"><label>Meses de despesa como meta</label>
+      <select id="res-meses"><option value="3">3 meses (mínimo recomendado)</option><option value="6" selected>6 meses (ideal)</option><option value="12">12 meses (conservador)</option></select>
+    </div>
+    <div class="form-group"><label>Percentual do lucro a guardar por mês (%)</label>
+      <input type="number" id="res-pct" value="20" min="1" max="100">
+    </div>
+    <div class="ma"><button class="btn bg" onclick="closeModal('modal-reserva')">Cancelar</button><button class="btn bp" onclick="salvarReserva()">Salvar</button></div>
+  </div>
+</div>
+
+<script>
+var procedimentos=[
+  {id:1,nome:'Botox · testa e olhos',preco:980,duracao:35,insumos:[{nome:'Toxina botulínica (2 ampolas)',custo:280},{nome:'Agulhas',custo:15},{nome:'Anestésico',custo:12}]},
+  {id:2,nome:'Preenchimento labial',preco:1200,duracao:40,insumos:[{nome:'Ácido hialurônico 1ml',custo:580},{nome:'Anestésico',custo:12},{nome:'Agulhas',custo:15}]},
+  {id:3,nome:'Limpeza de pele profunda',preco:220,duracao:60,insumos:[{nome:'Kit limpeza',custo:48},{nome:'Esfoliante',custo:18}]},
+  {id:4,nome:'Drenagem linfática',preco:180,duracao:50,insumos:[{nome:'Óleo de massagem',custo:22},{nome:'Gel condutor',custo:18}]},
+];
+var estoque=[
+  {id:1,nome:'Ácido hialurônico 1ml',qtd:3,min:5,unidade:'ampolas'},
+  {id:2,nome:'Toxina botulínica',qtd:12,min:4,unidade:'ampolas'},
+  {id:3,nome:'Kit limpeza de pele',qtd:8,min:3,unidade:'kits'},
+  {id:4,nome:'Ácido para peeling',qtd:2,min:4,unidade:'unidades'},
+  {id:5,nome:'Óleo de massagem',qtd:6,min:2,unidade:'unidades'},
+];
+var agenda=[
+  {id:1,cliente:'Renata Souza',proc:'Limpeza de pele profunda',hora:'09:00',status:'confirmado'},
+  {id:2,cliente:'Juliana Prado',proc:'Botox · testa e olhos',hora:'10:30',status:'confirmado'},
+  {id:3,cliente:'Fernanda Lima',proc:'Preenchimento labial',hora:'12:00',status:'pendente'},
+  {id:4,cliente:'Patrícia Nogueira',proc:'Drenagem linfática',hora:'14:00',status:'pendente'},
+  {id:5,cliente:'Camila Reis',proc:'Limpeza de pele profunda',hora:'15:30',status:'pendente'},
+  {id:6,cliente:'Beatriz Alves',proc:'Botox · testa e olhos',hora:'17:00',status:'pendente'},
+];
+var despesas=[
+  {id:1,nome:'Aluguel',valor:1800,tipo:'fixa',cat:'Infraestrutura'},
+  {id:2,nome:'Água e luz',valor:320,tipo:'fixa',cat:'Infraestrutura'},
+  {id:3,nome:'Internet',valor:120,tipo:'fixa',cat:'Serviços'},
+  {id:4,nome:'Contador',valor:350,tipo:'fixa',cat:'Serviços'},
+  {id:5,nome:'Instagram Ads',valor:200,tipo:'fixa',cat:'Marketing'},
+  {id:6,nome:'Manutenção aparelho',valor:180,tipo:'variavel',cat:'Equipamento'},
+  {id:7,nome:'Material de limpeza',valor:90,tipo:'variavel',cat:'Outros'},
+];
+var finAtend={'Botox · testa e olhos':7,'Preenchimento labial':5,'Limpeza de pele profunda':12,'Drenagem linfática':9};
+var reservaConfig={meses:6,pct:20,acumulado:1200};
+var finExpanded=null,reporId=null;
+
+function R(v){return 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:0});}
+function calcM(p){var c=p.insumos.reduce(function(s,i){return s+i.custo;},0);return{custo:c,margem:p.preco?Math.round(((p.preco-c)/p.preco)*100):0,lucro:p.preco-c};}
+function newId(arr){return arr.length?Math.max.apply(null,arr.map(function(x){return x.id;}))+1:1;}
+
+/* PROCEDIMENTOS */
+function renderProcs(){
+  var el=document.getElementById('proc-list');
+  if(!procedimentos.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Nenhum procedimento cadastrado.</p>';updateProcSummary();return;}
+  var warns=0,bestP=null,bestM=0;
+  el.innerHTML=procedimentos.map(function(p){
+    var m=calcM(p);if(m.margem<50)warns++;if(m.margem>bestM){bestM=m.margem;bestP=p;}
+    var cp=Math.max(0,100-m.margem);var good=m.margem>=50;
+    return '<div class="pi">'+
+      '<div class="ptop"><div><div class="pn">'+p.nome+'</div><div style="font-size:11px;color:var(--ink-soft);margin-top:1px;">'+p.duracao+' min</div></div>'+
+      '<div style="text-align:right"><div class="mono" style="font-size:12.5px;">'+R(p.preco)+'</div><div style="font-size:10.5px;color:var(--ink-soft);">custo: '+R(m.custo)+'</div></div></div>'+
+      '<div class="pmarg"><div class="mbar"><div class="mbc" style="width:'+cp+'%"></div><div class="mbm" style="width:'+m.margem+'%"></div></div>'+
+      '<span class="pill '+(good?'pg':'pw')+'">'+m.margem+'%</span><span class="minfo">lucro: '+R(m.lucro)+'</span></div>'+
+      '<div class="ititle">Insumos</div>'+p.insumos.map(function(i){return '<span class="itag">'+i.nome+' · '+R(i.custo)+'</span>';}).join('')+
+      '<div style="margin-top:8px;"><button class="btn bd bsm" onclick="deletarProc('+p.id+')">Remover</button></div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('total-procs').textContent=procedimentos.length;
+  document.getElementById('warn-count').textContent=warns;
+  if(bestP){document.getElementById('best-margin').textContent=bestM+'%';document.getElementById('best-name').textContent=bestP.nome;}
+  var sel=document.getElementById('ag-proc');
+  sel.innerHTML='<option value="">Selecionar...</option>'+procedimentos.map(function(p){return '<option>'+p.nome+'</option>';}).join('');
+}
+function updateProcSummary(){document.getElementById('total-procs').textContent=0;document.getElementById('warn-count').textContent=0;document.getElementById('best-margin').textContent='—';}
+function deletarProc(id){procedimentos=procedimentos.filter(function(p){return p.id!==id;});renderProcs();renderFin();}
+function addInsumoField(){var w=document.getElementById('proc-insumos-inputs');var d=document.createElement('div');d.className='fr2';d.style.marginBottom='7px';d.innerHTML='<input type="text" placeholder="Nome do produto"><input type="number" placeholder="Custo (R$)">';w.appendChild(d);}
+function salvarProcedimento(){
+  var nome=document.getElementById('proc-nome').value.trim();var preco=parseFloat(document.getElementById('proc-preco').value);var dur=parseInt(document.getElementById('proc-duracao').value)||60;
+  if(!nome||!preco){alert('Preencha nome e preço.');return;}
+  var ins=[];document.querySelectorAll('#proc-insumos-inputs .fr2').forEach(function(r){var ip=r.querySelectorAll('input');var n=ip[0].value.trim();var c=parseFloat(ip[1].value);if(n&&!isNaN(c))ins.push({nome:n,custo:c});});
+  procedimentos.push({id:newId(procedimentos),nome:nome,preco:preco,duracao:dur,insumos:ins});
+  closeModal('modal-proc');document.getElementById('proc-nome').value='';document.getElementById('proc-preco').value='';document.getElementById('proc-duracao').value='';
+  document.getElementById('proc-insumos-inputs').innerHTML='<div class="fr2" style="margin-bottom:7px;"><input type="text" placeholder="Nome do produto"><input type="number" placeholder="Custo (R$)"></div>';
+  renderProcs();renderFin();
+}
+
+/* ESTOQUE */
+function renderEstoque(){
+  var aEl=document.getElementById('estoque-alerts'),lEl=document.getElementById('estoque-list'),ah='';
+  lEl.innerHTML=estoque.map(function(e){
+    var baixo=e.qtd<=e.min;var pct=Math.min(100,Math.round((e.qtd/Math.max(e.min*2.5,1))*100));
+    if(baixo)ah+='<div class="ab w"><div class="abi">!</div><div class="abt"><strong>'+e.nome+'</strong> — '+e.qtd+' '+e.unidade+' restantes (mínimo: '+e.min+'). Repor agora.</div></div>';
+    return '<div class="ei"><div><div class="en">'+e.nome+'</div><div class="ed">Mínimo: '+e.min+' '+e.unidade+'</div></div>'+
+      '<div class="er"><div class="ebar"><div class="ebarfill" style="width:'+pct+'%;background:'+(baixo?'var(--terra)':'var(--sage)')+'"></div></div>'+
+      '<span class="mono" style="font-size:12px;">'+e.qtd+' '+e.unidade+'</span>'+
+      '<span class="pill '+(baixo?'pw':'pg')+'">'+(baixo?'Baixo':'OK')+'</span>'+
+      '<button class="btn bg bsm" onclick="abrirRepor('+e.id+')">+ Repor</button></div></div>';
+  }).join('')||'<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Nenhum produto.</p>';
+  aEl.innerHTML=ah;
+}
+function abrirRepor(id){reporId=id;var e=estoque.find(function(x){return x.id===id;});document.getElementById('repor-label').textContent=e.nome+' — atual: '+e.qtd+' '+e.unidade;document.getElementById('repor-qtd').value='';openModal('modal-repor');}
+function confirmarRepor(){var q=parseInt(document.getElementById('repor-qtd').value);if(isNaN(q)||q<=0){alert('Informe uma quantidade válida.');return;}estoque=estoque.map(function(e){return e.id===reporId?Object.assign({},e,{qtd:e.qtd+q}):e;});closeModal('modal-repor');renderEstoque();}
+function salvarEstoque(){var n=document.getElementById('est-nome').value.trim(),q=parseInt(document.getElementById('est-qtd').value),m=parseInt(document.getElementById('est-min').value),u=document.getElementById('est-unidade').value;if(!n||isNaN(q)||isNaN(m)){alert('Preencha todos os campos.');return;}estoque.push({id:newId(estoque),nome:n,qtd:q,min:m,unidade:u});closeModal('modal-estoque');document.getElementById('est-nome').value='';document.getElementById('est-qtd').value='';document.getElementById('est-min').value='';renderEstoque();}
+
+/* AGENDA */
+function renderAgenda(){
+  var el=document.getElementById('agenda-list');
+  var sorted=agenda.slice().sort(function(a,b){return a.hora.localeCompare(b.hora);});
+  var faltas=agenda.filter(function(a){return a.status==='faltou';}).length;
+  var conf=agenda.filter(function(a){return a.status==='confirmado';}).length;
+  document.getElementById('agenda-faltas').textContent=faltas;
+  document.getElementById('agenda-total').textContent=agenda.length;
+  document.getElementById('agenda-taxa').textContent=agenda.length?Math.round((conf/agenda.length)*100)+'%':'—';
+  if(!sorted.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Nenhum agendamento.</p>';return;}
+  el.innerHTML=sorted.map(function(a){
+    var dc=a.status==='confirmado'?'var(--sage)':a.status==='faltou'?'var(--terra)':a.status==='cancelou'?'var(--gold)':'var(--ink-soft)';
+    return '<div class="ai"><div class="atime">'+a.hora+'</div><div class="adot" style="background:'+dc+'"></div>'+
+      '<div class="ainfo"><div class="acl">'+a.cliente+'</div><div class="apr">'+a.proc+'</div></div>'+
+      '<div class="aact">'+
+        (a.status!=='confirmado'?'<button class="sbtn s-conf" onclick="setStatus('+a.id+',\'confirmado\')">✓ Confirmou</button>':'')+
+        (a.status!=='faltou'?'<button class="sbtn s-falt" onclick="setStatus('+a.id+',\'faltou\')">✗ Faltou</button>':'')+
+        (a.status!=='cancelou'?'<button class="sbtn s-canc" onclick="setStatus('+a.id+',\'cancelou\')">Cancelou</button>':'')+
+      '</div></div>';
+  }).join('');
+}
+function setStatus(id,s){agenda=agenda.map(function(a){return a.id===id?Object.assign({},a,{status:s}):a;});renderAgenda();}
+function salvarAgendamento(){var c=document.getElementById('ag-cliente').value.trim(),p=document.getElementById('ag-proc').value,h=document.getElementById('ag-hora').value;if(!c||!p){alert('Preencha cliente e procedimento.');return;}agenda.push({id:newId(agenda),cliente:c,proc:p,hora:h,status:'pendente'});closeModal('modal-agenda');document.getElementById('ag-cliente').value='';renderAgenda();}
+
+/* FINANCEIRO */
+function totalDespesas(){return despesas.reduce(function(s,d){return s+d.valor;},0);}
+function renderFin(){
+  var el=document.getElementById('fin-list');
+  if(!procedimentos.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Cadastre procedimentos.</p>';return;}
+  var tRec=0,tCusto=0,tAtend=0;
+  el.innerHTML=procedimentos.map(function(p){
+    var m=calcM(p);var qtd=finAtend[p.nome]||0;
+    var rec=p.preco*qtd,cus=m.custo*qtd,luc=m.lucro*qtd;
+    tRec+=rec;tCusto+=cus;tAtend+=qtd;
+    var good=m.margem>=50;var cp=100-m.margem;var isO=finExpanded===p.id;
+    return '<div class="finrow" onclick="toggleFin('+p.id+')">'+
+      '<div><div class="finnome">'+p.nome+'</div><div class="finsub">'+qtd+' atend. este mês</div></div>'+
+      '<div class="mono" style="font-size:12px;">'+R(p.preco)+'</div>'+
+      '<div class="mono" style="font-size:12px;">'+R(m.custo)+'</div>'+
+      '<div><div class="bwrap"><div class="bcost" style="width:'+cp+'%"></div><div class="bmg" style="width:'+m.margem+'%"></div></div></div>'+
+      '<div><span class="pill '+(good?'pg':'pw')+'">'+m.margem+'%</span></div></div>'+
+      '<div class="findet'+(isO?' open':'')+'" id="fd-'+p.id+'">'+
+        '<div class="fdgrid">'+
+          '<div><div class="fdl">Lucro por sessão</div><div class="fdv">'+R(m.lucro)+'</div></div>'+
+          '<div><div class="fdl">Receita no mês</div><div class="fdv">'+R(rec)+'</div></div>'+
+          '<div><div class="fdl">Lucro no mês</div><div class="fdv">'+R(luc)+'</div></div>'+
+        '</div>'+
+        (m.margem<50?'<div style="font-size:11px;color:var(--terra);">⚠ Margem abaixo de 50% — revise o preço ou negocie o custo dos insumos.</div>':'')+
+      '</div>';
+  }).join('');
+  var tDesp=totalDespesas();var tLiq=tRec-tCusto-tDesp;var mg=tRec?Math.round((tLiq/tRec)*100):0;
+  document.getElementById('fin-receita').textContent=R(tRec);
+  document.getElementById('fin-custo').textContent=R(tCusto);
+  document.getElementById('fin-desp').textContent=R(tDesp);
+  document.getElementById('fin-desp-sub').textContent='fixas + variáveis';
+  document.getElementById('fin-lucro').textContent=R(tLiq);
+  document.getElementById('fin-lucro').style.color=tLiq<0?'var(--terra)':'var(--ink)';
+  document.getElementById('fin-atend').textContent=tAtend+' atendimentos';
+  document.getElementById('fin-margem-geral').textContent='margem líquida: '+mg+'%';
+  document.getElementById('fin-margem-geral').className='ss '+(mg>0?'fg2':'fw2');
+  // resumo
+  var res=document.getElementById('fin-resumo');
+  var rows=[
+    {l:'Receita bruta',v:tRec,cl:''},
+    {l:'(-) Custo de insumos',v:-tCusto,cl:'fw2'},
+    {l:'(-) Despesas fixas',v:-despesas.filter(function(d){return d.tipo==='fixa';}).reduce(function(s,d){return s+d.valor;},0),cl:'fw2'},
+    {l:'(-) Despesas variáveis',v:-despesas.filter(function(d){return d.tipo==='variavel';}).reduce(function(s,d){return s+d.valor;},0),cl:'fw2'},
+    {l:'= Lucro líquido',v:tLiq,cl:tLiq>=0?'fg':'fw',bold:true},
+  ];
+  res.innerHTML=rows.map(function(r){
+    return '<div style="display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line);font-size:13px;'+(r.bold?'font-weight:700;':'')+'">'+'<span>'+r.l+'</span><span class="mono '+r.cl+'">'+R(Math.abs(r.v))+'</span></div>';
+  }).join('');
+}
+function toggleFin(id){finExpanded=finExpanded===id?null:id;renderFin();}
+
+/* DESPESAS */
+function renderDespesas(){
+  var fixas=despesas.filter(function(d){return d.tipo==='fixa';});
+  var vars=despesas.filter(function(d){return d.tipo==='variavel';});
+  var tf=fixas.reduce(function(s,d){return s+d.valor;},0);
+  var tv=vars.reduce(function(s,d){return s+d.valor;},0);
+  document.getElementById('desp-fixas-total').textContent=R(tf);
+  document.getElementById('desp-var-total').textContent=R(tv);
+  document.getElementById('desp-total').textContent=R(tf+tv);
+  function renderList(list,elId){
+    var el=document.getElementById(elId);
+    if(!list.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Nenhuma despesa cadastrada.</p>';return;}
+    el.innerHTML=list.map(function(d){
+      return '<div class="desp-item">'+
+        '<div><div class="desp-nome">'+d.nome+'</div><div class="desp-tipo" style="color:var(--ink-soft)">'+d.cat+'</div></div>'+
+        '<div class="desp-right">'+
+          '<span class="mono" style="font-size:13px;">'+R(d.valor)+'</span>'+
+          '<button class="btn bd bsm" onclick="deletarDesp('+d.id+')">Remover</button>'+
+        '</div></div>';
+    }).join('');
+  }
+  renderList(fixas,'desp-fixas-list');
+  renderList(vars,'desp-var-list');
+  renderFin();renderReserva();
+}
+function deletarDesp(id){despesas=despesas.filter(function(d){return d.id!==id;});renderDespesas();}
+function salvarDespesa(){
+  var n=document.getElementById('desp-nome').value.trim();
+  var v=parseFloat(document.getElementById('desp-valor').value);
+  var t=document.getElementById('desp-tipo-sel').value;
+  var c=document.getElementById('desp-cat').value;
+  if(!n||isNaN(v)||v<=0){alert('Preencha nome e valor.');return;}
+  despesas.push({id:newId(despesas),nome:n,valor:v,tipo:t,cat:c});
+  closeModal('modal-desp');document.getElementById('desp-nome').value='';document.getElementById('desp-valor').value='';
+  renderDespesas();
+}
+
+/* RESERVA */
+function renderReserva(){
+  var tDesp=totalDespesas();
+  var meta=tDesp*reservaConfig.meses;
+  var tRec=procedimentos.reduce(function(s,p){var m=calcM(p);var q=finAtend[p.nome]||0;return s+m.lucro*q;},0)-tDesp;
+  var guardaMes=Math.max(0,Math.round(tRec*(reservaConfig.pct/100)));
+  var mesesPraChegar=guardaMes>0?Math.ceil((meta-reservaConfig.acumulado)/guardaMes):999;
+  var pct=meta>0?Math.min(100,Math.round((reservaConfig.acumulado/meta)*100)):0;
+  var el=document.getElementById('reserva-content');
+  var alertas='';
+  if(tDesp===0)alertas+='<div class="ab w"><div class="abi">!</div><div class="abt">Cadastre suas despesas primeiro para calcular a meta de reserva corretamente.</div></div>';
+  if(tRec<=0)alertas+='<div class="ab w"><div class="abi">!</div><div class="abt">Lucro líquido atual é zero ou negativo. Revise despesas e preços antes de planejar reserva.</div></div>';
+  el.innerHTML=alertas+
+    '<div class="sb">' +
+      '<div class="sc"><div class="sl">Meta ('+reservaConfig.meses+'x despesas)</div><div class="sv">'+R(meta)+'</div></div>'+
+      '<div class="sc"><div class="sl">Acumulado</div><div class="sv fg">'+R(reservaConfig.acumulado)+'</div></div>'+
+      '<div class="sc"><div class="sl">Guardar / mês</div><div class="sv">'+R(guardaMes)+'</div><div class="ss">'+reservaConfig.pct+'% do lucro</div></div>'+
+    '</div>'+
+    '<div class="reserva-goal">'+
+      '<div class="rg-label">Progresso da reserva</div>'+
+      '<div class="rg-bar-wrap"><div class="rg-bar-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="rg-info"><span>'+pct+'% da meta</span><span>'+(mesesPraChegar<999?mesesPraChegar+' meses para completar':'calcule o lucro primeiro')+'</span></div>'+
+    '</div>'+
+    '<div class="card">'+
+      '<div class="ch"><h2>Para quê serve a reserva</h2></div>'+
+      '<div class="reserva-tip">'+
+        '📌 <strong>Meses parados</strong>: cobre suas despesas fixas se você ficou doente, fez reforma, ou teve queda de clientes.<br><br>'+
+        '📌 <strong>Equipamento quebrado</strong>: aparelhos de estética custam caro — a reserva evita parcelamento com juros.<br><br>'+
+        '📌 <strong>Sazonalidade</strong>: janeiro e julho costumam ser mais fracos — a reserva sustenta o caixa nesses meses.<br><br>'+
+        '📌 <strong>Regra prática</strong>: guarde primeiro, gaste depois. Separe os '+reservaConfig.pct+'% logo que receber, antes de qualquer outra saída.'+
+      '</div>'+
+    '</div>'+
+    '<div style="margin-top:6px;"><button class="btn bg" onclick="openModal(\'modal-reserva\')">Ajustar meta e percentual</button></div>';
+}
+function salvarReserva(){
+  reservaConfig.meses=parseInt(document.getElementById('res-meses').value);
+  reservaConfig.pct=parseInt(document.getElementById('res-pct').value)||20;
+  closeModal('modal-reserva');renderReserva();
+}
+
+/* MODAL */
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
+
+/* TABS */
+function showTab(t,b){
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  document.getElementById('view-'+t).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('active');});
+  b.classList.add('active');
+}
+
+/* INIT */
+renderProcs();renderEstoque();renderAgenda();renderFin();renderDespesas();renderReserva();
+document.getElementById('ag-data').value=new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
