@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cora · Clínica de Estética</title>
+<title>StudioFlow · Gestão de Estúdios</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -230,6 +230,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 .alert-box.warn{background:var(--terra-pale);border:1px solid #ECC8BC;}
 .alert-box.ok{background:var(--sage-pale);border:1px solid #C8DABE;}
 .alert-box.gold{background:var(--gold-pale);border:1px solid #E0CFA0;}
+.alert-box.gold .alert-icon{color:var(--gold);}
+.alert-box.gold{background:var(--gold-pale);border:1px solid #E0CFA0;}
 .alert-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
 .alert-text{font-size:12.5px;line-height:1.5;}
 .alert-text strong{font-weight:700;}
@@ -292,10 +294,15 @@ textarea.form-control{resize:vertical;min-height:72px;}
 <div class="login-wrap" id="login-wrap">
   <div class="login-box">
     <div class="login-brand">
-      <div class="login-mark">C</div>
-      <div class="login-name">Cora</div>
+      <div class="login-mark">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path d="M3 6h18M3 12h12M3 18h8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="19" cy="18" r="3" fill="#B8922A"/>
+  </svg>
+</div>
+      <div class="login-name">StudioFlow</div>
     </div>
-    <p class="login-tagline">Sistema de gestão para clínicas de estética</p>
+    <p class="login-tagline">Gestão inteligente para estúdios de estética</p>
     <div class="login-error" id="login-error"></div>
     <div class="form-group"><label class="form-label">E-mail</label><input type="email" id="login-email" class="form-control" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
     <div class="form-group"><label class="form-label">Senha</label><input type="password" id="login-senha" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
@@ -310,8 +317,13 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-      <div class="sidebar-mark">C</div>
-      <div class="sidebar-name">Cora</div>
+      <div class="sidebar-mark">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+    <path d="M3 6h18M3 12h12M3 18h8" stroke="#2D4028" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="19" cy="18" r="3" fill="#B8922A"/>
+  </svg>
+</div>
+      <div class="sidebar-name">StudioFlow</div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">Visão Geral</div>
@@ -495,7 +507,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <!-- DESPESAS -->
   <div class="view" id="view-despesas">
     <h1 class="section-title">Despesas</h1>
-    <p class="section-sub">Fixas e variáveis — impactam o lucro líquido</p>
+    <p class="section-sub">Fixas e variáveis · alertas de vencimento automáticos</p>
+    <div id="desp-alertas-venc"></div>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-warn"><div class="kpi-label">Fixas / mês</div><div class="kpi-value kpi-warn-val" id="desp-fix-total">—</div></div>
       <div class="kpi kpi-warn"><div class="kpi-label">Variáveis</div><div class="kpi-value kpi-warn-val" id="desp-var-total">—</div></div>
@@ -514,15 +527,32 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <!-- MOVIMENTAÇÕES -->
   <div class="view" id="view-movimentacoes">
     <h1 class="section-title">Movimentações</h1>
-    <p class="section-sub">Histórico completo de entradas e saídas do estoque</p>
+    <p class="section-sub">Filtros por tipo (entrada/saída) e período · use os selects acima para refinar</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-warn"><div class="kpi-label">Saídas hoje</div><div class="kpi-value kpi-warn-val" id="mov-saidas">—</div></div>
       <div class="kpi kpi-ok"><div class="kpi-label">Entradas hoje</div><div class="kpi-value kpi-ok-val" id="mov-entradas">—</div></div>
       <div class="kpi"><div class="kpi-label">Movimentos no mês</div><div class="kpi-value" id="mov-total">—</div></div>
     </div>
     <div class="card">
-      <div class="card-head"><h2>Histórico</h2></div>
-      <div class="mov-item mov-head"><div>Data / Hora</div><div>Produto</div><div>Tipo / Cliente</div><div>Qtd</div></div>
+      <div class="card-head">
+        <h2>Histórico</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <select id="mov-filtro-tipo" class="form-control" style="width:auto;padding:6px 10px;" onchange="renderMovs()">
+            <option value="">Todos os tipos</option>
+            <option value="saida">↓ Saídas</option>
+            <option value="entrada">↑ Entradas</option>
+          </select>
+          <select id="mov-filtro-periodo" class="form-control" style="width:auto;padding:6px 10px;" onchange="renderMovs()">
+            <option value="7">Últimos 7 dias</option>
+            <option value="30" selected>Últimos 30 dias</option>
+            <option value="90">Últimos 3 meses</option>
+            <option value="180">Últimos 6 meses</option>
+            <option value="365">Último ano</option>
+            <option value="0">Todos</option>
+          </select>
+        </div>
+      </div>
+      <div class="mov-grid mov-head"><div>Data / Hora</div><div>Produto</div><div>Tipo / Cliente</div><div>Qtd</div></div>
       <div id="mov-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
     </div>
   </div>
@@ -630,9 +660,12 @@ textarea.form-control{resize:vertical;min-height:72px;}
     <input type="hidden" id="desp-tipo-hidden">
     <div class="form-group"><label class="form-label">Descrição</label><input type="text" id="desp-nome" class="form-control" placeholder="Ex: Aluguel, Internet, Material..."></div>
     <div class="fr2">
-      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="number" id="desp-valor"></div>
-      <div class="form-group"><label class="form-label">Categoria</label><select id="desp-cat" class="form-control"><option>Infraestrutura</option><option>Serviços</option><option>Marketing</option><option>Equipamento</option><option>Pessoal</option><option>Outros</option></select>
-      </div>
+      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="number" id="desp-valor" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Categoria</label><select id="desp-cat" class="form-control"><option>Infraestrutura</option><option>Serviços</option><option>Marketing</option><option>Equipamento</option><option>Pessoal</option><option>Outros</option></select></div>
+    </div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Data de vencimento</label><input type="date" id="desp-venc" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Dia fixo do mês (fixas)</label><input type="number" id="desp-dia" class="form-control" placeholder="Ex: 10" min="1" max="31"></div>
     </div>
     <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-desp')">Cancelar</button><button class="btn btn-primary" onclick="salvarDesp()">Salvar</button></div>
   </div>
@@ -655,8 +688,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 // SUBSTITUA COM SUAS CREDENCIAIS DO SUPABASE
 // Supabase → Settings → API → Legacy anon
 // ====================================================
-var SUPA_URL = 'https://twjdcutypnhybyvdnvam.supabase.co';
-var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR3amRjdXR5cG5oeWJ5dmRudmFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2ODYyNTAsImV4cCI6MjA5ODI2MjI1MH0.NZ5CXNZsTWPA58N8mATjiv7qbjPPvBM2XvMca76NSm4';
+var SUPA_URL = 'COLE_SUA_URL_AQUI';
+var SUPA_KEY = 'COLE_SUA_CHAVE_AQUI';
 var SB = null;
 try {
   if(SUPA_URL.indexOf('supabase.co') > -1 && SUPA_KEY.length > 30) {
@@ -704,12 +737,12 @@ document.querySelectorAll('.overlay').forEach(function(el){
 var PAGE_TITLES={
   dashboard:['Dashboard','Visão geral do seu negócio hoje'],
   clientes:['Clientes','Cadastro e histórico de atendimentos'],
-  procedimentos:['Procedimentos','Margem real por procedimento'],
-  estoque:['Estoque','Controle de produtos com baixa automática'],
-  agenda:['Agenda','Confirme presenças e controle faltas'],
-  financeiro:['Financeiro','Resultado real do mês'],
-  despesas:['Despesas','Fixas e variáveis'],
-  movimentacoes:['Movimentações','Histórico de entradas e saídas'],
+  procedimentos:['Procedimentos','Margem real calculada com os insumos do estoque'],
+  estoque:['Estoque','Controle de produtos · baixa automática ao confirmar atendimento'],
+  agenda:['Agenda','Confirme presenças · horários duplicados bloqueados automaticamente'],
+  financeiro:['Financeiro','Resultado real do mês · clique em cada linha para expandir'],
+  despesas:['Despesas','Fixas e variáveis · alertas automáticos de vencimento'],
+  movimentacoes:['Movimentações','Histórico de entradas e saídas · use os filtros para refinar'],
   reserva:['Plano de Reserva','Segurança financeira do negócio'],
 };
 function showTab(t,b){
@@ -1164,11 +1197,29 @@ async function salvarAgendamento(){
   var data=document.getElementById('ag-data-input').value;
   var hora=document.getElementById('ag-hora-input').value;
   if(!cliId||!procId){toast('Selecione cliente e procedimento.','err');return;}
+  if(!data||!hora){toast('Informe data e horário.','err');return;}
+
+  // Verificar duplicidade: mesmo dia e horário (ignora cancelados)
+  var {data:existentes}=await SB.from('agenda')
+    .select('id,cliente_nome,status')
+    .eq('data',data)
+    .eq('hora',hora)
+    .neq('status','cancelou');
+  if(existentes&&existentes.length>0){
+    toast('⚠ Já existe agendamento neste dia e horário: '+existentes[0].cliente_nome+'. Escolha outro horário.','err');
+    return;
+  }
+
   var cli=_clientes.find(function(c){return c.id===cliId;});
   var proc=_procs.find(function(p){return p.id===procId;});
-  await SB.from('agenda').insert({cliente_id:cliId,cliente_nome:cli.nome,procedimento_id:procId,procedimento_nome:proc.nome,data:data,hora:hora,status:'pendente'});
+  await SB.from('agenda').insert({
+    cliente_id:cliId,cliente_nome:cli.nome,
+    procedimento_id:procId,procedimento_nome:proc.nome,
+    data:data,hora:hora,status:'pendente'
+  });
   closeModal('modal-ag');
-  await carregarAgenda();toast('Agendamento criado!');
+  await carregarAgenda();
+  toast('Agendamento criado: '+cli.nome+' às '+hora);
 }
 
 // ====================================================
@@ -1229,7 +1280,22 @@ function renderFin(){
   }).join('');
 }
 
-function toggleFin(id){_finExpanded=_finExpanded===id?null:id;renderFin();}
+function toggleFin(id){
+  _finExpanded=_finExpanded===id?null:id;
+  // Atualiza só o detail e o indicador sem re-renderizar tudo
+  _procs.forEach(function(p){
+    var det=document.getElementById('fd-'+p.id);
+    if(det) det.style.display=(_finExpanded===p.id)?'block':'none';
+    // atualiza seta
+    var rows=document.querySelectorAll('.finrow');
+    rows.forEach(function(r){
+      if(r.getAttribute('onclick')&&r.getAttribute('onclick').indexOf(p.id)>-1){
+        var arrow=r.querySelector('span[style*="font-size:10px"]');
+        if(arrow) arrow.textContent=(_finExpanded===p.id)?'▲':'▼';
+      }
+    });
+  });
+}
 
 // ====================================================
 // DESPESAS
@@ -1389,9 +1455,36 @@ function renderDashboard(){
   }).join('');
 
   // alertas
-  document.getElementById('dash-alertas').innerHTML=alertas.length?
-    alertas.map(function(e){return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+e.nome+'</strong> — '+e.qtd+' '+e.unidade+' (mín: '+e.minimo+')</div></div>';}).join('') :
-    '<div class="alert-box ok"><div class="alert-icon">✓</div><div class="alert-text">Todos os produtos com estoque OK.</div></div>';
+  // Alertas de estoque
+  var estAlertas=alertas.map(function(e){
+    return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+e.nome+'</strong> — '+e.qtd+' '+e.unidade+' (mín: '+e.minimo+')</div></div>';
+  }).join('');
+  // Alertas de vencimento (próximos 3 dias)
+  var hoje_dash=new Date();hoje_dash.setHours(0,0,0,0);
+  var em3=new Date(hoje_dash);em3.setDate(em3.getDate()+3);
+  var despVenc=_despesas.filter(function(d){
+    if(!d.vencimento)return false;
+    var dv=new Date(d.vencimento+'T00:00:00');
+    return dv<=em3;
+  });
+  var despAlertas=despVenc.map(function(d){
+    var dv=new Date(d.vencimento+'T00:00:00');
+    var vencida=dv<hoje_dash;
+    return '<div class="alert-box '+(vencida?'warn':'gold')+'"><div class="alert-icon">'+(vencida?'⚠':'⏰')+'</div><div class="alert-text"><strong>'+d.nome+'</strong> — '+(vencida?'vencida em':'vence em')+' '+fmtData(d.vencimento)+' · '+R(d.valor)+'</div></div>';
+  }).join('');
+  var totalAlertas=alertas.length+despVenc.length;
+  document.getElementById('dash-alertas').innerHTML=
+    (estAlertas||despAlertas) ?
+    (estAlertas+despAlertas) :
+    '<div class="alert-box ok"><div class="alert-icon">✓</div><div class="alert-text">Estoque OK · Sem despesas vencendo.</div></div>';
+  // Atualizar KPI de alertas no dash
+  var alertKpi=document.querySelector('#dash-stats .kpi:last-child');
+  if(alertKpi){
+    alertKpi.className='kpi '+(totalAlertas>0?'kpi-warn':'kpi-ok');
+    alertKpi.querySelector('.kpi-value').textContent=totalAlertas;
+    alertKpi.querySelector('.kpi-value').className='kpi-value '+(totalAlertas>0?'kpi-warn-val':'kpi-ok-val');
+    alertKpi.querySelector('.kpi-sub').textContent=totalAlertas>0?(alertas.length+' estoque · '+despVenc.length+' vencimento'):'tudo OK';
+  }
 
   // últimas movs
   var ultMovs=_movs.slice(0,5);
