@@ -414,8 +414,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- CLIENTES -->
   <div class="view" id="view-clientes">
-    <h1 class="section-title">Clientes</h1>
-    <p class="section-sub">Cadastro e histórico de atendimentos</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-hero"><div class="kpi-label">Total de clientes</div><div class="kpi-value" id="cli-total">—</div></div>
       <div class="kpi kpi-gold"><div class="kpi-label">Novos este mês</div><div class="kpi-value kpi-gold-val" id="cli-novos">—</div></div>
@@ -435,8 +433,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- PROCEDIMENTOS -->
   <div class="view" id="view-procedimentos">
-    <h1 class="section-title">Procedimentos</h1>
-    <p class="section-sub">Margem real calculada com base nos insumos vinculados ao estoque</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-hero"><div class="kpi-label">Procedimentos</div><div class="kpi-value" id="proc-total">—</div></div>
       <div class="kpi kpi-ok"><div class="kpi-label">Melhor margem</div><div class="kpi-value kpi-ok-val" id="proc-best">—</div><div class="kpi-sub" id="proc-best-name"></div></div>
@@ -450,8 +446,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- ESTOQUE -->
   <div class="view" id="view-estoque">
-    <h1 class="section-title">Estoque</h1>
-    <p class="section-sub">Controle de produtos com baixa automática ao confirmar atendimento</p>
     <div class="kpi-grid kpi-grid-4" id="est-stats"></div>
     <div id="est-alertas"></div>
     <div class="card">
@@ -462,8 +456,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- AGENDA -->
   <div class="view" id="view-agenda">
-    <h1 class="section-title">Agenda</h1>
-    <p class="section-sub">Baixa automática no estoque ao confirmar · não permite dois agendamentos no mesmo horário</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-hero"><div class="kpi-label">Agendamentos hoje</div><div class="kpi-value" id="ag-total">—</div></div>
       <div class="kpi kpi-warn"><div class="kpi-label">Faltas no mês</div><div class="kpi-value kpi-warn-val" id="ag-faltas">—</div></div>
@@ -483,8 +475,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- FINANCEIRO -->
   <div class="view" id="view-financeiro">
-    <h1 class="section-title">Financeiro</h1>
-    <p class="section-sub">Resultado real: receita menos custos de insumos e despesas</p>
     <div class="kpi-grid kpi-grid-4">
       <div class="kpi kpi-hero"><div class="kpi-label">Receita bruta</div><div class="kpi-value" id="fin-rec">—</div><div class="kpi-sub" id="fin-atend"></div></div>
       <div class="kpi"><div class="kpi-label">Custo insumos</div><div class="kpi-value" id="fin-custo">—</div></div>
@@ -501,8 +491,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- DESPESAS -->
   <div class="view" id="view-despesas">
-    <h1 class="section-title">Despesas</h1>
-    <p class="section-sub">Fixas e variáveis — impactam o lucro líquido</p>
     <div id="desp-alertas"></div>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-warn"><div class="kpi-label">Fixas / mês</div><div class="kpi-value kpi-warn-val" id="desp-fix-total">—</div></div>
@@ -521,8 +509,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- MOVIMENTAÇÕES -->
   <div class="view" id="view-movimentacoes">
-    <h1 class="section-title">Movimentações</h1>
-    <p class="section-sub">Histórico completo de entradas e saídas do estoque</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-warn"><div class="kpi-label">Saídas no período</div><div class="kpi-value kpi-warn-val" id="mov-saidas">—</div></div>
       <div class="kpi kpi-ok"><div class="kpi-label">Entradas no período</div><div class="kpi-value kpi-ok-val" id="mov-entradas">—</div></div>
@@ -553,8 +539,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- RESERVA -->
   <div class="view" id="view-reserva">
-    <h1 class="section-title">Plano de Reserva</h1>
-    <p class="section-sub">Quanto guardar por mês para ter segurança financeira</p>
     <div id="reserva-content"></div>
   </div>
 
@@ -702,10 +686,11 @@ var _movTipo='todos', _movPeriodo='semanal';
 // UTILITÁRIOS
 // ====================================================
 function R(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0});}
-function hoje(){var d=new Date();return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'}).split('/').reverse().join('-');}
+function hoje(){return new Date().toISOString().split('T')[0];}
 function agora(){return new Date().toISOString();}
 function fmtData(d){if(!d)return '—';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
-function fmtDt(ts){if(!ts)return '—';var d=new Date(ts);return d.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'});}
+function fmtDt(ts){if(!ts)return '—';var d=new Date(ts);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+
 // Retorna a data de início (ISO, 00:00) para cada período de filtro, a partir de hoje
 function inicioPeriodo(periodo){
   var d=new Date();
