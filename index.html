@@ -493,7 +493,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
     </div>
     <div class="card">
       <div class="card-head"><h2>Resultado por procedimento</h2><span class="card-label">clique para expandir</span></div>
-      <div class="fin-row fin-head"><div>Procedimento</div><div>Preço</div><div>Custo</div><div>Proporção</div><div>Margem</div></div>
       <div id="fin-list"></div>
     </div>
     <div class="card"><div class="card-head"><h2>DRE do mês</h2></div><div id="fin-dre"></div></div>
@@ -1234,25 +1233,34 @@ function renderFin(){
   _agenda.forEach(function(a){
     if(a.status==='confirmado'){mesAtend[a.procedimento_nome]=(mesAtend[a.procedimento_nome]||0)+1;}
   });
-  el.innerHTML=_procs.map(function(p){
+
+  // cabeçalho dentro do fin-list para herdar o CSS de grid corretamente
+  var html='<div class="fin-row fin-head"><div>Procedimento</div><div>Preço</div><div>Custo</div><div>Proporção</div><div>Margem</div></div>';
+
+  _procs.forEach(function(p){
     var m=calcM(p);var qtd=mesAtend[p.nome]||0;
     var rec=p.preco*qtd;tRec+=rec;tCusto+=m.custo*qtd;tAtend+=qtd;
-    var good=m.margem>=50;var cp=100-m.margem;var isO=_finExpanded===p.id;
-    return '<div class="fin-row" onclick="toggleFin(\''+p.id+'\')">'+
-      '<div><div class="fin-name">'+p.nome+'</div><div class="fin-sub">'+qtd+' atend. confirmados</div></div>'+
-      '<div class="mono" style="font-size:12px;">'+R(p.preco)+'</div>'+
-      '<div class="mono" style="font-size:12px;">'+R(m.custo)+'</div>'+
-      '<div><div class="fin-bar"><div class="fin-bar-cost" style="width:'+cp+'%"></div><div class="fin-bar-profit" style="width:'+m.margem+'%"></div></div></div>'+
-      '<div><span class="pill '+(good?'pill-green':'pill-red')+'">'+m.margem+'%</span></div></div>'+
+    var good=m.margem>=50;var cp=Math.max(0,100-m.margem);var isO=_finExpanded===p.id;
+    html+=
+      '<div class="fin-row" onclick="toggleFin(\''+p.id+'\')">'+
+        '<div><div class="fin-name">'+p.nome+'</div><div class="fin-sub">'+qtd+' atend. confirmados</div></div>'+
+        '<div class="mono" style="font-size:12px;">'+R(p.preco)+'</div>'+
+        '<div class="mono" style="font-size:12px;">'+R(m.custo)+'</div>'+
+        '<div><div class="fin-bar"><div class="fin-bar-cost" style="width:'+cp+'%"></div><div class="fin-bar-profit" style="width:'+m.margem+'%"></div></div></div>'+
+        '<div><span class="pill '+(good?'pill-green':'pill-red')+'">'+m.margem+'%</span></div>'+
+      '</div>'+
       '<div class="fin-detail'+(isO?' open':'')+'" id="fd-'+p.id+'">'+
         '<div class="fin-detail-grid">'+
           '<div><div class="fin-dl">Lucro/sessão</div><div class="fin-dv">'+R(m.lucro)+'</div></div>'+
-          '<div><div class="fin-dl">Receita</div><div class="fin-dv">'+R(rec)+'</div></div>'+
+          '<div><div class="fin-dl">Receita total</div><div class="fin-dv">'+R(rec)+'</div></div>'+
           '<div><div class="fin-dl">Lucro total</div><div class="fin-dv">'+R(m.lucro*qtd)+'</div></div>'+
         '</div>'+
-        (m.margem<50?'<div style="font-size:11px;color:var(--terra);">⚠ Margem abaixo de 50% — revise preço ou negocie insumos.</div>':'')+
+        (m.margem<50?'<div style="font-size:11px;color:var(--terra);margin-top:4px;">⚠ Margem abaixo de 50% — revise o preço ou negocie insumos.</div>':'')+
       '</div>';
-  }).join('');
+  });
+
+  el.innerHTML=html;
+
   var tDesp=totalDesp();var tLiq=tRec-tCusto-tDesp;var mg=tRec?Math.round((tLiq/tRec)*100):0;
   document.getElementById('fin-rec').textContent=R(tRec);
   document.getElementById('fin-custo').textContent=R(tCusto);
@@ -1266,10 +1274,8 @@ function renderFin(){
   var tf=_despesas.filter(function(d){return d.tipo==='fixa';}).reduce(function(s,d){return s+d.valor;},0);
   var tv=_despesas.filter(function(d){return d.tipo==='variavel';}).reduce(function(s,d){return s+d.valor;},0);
   document.getElementById('fin-dre').innerHTML=[
-    {l:'Receita bruta',v:tRec,c:''},
-    {l:'(-) Custo dos insumos',v:tCusto,neg:true},
-    {l:'(-) Despesas fixas',v:tf,neg:true},
-    {l:'(-) Despesas variáveis',v:tv,neg:true},
+    {l:'Receita bruta',v:tRec},{l:'(-) Custo dos insumos',v:tCusto,neg:true},
+    {l:'(-) Despesas fixas',v:tf,neg:true},{l:'(-) Despesas variáveis',v:tv,neg:true},
     {l:'= Lucro líquido',v:tLiq,bold:true},
   ].map(function(r){
     var cor=r.bold?(tLiq>=0?'var(--sage-deep)':'var(--terra)'):r.neg?'var(--terra)':'var(--ink)';
@@ -1277,12 +1283,21 @@ function renderFin(){
   }).join('');
 }
 
-function toggleFin(id){_finExpanded=(_finExpanded===id)?null:id;renderFin();}
+function toggleFin(id){
+  _finExpanded=(_finExpanded===id)?null:id;
+  // toggle direto no DOM sem re-render completo para melhor UX
+  document.querySelectorAll('.fin-detail').forEach(function(el){
+    el.classList.remove('open');
+  });
+  if(_finExpanded){
+    var det=document.getElementById('fd-'+_finExpanded);
+    if(det)det.classList.add('open');
+  }
+}
 
 // ====================================================
 // DESPESAS
 // ====================================================
-async function carregarDespesas(){
   var {data}=await SB.from('despesas').select('*').order('vencimento',{ascending:true,nullsFirst:false});
   _despesas=data||[];renderDespesas();
 }
