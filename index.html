@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudioFlow · Gestão de Estúdios</title>
+<title>StudioFlow</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 :root{
   --bg:#F8F7F4;
   --panel:#FFFFFF;
@@ -44,7 +42,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webki
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);}
 .login-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:40px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-md);}
 .login-brand{display:flex;align-items:center;gap:12px;margin-bottom:32px;}
-.login-mark{width:40px;height:40px;border-radius:10px;background:var(--sidebar);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:20px;letter-spacing:-.5px;}
+.login-mark{width:42px;height:42px;border-radius:10px;background:var(--sidebar);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .login-name{font-family:'DM Serif Display',serif;font-size:24px;color:var(--ink);}
 .login-tagline{font-size:13px;color:var(--ink-soft);margin-bottom:28px;line-height:1.5;}
 .login-error{background:var(--terra-pale);color:var(--terra);font-size:12.5px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;display:none;line-height:1.4;}
@@ -55,8 +53,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webki
 
 /* ── SIDEBAR ── */
 .sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;transition:.25s;}
-.sidebar-brand{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;}
-.sidebar-mark{width:30px;height:30px;border-radius:8px;background:var(--sage-pale);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:15px;color:var(--sage-deep);}
+.sidebar-brand{padding:22px 20px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;}
+.sidebar-mark{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .sidebar-name{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;letter-spacing:-.2px;}
 .sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto;}
 .nav-section{font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--sidebar-text-muted);font-weight:600;padding:16px 10px 6px;}
@@ -216,6 +214,11 @@ textarea.form-control{resize:vertical;min-height:72px;}
 .mov-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr .7fr;gap:8px;padding:11px 0;border-top:1px solid var(--line);font-size:12.5px;align-items:center;}
 .mov-grid:first-child{border-top:none;}
 .mov-head{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:600;padding-bottom:8px;}
+.mov-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px;}
+.seg-btn{border:none;background:none;padding:6px 11px;font-size:11.5px;font-weight:600;color:var(--ink-soft);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;white-space:nowrap;}
+.seg-btn.active{background:var(--sidebar);color:#fff;}
+.seg-btn:hover:not(.active){background:var(--line);}
 
 /* ── RESERVA ── */
 .res-goal{background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;}
@@ -229,8 +232,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
 .alert-box{display:flex;gap:10px;padding:11px 14px;border-radius:var(--radius-sm);margin-bottom:8px;align-items:flex-start;}
 .alert-box.warn{background:var(--terra-pale);border:1px solid #ECC8BC;}
 .alert-box.ok{background:var(--sage-pale);border:1px solid #C8DABE;}
-.alert-box.gold{background:var(--gold-pale);border:1px solid #E0CFA0;}
-.alert-box.gold .alert-icon{color:var(--gold);}
 .alert-box.gold{background:var(--gold-pale);border:1px solid #E0CFA0;}
 .alert-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
 .alert-text{font-size:12.5px;line-height:1.5;}
@@ -295,14 +296,11 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <div class="login-box">
     <div class="login-brand">
       <div class="login-mark">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M3 6h18M3 12h12M3 18h8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-    <circle cx="19" cy="18" r="3" fill="#B8922A"/>
-  </svg>
-</div>
+        <svg width="42" height="42" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="#1E2820"/><path d="M 52 130 C 52 78, 100 78, 100 130 C 100 158, 130 158, 130 110" fill="none" stroke="#B8922A" stroke-width="18" stroke-linecap="round"/><circle cx="130" cy="68" r="11" fill="#B8922A"/></svg>
+      </div>
       <div class="login-name">StudioFlow</div>
     </div>
-    <p class="login-tagline">Gestão inteligente para estúdios de estética</p>
+    <p class="login-tagline">Sistema de gestão para studios e clínicas de estética</p>
     <div class="login-error" id="login-error"></div>
     <div class="form-group"><label class="form-label">E-mail</label><input type="email" id="login-email" class="form-control" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
     <div class="form-group"><label class="form-label">Senha</label><input type="password" id="login-senha" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
@@ -318,11 +316,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-mark">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-    <path d="M3 6h18M3 12h12M3 18h8" stroke="#2D4028" stroke-width="2.2" stroke-linecap="round"/>
-    <circle cx="19" cy="18" r="3" fill="#B8922A"/>
-  </svg>
-</div>
+        <svg width="32" height="32" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="#F0F5EE"/><path d="M 52 130 C 52 78, 100 78, 100 130 C 100 158, 130 158, 130 110" fill="none" stroke="#2D4028" stroke-width="20" stroke-linecap="round"/><circle cx="130" cy="68" r="12" fill="#2D4028"/></svg>
+      </div>
       <div class="sidebar-name">StudioFlow</div>
     </div>
     <nav class="sidebar-nav">
@@ -390,10 +385,10 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- DASHBOARD -->
   <div class="view active" id="view-dashboard">
-    <h1 class="pt" id="dash-greeting">Bom dia</h1>
+    <h1 class="section-title" id="dash-greeting">Bom dia</h1>
     <p class="section-sub">Visão geral do seu negócio hoje</p>
     <div class="kpi-grid kpi-grid-4" id="dash-stats"></div>
-    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:start;" id="dash-grid" class="dash-grid">
+    <div class="dash-grid">
       <div>
         <div class="card" id="dash-agenda-card">
           <div class="card-head"><h2>Agenda de hoje</h2><button class="btn btn-outline btn-sm" onclick="showTab('agenda',document.querySelector('[data-tab=agenda]'))">Ver tudo</button></div>
@@ -448,7 +443,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
       <div class="kpi kpi-warn"><div class="kpi-label">Abaixo de 50%</div><div class="kpi-value kpi-warn-val" id="proc-warn">—</div><div class="kpi-sub">precisam de atenção</div></div>
     </div>
     <div class="card">
-      <div class="card-head"><h2>Lista</h2><button class="btn btn-primary" onclick="openModal('modal-proc')">+ Novo</button></div>
+      <div class="card-head"><h2>Lista</h2><button class="btn btn-primary" onclick="abrirModalProc()">+ Novo</button></div>
       <div id="proc-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
     </div>
   </div>
@@ -468,7 +463,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <!-- AGENDA -->
   <div class="view" id="view-agenda">
     <h1 class="section-title">Agenda</h1>
-    <p class="section-sub">Baixa automática no estoque ao confirmar · estoque verificado antes de confirmar</p>
+    <p class="section-sub">Baixa automática no estoque ao confirmar · não permite dois agendamentos no mesmo horário</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-hero"><div class="kpi-label">Agendamentos hoje</div><div class="kpi-value" id="ag-total">—</div></div>
       <div class="kpi kpi-warn"><div class="kpi-label">Faltas no mês</div><div class="kpi-value kpi-warn-val" id="ag-faltas">—</div></div>
@@ -491,14 +486,14 @@ textarea.form-control{resize:vertical;min-height:72px;}
     <h1 class="section-title">Financeiro</h1>
     <p class="section-sub">Resultado real: receita menos custos de insumos e despesas</p>
     <div class="kpi-grid kpi-grid-4">
-      <div class="kpi kpi-hero"><div class="sl">Receita bruta</div><div class="kpi-value" id="fin-rec">—</div><div class="kpi-sub" id="fin-atend"></div></div>
+      <div class="kpi kpi-hero"><div class="kpi-label">Receita bruta</div><div class="kpi-value" id="fin-rec">—</div><div class="kpi-sub" id="fin-atend"></div></div>
       <div class="kpi"><div class="kpi-label">Custo insumos</div><div class="kpi-value" id="fin-custo">—</div></div>
       <div class="kpi"><div class="kpi-label">Despesas</div><div class="kpi-value" id="fin-desp" style="color:var(--terra)">—</div></div>
-      <div class="kpi"><div class="kpi-label">Lucro líquido</div><div class="kpi-value" id="fin-lucro">—</div><div class="kpi-sub" id="fin-mg"></div></div>
+      <div class="kpi" id="fin-lucro-kpi"><div class="kpi-label">Lucro líquido</div><div class="kpi-value" id="fin-lucro">—</div><div class="kpi-sub" id="fin-mg"></div></div>
     </div>
     <div class="card">
       <div class="card-head"><h2>Resultado por procedimento</h2><span class="card-label">clique para expandir</span></div>
-      <div class="finrow finhead"><div>Procedimento</div><div>Preço</div><div>Custo</div><div>Proporção</div><div>Margem</div></div>
+      <div class="fin-row fin-head"><div>Procedimento</div><div>Preço</div><div>Custo</div><div>Proporção</div><div>Margem</div></div>
       <div id="fin-list"></div>
     </div>
     <div class="card"><div class="card-head"><h2>DRE do mês</h2></div><div id="fin-dre"></div></div>
@@ -507,8 +502,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <!-- DESPESAS -->
   <div class="view" id="view-despesas">
     <h1 class="section-title">Despesas</h1>
-    <p class="section-sub">Fixas e variáveis · alertas de vencimento automáticos</p>
-    <div id="desp-alertas-venc"></div>
+    <p class="section-sub">Fixas e variáveis — impactam o lucro líquido</p>
+    <div id="desp-alertas"></div>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-warn"><div class="kpi-label">Fixas / mês</div><div class="kpi-value kpi-warn-val" id="desp-fix-total">—</div></div>
       <div class="kpi kpi-warn"><div class="kpi-label">Variáveis</div><div class="kpi-value kpi-warn-val" id="desp-var-total">—</div></div>
@@ -527,29 +522,28 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <!-- MOVIMENTAÇÕES -->
   <div class="view" id="view-movimentacoes">
     <h1 class="section-title">Movimentações</h1>
-    <p class="section-sub">Filtros por tipo (entrada/saída) e período · use os selects acima para refinar</p>
+    <p class="section-sub">Histórico completo de entradas e saídas do estoque</p>
     <div class="kpi-grid kpi-grid-3">
-      <div class="kpi kpi-warn"><div class="kpi-label">Saídas hoje</div><div class="kpi-value kpi-warn-val" id="mov-saidas">—</div></div>
-      <div class="kpi kpi-ok"><div class="kpi-label">Entradas hoje</div><div class="kpi-value kpi-ok-val" id="mov-entradas">—</div></div>
-      <div class="kpi"><div class="kpi-label">Movimentos no mês</div><div class="kpi-value" id="mov-total">—</div></div>
+      <div class="kpi kpi-warn"><div class="kpi-label">Saídas no período</div><div class="kpi-value kpi-warn-val" id="mov-saidas">—</div></div>
+      <div class="kpi kpi-ok"><div class="kpi-label">Entradas no período</div><div class="kpi-value kpi-ok-val" id="mov-entradas">—</div></div>
+      <div class="kpi"><div class="kpi-label">Movimentos no período</div><div class="kpi-value" id="mov-total">—</div></div>
     </div>
     <div class="card">
       <div class="card-head">
         <h2>Histórico</h2>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <select id="mov-filtro-tipo" class="form-control" style="width:auto;padding:6px 10px;" onchange="renderMovs()">
-            <option value="">Todos os tipos</option>
-            <option value="saida">↓ Saídas</option>
-            <option value="entrada">↑ Entradas</option>
-          </select>
-          <select id="mov-filtro-periodo" class="form-control" style="width:auto;padding:6px 10px;" onchange="renderMovs()">
-            <option value="7">Últimos 7 dias</option>
-            <option value="30" selected>Últimos 30 dias</option>
-            <option value="90">Últimos 3 meses</option>
-            <option value="180">Últimos 6 meses</option>
-            <option value="365">Último ano</option>
-            <option value="0">Todos</option>
-          </select>
+        <div class="mov-filters">
+          <div class="seg" id="mov-tipo-seg">
+            <button class="seg-btn active" data-tipo="todos" onclick="setMovTipo('todos')">Todos</button>
+            <button class="seg-btn" data-tipo="entrada" onclick="setMovTipo('entrada')">Entrada</button>
+            <button class="seg-btn" data-tipo="saida" onclick="setMovTipo('saida')">Saída</button>
+          </div>
+          <div class="seg" id="mov-periodo-seg">
+            <button class="seg-btn active" data-periodo="semanal" onclick="setMovPeriodo('semanal')">Semanal</button>
+            <button class="seg-btn" data-periodo="mensal" onclick="setMovPeriodo('mensal')">Mensal</button>
+            <button class="seg-btn" data-periodo="trimestral" onclick="setMovPeriodo('trimestral')">Trimestral</button>
+            <button class="seg-btn" data-periodo="semestral" onclick="setMovPeriodo('semestral')">Semestral</button>
+            <button class="seg-btn" data-periodo="anual" onclick="setMovPeriodo('anual')">Anual</button>
+          </div>
         </div>
       </div>
       <div class="mov-grid mov-head"><div>Data / Hora</div><div>Produto</div><div>Tipo / Cliente</div><div>Qtd</div></div>
@@ -563,11 +557,11 @@ textarea.form-control{resize:vertical;min-height:72px;}
     <p class="section-sub">Quanto guardar por mês para ter segurança financeira</p>
     <div id="reserva-content"></div>
   </div>
-</div>
 
     </div><!-- /content -->
   </main><!-- /main -->
 </div><!-- /layout -->
+</div><!-- /app -->
 
 <!-- ===== MODAIS ===== -->
 
@@ -600,7 +594,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
     </div>
     <hr class="divider">
     <div class="form-group">
-      <label>Insumos do estoque consumidos</label>
+      <label class="form-label">Insumos do estoque consumidos</label>
       <div id="ins-wrap"></div>
       <button class="btn btn-outline btn-sm" onclick="addInsRow()" style="margin-top:6px;">+ Adicionar insumo</button>
     </div>
@@ -658,15 +652,14 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <div class="modal">
     <h3 class="modal-title">Nova despesa</h3>
     <input type="hidden" id="desp-tipo-hidden">
+    <input type="hidden" id="desp-id-edit">
     <div class="form-group"><label class="form-label">Descrição</label><input type="text" id="desp-nome" class="form-control" placeholder="Ex: Aluguel, Internet, Material..."></div>
     <div class="fr2">
-      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="number" id="desp-valor" class="form-control"></div>
-      <div class="form-group"><label class="form-label">Categoria</label><select id="desp-cat" class="form-control"><option>Infraestrutura</option><option>Serviços</option><option>Marketing</option><option>Equipamento</option><option>Pessoal</option><option>Outros</option></select></div>
+      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="number" id="desp-valor"></div>
+      <div class="form-group"><label class="form-label">Categoria</label><select id="desp-cat" class="form-control"><option>Infraestrutura</option><option>Serviços</option><option>Marketing</option><option>Equipamento</option><option>Pessoal</option><option>Outros</option></select>
+      </div>
     </div>
-    <div class="fr2">
-      <div class="form-group"><label class="form-label">Data de vencimento</label><input type="date" id="desp-venc" class="form-control"></div>
-      <div class="form-group"><label class="form-label">Dia fixo do mês (fixas)</label><input type="number" id="desp-dia" class="form-control" placeholder="Ex: 10" min="1" max="31"></div>
-    </div>
+    <div class="form-group"><label class="form-label">Data de vencimento</label><input type="date" id="desp-venc" class="form-control"></div>
     <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-desp')">Cancelar</button><button class="btn btn-primary" onclick="salvarDesp()">Salvar</button></div>
   </div>
 </div>
@@ -703,6 +696,7 @@ try {
 var _clientes=[], _procs=[], _estoque=[], _agenda=[], _despesas=[], _movs=[];
 var _reserva={meses_meta:6,percentual:20,acumulado:0,id:null};
 var _finExpanded=null, _reporId=null, _reporQtdAtual=0;
+var _movTipo='todos', _movPeriodo='semanal';
 
 // ====================================================
 // UTILITÁRIOS
@@ -712,6 +706,18 @@ function hoje(){return new Date().toISOString().split('T')[0];}
 function agora(){return new Date().toISOString();}
 function fmtData(d){if(!d)return '—';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 function fmtDt(ts){if(!ts)return '—';var d=new Date(ts);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+
+// Retorna a data de início (ISO, 00:00) para cada período de filtro, a partir de hoje
+function inicioPeriodo(periodo){
+  var d=new Date();
+  d.setHours(0,0,0,0);
+  if(periodo==='semanal'){d.setDate(d.getDate()-7);}
+  else if(periodo==='mensal'){d.setMonth(d.getMonth()-1);}
+  else if(periodo==='trimestral'){d.setMonth(d.getMonth()-3);}
+  else if(periodo==='semestral'){d.setMonth(d.getMonth()-6);}
+  else if(periodo==='anual'){d.setFullYear(d.getFullYear()-1);}
+  return d;
+}
 
 function toast(msg,tipo){
   var el=document.getElementById('toast');
@@ -737,12 +743,12 @@ document.querySelectorAll('.overlay').forEach(function(el){
 var PAGE_TITLES={
   dashboard:['Dashboard','Visão geral do seu negócio hoje'],
   clientes:['Clientes','Cadastro e histórico de atendimentos'],
-  procedimentos:['Procedimentos','Margem real calculada com os insumos do estoque'],
-  estoque:['Estoque','Controle de produtos · baixa automática ao confirmar atendimento'],
-  agenda:['Agenda','Confirme presenças · horários duplicados bloqueados automaticamente'],
-  financeiro:['Financeiro','Resultado real do mês · clique em cada linha para expandir'],
-  despesas:['Despesas','Fixas e variáveis · alertas automáticos de vencimento'],
-  movimentacoes:['Movimentações','Histórico de entradas e saídas · use os filtros para refinar'],
+  procedimentos:['Procedimentos','Margem real por procedimento'],
+  estoque:['Estoque','Controle de produtos com baixa automática'],
+  agenda:['Agenda','Confirme presenças e controle faltas'],
+  financeiro:['Financeiro','Resultado real do mês'],
+  despesas:['Despesas','Fixas e variáveis'],
+  movimentacoes:['Movimentações','Histórico de entradas e saídas'],
   reserva:['Plano de Reserva','Segurança financeira do negócio'],
 };
 function showTab(t,b){
@@ -928,10 +934,11 @@ function addInsRow(estoqueId,nome,qtd,custo){
   div.className='ins-row';
   var opts=_estoque.map(function(e){return '<option value="'+e.id+'"'+(estoqueId===e.id?' selected':'')+'>'+e.nome+' ('+e.unidade+')</option>';}).join('');
   div.innerHTML=
-    '<div class="form-group"><label class="form-label">Produto do estoque</label><select class="ins-est-id"><option value="">Selecionar...</option>'+opts+'</select></div>'+
+    '<div class="form-group"><label class="form-label">Produto do estoque</label><select class="ins-est-id">'+
+    '<option value="">Selecionar...</option>'+opts+'</select></div>'+
     '<div class="form-group"><label class="form-label">Quantidade</label><input type="number" class="ins-qtd" value="'+(qtd||1)+'" min="0.01" step="0.01"></div>'+
     '<div class="form-group"><label class="form-label">Custo (R$)</label><input type="number" class="ins-custo" value="'+(custo||0)+'" min="0"></div>'+
-    '<button class="btn-rm" onclick="this.parentElement.remove()">✕</button>';
+    '<button class="ins-rm" onclick="this.parentElement.remove()">✕</button>';
   // auto-preencher custo ao selecionar produto
   div.querySelector('.ins-est-id').addEventListener('change',function(){
     var est=_estoque.find(function(e){return e.id===this.value;}.bind(this));
@@ -1005,7 +1012,7 @@ function renderEstoque(){
     var baixo=Number(e.minimo)>0 && Number(e.qtd)<=Number(e.minimo);
     var pct=Math.min(100,Math.round((e.qtd/Math.max(e.minimo*2.5,1))*100));
     return '<div class="list-item">'+
-      '<div><div class="li-name">'+e.nome+'</div><div class="li-meta">Mín: '+e.minimo+' '+e.unidade+' · Custo unit.: '+R(e.custo_unitario)+'</div></div>'+
+      '<div><div class="li-name">'+e.nome+'</div><div class="li-sub">Mín: '+e.minimo+' '+e.unidade+' · Custo unit.: '+R(e.custo_unitario)+'</div></div>'+
       '<div class="li-actions">'+
         '<div class="est-bar"><div class="est-bar-fill" style="width:'+pct+'%;background:'+(baixo?'var(--terra)':'var(--sage)')+'"></div></div>'+
         '<span class="mono" style="font-size:12px;">'+e.qtd+' '+e.unidade+'</span>'+
@@ -1108,10 +1115,10 @@ function renderAgenda(){
         '<div class="ag-client">'+a.cliente_nome+'</div>'+
         '<div class="ag-proc">'+a.procedimento_nome+'</div>'+
         '<div class="ag-actions">'+
-          (a.status!=='confirmado'?'<button class="sbtn s-conf" onclick="setStatus(\''+a.id+'\',\'confirmado\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✓ Confirmou</button>':'')+
-          (a.status!=='faltou'?'<button class="sbtn s-falt" onclick="setStatus(\''+a.id+'\',\'faltou\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✗ Faltou</button>':'')+
-          (a.status!=='cancelou'?'<button class="sbtn s-canc" onclick="setStatus(\''+a.id+'\',\'cancelou\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">Cancelou</button>':'')+
-          '<button class="sbtn" style="background:var(--line);color:var(--ink-soft);" onclick="deletarAg(\''+a.id+'\')">✕</button>'+
+          (a.status!=='confirmado'?'<button class="status-btn s-conf" onclick="setStatus(\''+a.id+'\',\'confirmado\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✓ Confirmou</button>':'')+
+          (a.status!=='faltou'?'<button class="status-btn s-falt" onclick="setStatus(\''+a.id+'\',\'faltou\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✗ Faltou</button>':'')+
+          (a.status!=='cancelou'?'<button class="status-btn s-canc" onclick="setStatus(\''+a.id+'\',\'cancelou\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">Cancelou</button>':'')+
+          '<button class="status-btn s-del" onclick="deletarAg(\''+a.id+'\')">✕</button>'+
         '</div>'+
       '</div></div>';
   }).join('');
@@ -1196,30 +1203,22 @@ async function salvarAgendamento(){
   var procId=document.getElementById('ag-proc-sel').value;
   var data=document.getElementById('ag-data-input').value;
   var hora=document.getElementById('ag-hora-input').value;
-  if(!cliId||!procId){toast('Selecione cliente e procedimento.','err');return;}
-  if(!data||!hora){toast('Informe data e horário.','err');return;}
+  if(!cliId||!procId||!data||!hora){toast('Preencha cliente, procedimento, data e horário.','err');return;}
 
-  // Verificar duplicidade: mesmo dia e horário (ignora cancelados)
-  var {data:existentes}=await SB.from('agenda')
-    .select('id,cliente_nome,status')
-    .eq('data',data)
-    .eq('hora',hora)
-    .neq('status','cancelou');
-  if(existentes&&existentes.length>0){
-    toast('⚠ Já existe agendamento neste dia e horário: '+existentes[0].cliente_nome+'. Escolha outro horário.','err');
+  // Verifica conflito: mesmo dia + mesmo horário, com agendamento ainda ativo
+  // (ignora os que já foram cancelados, já que o horário fica livre de novo)
+  var {data:existentes}=await SB.from('agenda').select('id,status').eq('data',data).eq('hora',hora);
+  var conflito=(existentes||[]).some(function(a){return a.status!=='cancelou';});
+  if(conflito){
+    toast('⚠ Já existe um agendamento neste dia e horário. Escolha outro horário.','err');
     return;
   }
 
   var cli=_clientes.find(function(c){return c.id===cliId;});
   var proc=_procs.find(function(p){return p.id===procId;});
-  await SB.from('agenda').insert({
-    cliente_id:cliId,cliente_nome:cli.nome,
-    procedimento_id:procId,procedimento_nome:proc.nome,
-    data:data,hora:hora,status:'pendente'
-  });
+  await SB.from('agenda').insert({cliente_id:cliId,cliente_nome:cli.nome,procedimento_id:procId,procedimento_nome:proc.nome,data:data,hora:hora,status:'pendente'});
   closeModal('modal-ag');
-  await carregarAgenda();
-  toast('Agendamento criado: '+cli.nome+' às '+hora);
+  await carregarAgenda();toast('Agendamento criado!');
 }
 
 // ====================================================
@@ -1232,7 +1231,6 @@ function renderFin(){
   if(!_procs.length){el.innerHTML='<p class="empty-state">Cadastre procedimentos para ver o financeiro.</p>';return;}
   var tRec=0,tCusto=0,tAtend=0;
   var mesAtend={};
-  var now=new Date();
   _agenda.forEach(function(a){
     if(a.status==='confirmado'){mesAtend[a.procedimento_nome]=(mesAtend[a.procedimento_nome]||0)+1;}
   });
@@ -1240,13 +1238,13 @@ function renderFin(){
     var m=calcM(p);var qtd=mesAtend[p.nome]||0;
     var rec=p.preco*qtd;tRec+=rec;tCusto+=m.custo*qtd;tAtend+=qtd;
     var good=m.margem>=50;var cp=100-m.margem;var isO=_finExpanded===p.id;
-    return '<div class="finrow" onclick="toggleFin(\''+p.id+'\')">'+
+    return '<div class="fin-row" onclick="toggleFin(\''+p.id+'\')">'+
       '<div><div class="fin-name">'+p.nome+'</div><div class="fin-sub">'+qtd+' atend. confirmados</div></div>'+
       '<div class="mono" style="font-size:12px;">'+R(p.preco)+'</div>'+
       '<div class="mono" style="font-size:12px;">'+R(m.custo)+'</div>'+
       '<div><div class="fin-bar"><div class="fin-bar-cost" style="width:'+cp+'%"></div><div class="fin-bar-profit" style="width:'+m.margem+'%"></div></div></div>'+
       '<div><span class="pill '+(good?'pill-green':'pill-red')+'">'+m.margem+'%</span></div></div>'+
-      '<div class="findet'+(isO?' open':'')+'" id="fd-'+p.id+'">'+
+      '<div class="fin-detail'+(isO?' open':'')+'" id="fd-'+p.id+'">'+
         '<div class="fin-detail-grid">'+
           '<div><div class="fin-dl">Lucro/sessão</div><div class="fin-dv">'+R(m.lucro)+'</div></div>'+
           '<div><div class="fin-dl">Receita</div><div class="fin-dv">'+R(rec)+'</div></div>'+
@@ -1261,8 +1259,7 @@ function renderFin(){
   document.getElementById('fin-desp').textContent=R(tDesp);
   document.getElementById('fin-lucro').textContent=R(tLiq);
   document.getElementById('fin-lucro').style.color=tLiq>=0?'var(--sage)':'var(--terra)';
-  // Update lucro KPI border color dynamically
-  var lucroKpi=document.getElementById('fin-lucro').closest('.kpi');
+  var lucroKpi=document.getElementById('fin-lucro-kpi');
   if(lucroKpi){lucroKpi.className='kpi '+(tLiq>=0?'kpi-ok':'kpi-warn');}
   document.getElementById('fin-atend').textContent=tAtend+' atendimentos confirmados';
   document.getElementById('fin-mg').textContent='margem líquida: '+mg+'%';
@@ -1276,33 +1273,26 @@ function renderFin(){
     {l:'= Lucro líquido',v:tLiq,bold:true},
   ].map(function(r){
     var cor=r.bold?(tLiq>=0?'var(--sage-deep)':'var(--terra)'):r.neg?'var(--terra)':'var(--ink)';
-    return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:13px;'+(r.bold?'font-weight:700;':'')+'">'+'<span>'+r.l+'</span><span class="mono" style="color:'+cor+'">'+R(Math.abs(r.v))+'</span></div>';
+    return '<div class="dre-row" style="'+(r.bold?'font-weight:700;':'')+'">'+'<span>'+r.l+'</span><span class="mono" style="color:'+cor+'">'+R(Math.abs(r.v))+'</span></div>';
   }).join('');
 }
 
-function toggleFin(id){
-  _finExpanded=_finExpanded===id?null:id;
-  // Atualiza só o detail e o indicador sem re-renderizar tudo
-  _procs.forEach(function(p){
-    var det=document.getElementById('fd-'+p.id);
-    if(det) det.style.display=(_finExpanded===p.id)?'block':'none';
-    // atualiza seta
-    var rows=document.querySelectorAll('.finrow');
-    rows.forEach(function(r){
-      if(r.getAttribute('onclick')&&r.getAttribute('onclick').indexOf(p.id)>-1){
-        var arrow=r.querySelector('span[style*="font-size:10px"]');
-        if(arrow) arrow.textContent=(_finExpanded===p.id)?'▲':'▼';
-      }
-    });
-  });
-}
+function toggleFin(id){_finExpanded=(_finExpanded===id)?null:id;renderFin();}
 
 // ====================================================
 // DESPESAS
 // ====================================================
 async function carregarDespesas(){
-  var {data}=await SB.from('despesas').select('*').order('criado_em');
+  var {data}=await SB.from('despesas').select('*').order('vencimento',{ascending:true,nullsFirst:false});
   _despesas=data||[];renderDespesas();
+}
+
+// Quantos dias faltam para o vencimento (negativo = já venceu)
+function diasParaVencer(venc){
+  if(!venc)return null;
+  var hojeD=new Date(hoje()+'T00:00:00');
+  var v=new Date(venc+'T00:00:00');
+  return Math.round((v-hojeD)/(1000*60*60*24));
 }
 
 function renderDespesas(){
@@ -1313,12 +1303,39 @@ function renderDespesas(){
   document.getElementById('desp-fix-total').textContent=R(tf);
   document.getElementById('desp-var-total').textContent=R(tv);
   document.getElementById('desp-total').textContent=R(tf+tv);
+
+  // Banner de alertas de vencimento: vencidas e a vencer em até 5 dias
+  var vencidas=[],proximas=[];
+  _despesas.forEach(function(d){
+    var dias=diasParaVencer(d.vencimento);
+    if(dias===null)return;
+    if(dias<0)vencidas.push(d);
+    else if(dias<=5)proximas.push(d);
+  });
+  var alEl=document.getElementById('desp-alertas');
+  var html='';
+  if(vencidas.length){
+    html+='<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+vencidas.length+' conta'+(vencidas.length>1?'s':'')+' vencida'+(vencidas.length>1?'s':'')+':</strong> '+vencidas.map(function(d){return d.nome+' ('+fmtData(d.vencimento)+')';}).join(', ')+'</div></div>';
+  }
+  if(proximas.length){
+    html+='<div class="alert-box gold"><div class="alert-icon">⏰</div><div class="alert-text"><strong>'+proximas.length+' conta'+(proximas.length>1?'s':'')+' vencendo em breve:</strong> '+proximas.map(function(d){return d.nome+' ('+fmtData(d.vencimento)+')';}).join(', ')+'</div></div>';
+  }
+  alEl.innerHTML=html;
+
   function rl(list,eid){
     var el=document.getElementById(eid);
     if(!list.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Nenhuma despesa cadastrada.</p>';return;}
     el.innerHTML=list.map(function(d){
-      return '<div class="list-item"><div><div class="li-name">'+d.nome+'</div><div class="li-meta">'+d.categoria+'</div></div>'+
-        '<div class="li-actions"><span class="mono" style="font-size:13px;">'+R(d.valor)+'</span>'+
+      var dias=diasParaVencer(d.vencimento);
+      var vencBadge='';
+      if(dias!==null){
+        if(dias<0)vencBadge='<span class="pill pill-red">Venceu há '+Math.abs(dias)+'d</span>';
+        else if(dias===0)vencBadge='<span class="pill pill-gold">Vence hoje</span>';
+        else if(dias<=5)vencBadge='<span class="pill pill-gold">Vence em '+dias+'d</span>';
+        else vencBadge='<span class="pill" style="background:var(--line);color:var(--ink-soft);">'+fmtData(d.vencimento)+'</span>';
+      }
+      return '<div class="list-item"><div><div class="li-name">'+d.nome+'</div><div class="li-sub">'+d.categoria+'</div></div>'+
+        '<div class="li-actions">'+vencBadge+'<span class="mono" style="font-size:13px;">'+R(d.valor)+'</span>'+
         '<button class="btn btn-danger btn-sm" onclick="deletarDesp(\''+d.id+'\')">Remover</button></div></div>';
     }).join('');
   }
@@ -1326,13 +1343,21 @@ function renderDespesas(){
   renderFin();renderReserva();renderDashboard();
 }
 
-function openDesp(tipo){document.getElementById('desp-tipo-hidden').value=tipo;document.getElementById('desp-nome').value='';document.getElementById('desp-valor').value='';openModal('modal-desp');}
+function openDesp(tipo){
+  document.getElementById('desp-tipo-hidden').value=tipo;
+  document.getElementById('desp-id-edit').value='';
+  document.getElementById('desp-nome').value='';
+  document.getElementById('desp-valor').value='';
+  document.getElementById('desp-venc').value='';
+  openModal('modal-desp');
+}
 
 async function salvarDesp(){
   var n=document.getElementById('desp-nome').value.trim(),v=parseFloat(document.getElementById('desp-valor').value),t=document.getElementById('desp-tipo-hidden').value,c=document.getElementById('desp-cat').value;
+  var venc=document.getElementById('desp-venc').value||null;
   if(!n||isNaN(v)||v<=0){toast('Preencha nome e valor.','err');return;}
   var now=new Date();
-  await SB.from('despesas').insert({nome:n,valor:v,tipo:t,categoria:c,mes:now.getMonth()+1,ano:now.getFullYear()});
+  await SB.from('despesas').insert({nome:n,valor:v,tipo:t,categoria:c,vencimento:venc,mes:now.getMonth()+1,ano:now.getFullYear()});
   closeModal('modal-desp');await carregarDespesas();toast('Despesa salva!');
 }
 
@@ -1346,23 +1371,42 @@ async function deletarDesp(id){
 // MOVIMENTAÇÕES
 // ====================================================
 async function carregarMovs(){
-  var {data}=await SB.from('movimentacoes_estoque').select('*').order('criado_em',{ascending:false}).limit(200);
+  var {data}=await SB.from('movimentacoes_estoque').select('*').order('criado_em',{ascending:false}).limit(500);
   _movs=data||[];renderMovs();renderEstoque();
 }
 
+function setMovTipo(tipo){
+  _movTipo=tipo;
+  document.querySelectorAll('#mov-tipo-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.tipo===tipo);});
+  renderMovs();
+}
+function setMovPeriodo(periodo){
+  _movPeriodo=periodo;
+  document.querySelectorAll('#mov-periodo-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.periodo===periodo);});
+  renderMovs();
+}
+
 function renderMovs(){
-  var now=new Date();
-  var hoje_str=hoje();
-  var saidasHoje=_movs.filter(function(m){return m.tipo==='saida'&&m.criado_em&&m.criado_em.startsWith(hoje_str);}).reduce(function(s,m){return s+Number(m.quantidade);},0);
-  var entradasHoje=_movs.filter(function(m){return m.tipo==='entrada'&&m.criado_em&&m.criado_em.startsWith(hoje_str);}).reduce(function(s,m){return s+Number(m.quantidade);},0);
-  document.getElementById('mov-saidas').textContent=saidasHoje.toFixed(1);
-  document.getElementById('mov-entradas').textContent=entradasHoje.toFixed(1);
-  document.getElementById('mov-total').textContent=_movs.filter(function(m){var d=new Date(m.criado_em);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
+  var inicio=inicioPeriodo(_movPeriodo);
+  var filtradas=_movs.filter(function(m){
+    if(!m.criado_em)return false;
+    var d=new Date(m.criado_em);
+    if(d<inicio)return false;
+    if(_movTipo!=='todos'&&m.tipo!==_movTipo)return false;
+    return true;
+  });
+
+  var saidas=filtradas.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.quantidade);},0);
+  var entradas=filtradas.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.quantidade);},0);
+  document.getElementById('mov-saidas').textContent=saidas.toFixed(1);
+  document.getElementById('mov-entradas').textContent=entradas.toFixed(1);
+  document.getElementById('mov-total').textContent=filtradas.length;
+
   var el=document.getElementById('mov-list');
-  if(!_movs.length){el.innerHTML='<p class="empty-state">Nenhuma movimentação registrada ainda.</p>';return;}
-  el.innerHTML=_movs.map(function(m){
+  if(!filtradas.length){el.innerHTML='<p class="empty-state">Nenhuma movimentação no período selecionado.</p>';return;}
+  el.innerHTML=filtradas.map(function(m){
     var isS=m.tipo==='saida';
-    return '<div class="mov-item">'+
+    return '<div class="mov-grid">'+
       '<div style="font-size:11.5px;color:var(--ink-soft);">'+fmtDt(m.criado_em)+'</div>'+
       '<div style="font-size:13px;font-weight:600;">'+m.produto_nome+'</div>'+
       '<div>'+
@@ -1455,36 +1499,9 @@ function renderDashboard(){
   }).join('');
 
   // alertas
-  // Alertas de estoque
-  var estAlertas=alertas.map(function(e){
-    return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+e.nome+'</strong> — '+e.qtd+' '+e.unidade+' (mín: '+e.minimo+')</div></div>';
-  }).join('');
-  // Alertas de vencimento (próximos 3 dias)
-  var hoje_dash=new Date();hoje_dash.setHours(0,0,0,0);
-  var em3=new Date(hoje_dash);em3.setDate(em3.getDate()+3);
-  var despVenc=_despesas.filter(function(d){
-    if(!d.vencimento)return false;
-    var dv=new Date(d.vencimento+'T00:00:00');
-    return dv<=em3;
-  });
-  var despAlertas=despVenc.map(function(d){
-    var dv=new Date(d.vencimento+'T00:00:00');
-    var vencida=dv<hoje_dash;
-    return '<div class="alert-box '+(vencida?'warn':'gold')+'"><div class="alert-icon">'+(vencida?'⚠':'⏰')+'</div><div class="alert-text"><strong>'+d.nome+'</strong> — '+(vencida?'vencida em':'vence em')+' '+fmtData(d.vencimento)+' · '+R(d.valor)+'</div></div>';
-  }).join('');
-  var totalAlertas=alertas.length+despVenc.length;
-  document.getElementById('dash-alertas').innerHTML=
-    (estAlertas||despAlertas) ?
-    (estAlertas+despAlertas) :
-    '<div class="alert-box ok"><div class="alert-icon">✓</div><div class="alert-text">Estoque OK · Sem despesas vencendo.</div></div>';
-  // Atualizar KPI de alertas no dash
-  var alertKpi=document.querySelector('#dash-stats .kpi:last-child');
-  if(alertKpi){
-    alertKpi.className='kpi '+(totalAlertas>0?'kpi-warn':'kpi-ok');
-    alertKpi.querySelector('.kpi-value').textContent=totalAlertas;
-    alertKpi.querySelector('.kpi-value').className='kpi-value '+(totalAlertas>0?'kpi-warn-val':'kpi-ok-val');
-    alertKpi.querySelector('.kpi-sub').textContent=totalAlertas>0?(alertas.length+' estoque · '+despVenc.length+' vencimento'):'tudo OK';
-  }
+  document.getElementById('dash-alertas').innerHTML=alertas.length?
+    alertas.map(function(e){return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+e.nome+'</strong> — '+e.qtd+' '+e.unidade+' (mín: '+e.minimo+')</div></div>';}).join('') :
+    '<div class="alert-box ok"><div class="alert-icon">✓</div><div class="alert-text">Todos os produtos com estoque OK.</div></div>';
 
   // últimas movs
   var ultMovs=_movs.slice(0,5);
@@ -1523,11 +1540,6 @@ document.addEventListener('DOMContentLoaded',function(){
   } else {
     SB.auth.getSession().then(function(r){if(r.data&&r.data.session)mostrarApp(r.data.session.user);});
   }
-  // dar atributos data-tab para os botões de tab
-  document.querySelectorAll('.tab-btn').forEach(function(b){
-    var m=b.getAttribute('onclick').match(/'([^']+)'/);
-    if(m)b.setAttribute('data-tab',m[1]);
-  });
 });
 </script>
 </body>
