@@ -849,7 +849,7 @@ function renderClientes(){
     return '<div class="cli-item">'+
       '<div>'+
         '<div class="cli-name">'+c.nome+'</div>'+
-        '<div class="cli-meta">'+meta.join(' · ')+'</div>'+
+        (meta.length?'<div class="cli-meta">'+meta.join(' · ')+'</div>':'')+
         (c.observacoes?'<div style="font-size:11px;color:var(--ink-muted);margin-top:3px;font-style:italic;">'+c.observacoes+'</div>':'')+
       '</div>'+
       '<div style="display:flex;gap:6px;">'+
@@ -974,7 +974,6 @@ function editarProc(id){
   document.getElementById('proc-nome').value=p.nome||'';
   document.getElementById('proc-preco').value=p.preco||'';
   document.getElementById('proc-dur').value=p.duracao||60;
-  // Carregar insumos existentes
   document.getElementById('ins-wrap').innerHTML='';
   (p.insumos||[]).forEach(function(i){addInsRow(i.estoque_id,i.nome,i.quantidade,i.custo);});
   openModal('modal-proc');
@@ -998,13 +997,11 @@ async function salvarProc(){
     }
   });
   if(id){
-    // Editar: atualiza o procedimento e recria os insumos
     await SB.from('procedimentos').update({nome:nome,preco:preco,duracao:dur}).eq('id',id);
     await SB.from('insumos').delete().eq('procedimento_id',id);
     if(ins.length)await SB.from('insumos').insert(ins.map(function(i){return Object.assign({},i,{procedimento_id:id});}));
     toast('Procedimento atualizado!');
   } else {
-    // Novo procedimento
     var {data:proc}=await SB.from('procedimentos').insert({nome:nome,preco:preco,duracao:dur}).select().single();
     if(proc&&ins.length)await SB.from('insumos').insert(ins.map(function(i){return Object.assign({},i,{procedimento_id:proc.id});}));
     toast('Procedimento salvo!');
