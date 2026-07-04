@@ -35,6 +35,64 @@
   --radius:12px;
   --radius-sm:8px;
 }
+
+/* ── TEMAS ── */
+[data-theme="rosegold"]{
+  --bg:#FDF5F7;--panel:#FFFFFF;
+  --sidebar:#3D1F2D;--sidebar-hover:#5C2F43;--sidebar-active:#7A3D58;
+  --sidebar-text:#F0C8D4;--sidebar-text-muted:#C08090;
+  --ink:#2A1018;--ink-soft:#7A4858;--ink-muted:#B08090;
+  --sage:#C4748A;--sage-deep:#8B3A50;--sage-pale:#FAEAEE;--sage-light:#FDF2F5;
+  --gold:#D4A96A;--gold-pale:#FBF0E0;--gold-light:#FDF8F0;
+  --terra:#C0392B;--terra-pale:#FDE8E6;
+  --line:#F0DDE2;--line-strong:#E0C8CE;
+}
+[data-theme="oceano"]{
+  --bg:#F0F6FB;--panel:#FFFFFF;
+  --sidebar:#0F2942;--sidebar-hover:#1A4470;--sidebar-active:#1E5A94;
+  --sidebar-text:#A8C8E8;--sidebar-text-muted:#5888B8;
+  --ink:#0A1928;--ink-soft:#3A5878;--ink-muted:#6888A8;
+  --sage:#1E6FA8;--sage-deep:#0F4878;--sage-pale:#E0EEF8;--sage-light:#EEF6FC;
+  --gold:#27AE8A;--gold-pale:#DFF5EE;--gold-light:#EEF9F5;
+  --terra:#D44B3C;--terra-pale:#FDECEA;
+  --line:#D8E8F4;--line-strong:#C0D8EE;
+}
+[data-theme="carbono"]{
+  --bg:#FAFAFA;--panel:#FFFFFF;
+  --sidebar:#18181B;--sidebar-hover:#3F3F46;--sidebar-active:#52525B;
+  --sidebar-text:#D4D4D8;--sidebar-text-muted:#A1A1AA;
+  --ink:#18181B;--ink-soft:#52525B;--ink-muted:#A1A1AA;
+  --sage:#52525B;--sage-deep:#3F3F46;--sage-pale:#F4F4F5;--sage-light:#FAFAFA;
+  --gold:#E4B84D;--gold-pale:#FDF6E3;--gold-light:#FEFBF0;
+  --terra:#EF4444;--terra-pale:#FEF2F2;
+  --line:#E4E4E7;--line-strong:#D4D4D8;
+}
+[data-theme="lavanda"]{
+  --bg:#F7F5FF;--panel:#FFFFFF;
+  --sidebar:#2D1B69;--sidebar-hover:#4527A0;--sidebar-active:#5E35B1;
+  --sidebar-text:#C5B8F0;--sidebar-text-muted:#8878C8;
+  --ink:#1A1040;--ink-soft:#4A3888;--ink-muted:#8878C8;
+  --sage:#6D4AE8;--sage-deep:#4527A0;--sage-pale:#EDE9FF;--sage-light:#F4F2FF;
+  --gold:#3CC8A0;--gold-pale:#DFF8F1;--gold-light:#EEF9F5;
+  --terra:#E53E3E;--terra-pale:#FFF5F5;
+  --line:#E0DAFF;--line-strong:#C8C0F0;
+}
+
+/* ── THEME PICKER ── */
+.theme-btn{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-sm);padding:6px 12px;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:6px;transition:.15s;}
+.theme-btn:hover{border-color:var(--sage-pale);color:var(--sage-deep);background:var(--sage-light);}
+.theme-btn svg{width:14px;height:14px;flex-shrink:0;}
+.theme-panel{display:none;position:fixed;top:56px;right:24px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;z-index:300;box-shadow:var(--shadow-md);width:280px;}
+.theme-panel.open{display:block;}
+.theme-panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);margin-bottom:12px;}
+.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.theme-option{border:2px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;transition:.15s;background:var(--bg);}
+.theme-option:hover{border-color:var(--sage);}
+.theme-option.active{border-color:var(--sage);background:var(--sage-pale);}
+.theme-swatches{display:flex;gap:3px;margin-bottom:6px;}
+.theme-swatch{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.08);}
+.theme-option-name{font-size:12px;font-weight:600;color:var(--ink);}
+.theme-option-desc{font-size:10.5px;color:var(--ink-muted);margin-top:1px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;}
 
@@ -51,37 +109,26 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webki
 .app{display:none;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
 
-/* ── SIDEBAR RECOLHÍVEL ── */
-.sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;transition:width .22s cubic-bezier(.4,0,.2,1);}
-.sidebar.collapsed{width:60px;}
-.sidebar-brand{padding:18px 14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;overflow:hidden;min-height:64px;position:relative;}
+/* ── SIDEBAR ── */
+.sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;transition:.25s;}
+.sidebar-brand{padding:22px 20px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;}
 .sidebar-mark{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.sidebar-name{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;transition:opacity .15s,max-width .22s;max-width:160px;}
-.sidebar.collapsed .sidebar-name{opacity:0;max-width:0;}
-.sidebar-toggle{position:absolute;top:21px;right:-11px;width:22px;height:22px;background:var(--sidebar);border:1.5px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:60;color:var(--sidebar-text);transition:.2s;flex-shrink:0;}
-.sidebar-toggle:hover{background:var(--sidebar-hover);border-color:rgba(255,255,255,.4);}
-.sidebar-toggle svg{transition:transform .22s;display:block;}
-.sidebar.collapsed .sidebar-toggle svg{transform:rotate(180deg);}
-.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto;overflow-x:hidden;}
-.nav-section{font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--sidebar-text-muted);font-weight:600;padding:16px 10px 6px;white-space:nowrap;overflow:hidden;transition:opacity .15s;}
-.sidebar.collapsed .nav-section{opacity:0;pointer-events:none;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--sidebar-text);font-size:13px;font-weight:500;margin-bottom:2px;transition:.15s;border:none;background:none;width:100%;text-align:left;font-family:'Inter',sans-serif;white-space:nowrap;overflow:hidden;}
+.sidebar-name{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;letter-spacing:-.2px;}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto;}
+.nav-section{font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--sidebar-text-muted);font-weight:600;padding:16px 10px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--sidebar-text);font-size:13px;font-weight:500;margin-bottom:2px;transition:.15s;border:none;background:none;width:100%;text-align:left;font-family:'Inter',sans-serif;}
 .nav-item:hover{background:var(--sidebar-hover);color:#fff;}
 .nav-item.active{background:var(--sidebar-active);color:#fff;}
-.nav-label{overflow:hidden;transition:opacity .15s,max-width .22s;max-width:160px;display:inline-block;}
-.sidebar.collapsed .nav-label{opacity:0;max-width:0;}
 .nav-icon{width:16px;height:16px;opacity:.7;flex-shrink:0;}
 .nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1;}
-.sidebar-footer{padding:12px 8px;border-top:1px solid rgba(255,255,255,.06);overflow:hidden;}
-.sidebar-user{padding:6px 10px;}
-.sidebar-user-email{font-size:11px;color:var(--sidebar-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s;}
-.sidebar.collapsed .sidebar-user-email{opacity:0;}
-.btn-logout-sidebar{width:100%;margin-top:4px;background:rgba(255,255,255,.06);border:none;color:var(--sidebar-text);padding:7px 10px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;transition:.15s;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;}
+.sidebar-footer{padding:16px 10px;border-top:1px solid rgba(255,255,255,.06);}
+.sidebar-user{padding:8px 12px;border-radius:var(--radius-sm);}
+.sidebar-user-email{font-size:11px;color:var(--sidebar-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.btn-logout-sidebar{width:100%;margin-top:6px;background:rgba(255,255,255,.06);border:none;color:var(--sidebar-text);padding:7px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;transition:.15s;}
 .btn-logout-sidebar:hover{background:rgba(255,255,255,.1);color:#fff;}
 
 /* ── MAIN CONTENT ── */
-.main{margin-left:220px;flex:1;min-width:0;transition:margin-left .22s cubic-bezier(.4,0,.2,1);}
-.main.expanded{margin-left:60px;}
+.main{margin-left:220px;flex:1;min-width:0;}
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 28px 0;margin-bottom:24px;}
 .topbar-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);font-weight:400;}
 .topbar-sub{font-size:13px;color:var(--ink-soft);margin-top:2px;}
@@ -92,14 +139,6 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webki
 
 /* ── VIEWS ── */
 .view{display:none;}.view.active{display:block;}
-
-/* ── DASHBOARD INTERATIVO ── */
-.kpi-link{cursor:pointer;transition:transform .15s,box-shadow .15s;}
-.kpi-link:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,26,24,.12);}
-.dash-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
-.dash-quick-btn{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:8px;transition:.15s;}
-.dash-quick-btn:hover{border-color:var(--sage-pale);background:var(--sage-light);color:var(--sage-deep);transform:translateY(-1px);}
-.dash-quick-btn svg{width:15px;height:15px;flex-shrink:0;}
 
 /* ── CARDS ── */
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow);}
@@ -286,15 +325,14 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
-  .sidebar:not(.collapsed){width:180px;}
-  .main:not(.expanded){margin-left:180px;}
+  .sidebar{width:180px;}
+  .main{margin-left:180px;}
   .kpi-grid-4{grid-template-columns:1fr 1fr;}
-  .dash-quick{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:660px){
   .sidebar{transform:translateX(-100%);width:220px;}
   .sidebar.open{transform:translateX(0);}
-  .main{margin-left:0!important;}
+  .main{margin-left:0;}
   .topbar{padding:16px 16px 0;}
   .content{padding:0 16px 60px;}
   .fr2,.fr3{grid-template-columns:1fr;}
@@ -303,7 +341,6 @@ textarea.form-control{resize:vertical;min-height:72px;}
   .fin-head{display:none;}
   .mov-grid{grid-template-columns:1fr 1fr;}
   .ins-row{grid-template-columns:1fr 1fr;}
-  .dash-quick{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -340,60 +377,54 @@ textarea.form-control{resize:vertical;min-height:72px;}
         <svg width="32" height="32" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="#F0F5EE"/><path d="M 52 130 C 52 78, 100 78, 100 130 C 100 158, 130 158, 130 110" fill="none" stroke="#2D4028" stroke-width="20" stroke-linecap="round"/><circle cx="130" cy="68" r="12" fill="#2D4028"/></svg>
       </div>
       <div class="sidebar-name">StudioFlow</div>
-      <div class="sidebar-toggle" onclick="toggleSidebar()" title="Recolher menu">
-        <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M7 1L3 5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">Visão Geral</div>
       <button class="nav-item active" onclick="showTab('dashboard',this)" data-tab="dashboard">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/></svg>
-        <span class="nav-label">Dashboard</span>
+        Dashboard
       </button>
       <div class="nav-section">Cadastros</div>
       <button class="nav-item" onclick="showTab('clientes',this)" data-tab="clientes">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        <span class="nav-label">Clientes</span>
+        Clientes
       </button>
       <button class="nav-item" onclick="showTab('procedimentos',this)" data-tab="procedimentos">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        <span class="nav-label">Procedimentos</span>
+        Procedimentos
       </button>
       <button class="nav-item" onclick="showTab('estoque',this)" data-tab="estoque">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="5" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 5V3.5A2.5 2.5 0 0 1 7.5 1h1A2.5 2.5 0 0 1 11 3.5V5" stroke="currentColor" stroke-width="1.4"/></svg>
-        <span class="nav-label">Estoque</span>
+        Estoque
       </button>
       <div class="nav-section">Operações</div>
       <button class="nav-item" onclick="showTab('agenda',this)" data-tab="agenda">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h14M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        <span class="nav-label">Agenda</span>
+        Agenda
       </button>
       <button class="nav-item" onclick="showTab('movimentacoes',this)" data-tab="movimentacoes">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M1 8h14M11 4l4 4-4 4M5 4L1 8l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="nav-label">Movimentações</span>
+        Movimentações
       </button>
       <div class="nav-section">Financeiro</div>
       <button class="nav-item" onclick="showTab('financeiro',this)" data-tab="financeiro">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1v2M8 13v2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M1 8h2M13 8h2M3.5 12.5l1.4-1.4M11.1 4.9l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/></svg>
-        <span class="nav-label">Financeiro</span>
+        Financeiro
       </button>
       <button class="nav-item" onclick="showTab('despesas',this)" data-tab="despesas">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M2 4h12M2 8h8M2 12h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        <span class="nav-label">Despesas</span>
+        Despesas
       </button>
       <button class="nav-item" onclick="showTab('reserva',this)" data-tab="reserva">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1l1.8 3.6L14 5.3l-3 2.9.7 4.1L8 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-        <span class="nav-label">Reserva</span>
+        Reserva
       </button>
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">
         <div class="sidebar-user-email" id="user-email"></div>
       </div>
-      <button class="btn-logout-sidebar" onclick="fazerLogout()">
-        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="nav-label">Sair</span>
-      </button>
+      <button class="btn-logout-sidebar" onclick="fazerLogout()">← Sair</button>
     </div>
   </aside>
 
@@ -405,8 +436,18 @@ textarea.form-control{resize:vertical;min-height:72px;}
         <div class="topbar-sub" id="page-sub">Visão geral do seu negócio hoje</div>
       </div>
       <div class="topbar-right">
+        <button class="theme-btn" onclick="toggleThemePanel()" id="theme-btn-toggle" title="Trocar tema">
+          <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2M4.1 4.1l1.4 1.4M10.5 10.5l1.4 1.4M4.1 11.9l1.4-1.4M10.5 5.5l1.4-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Tema
+        </button>
         <span class="db-badge" id="db-badge">conectado</span>
       </div>
+    </div>
+
+    <!-- PAINEL DE TEMAS -->
+    <div class="theme-panel" id="theme-panel">
+      <div class="theme-panel-title">Escolher tema</div>
+      <div class="theme-options" id="theme-options"></div>
     </div>
     <div class="content">
 
@@ -414,43 +455,25 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <div class="view active" id="view-dashboard">
     <h1 class="section-title" id="dash-greeting">Bom dia</h1>
     <p class="section-sub">Visão geral do seu negócio hoje</p>
-    <div class="dash-quick">
-      <button class="dash-quick-btn" onclick="openModal('modal-ag')">
-        <svg fill="none" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h14M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        Novo agendamento
-      </button>
-      <button class="dash-quick-btn" onclick="openModal('modal-cli')">
-        <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        Novo cliente
-      </button>
-      <button class="dash-quick-btn" onclick="showTab('financeiro',document.querySelector('[data-tab=financeiro]'))">
-        <svg fill="none" viewBox="0 0 16 16"><path d="M8 1v2M8 13v2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/></svg>
-        Ver financeiro
-      </button>
-      <button class="dash-quick-btn" onclick="showTab('estoque',document.querySelector('[data-tab=estoque]'))">
-        <svg fill="none" viewBox="0 0 16 16"><rect x="1" y="5" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 5V3.5A2.5 2.5 0 0 1 7.5 1h1A2.5 2.5 0 0 1 11 3.5V5" stroke="currentColor" stroke-width="1.4"/></svg>
-        Verificar estoque
-      </button>
-    </div>
     <div class="kpi-grid kpi-grid-4" id="dash-stats"></div>
     <div class="dash-grid">
       <div>
-        <div class="card">
-          <div class="card-head"><h2>Agenda de hoje</h2><button class="btn btn-outline btn-sm" onclick="showTab('agenda',document.querySelector('[data-tab=agenda]'))">Ver tudo →</button></div>
+        <div class="card" id="dash-agenda-card">
+          <div class="card-head"><h2>Agenda de hoje</h2><button class="btn btn-outline btn-sm" onclick="showTab('agenda',document.querySelector('[data-tab=agenda]'))">Ver tudo</button></div>
           <div id="dash-agenda"></div>
         </div>
-        <div class="card">
-          <div class="card-head"><h2>Resultado do mês</h2><button class="btn btn-outline btn-sm" onclick="showTab('financeiro',document.querySelector('[data-tab=financeiro]'))">Detalhes →</button></div>
+        <div class="card" id="dash-fin-card">
+          <div class="card-head"><h2>Resultado do mês</h2></div>
           <div id="dash-fin"></div>
         </div>
       </div>
       <div>
         <div class="card">
-          <div class="card-head"><h2>Alertas de estoque</h2><button class="btn btn-outline btn-sm" onclick="showTab('estoque',document.querySelector('[data-tab=estoque]'))">Ver estoque →</button></div>
+          <div class="card-head"><h2>Alertas de estoque</h2></div>
           <div id="dash-alertas"></div>
         </div>
         <div class="card" style="margin-top:14px;">
-          <div class="card-head"><h2>Últimas movimentações</h2><button class="btn btn-outline btn-sm" onclick="showTab('movimentacoes',document.querySelector('[data-tab=movimentacoes]'))">Ver todas →</button></div>
+          <div class="card-head"><h2>Últimas movimentações</h2></div>
           <div id="dash-movs"></div>
         </div>
       </div>
@@ -459,6 +482,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- CLIENTES -->
   <div class="view" id="view-clientes">
+    <h1 class="section-title">Clientes</h1>
+    <p class="section-sub">Cadastro e histórico de atendimentos</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-hero"><div class="kpi-label">Total de clientes</div><div class="kpi-value" id="cli-total">—</div></div>
       <div class="kpi kpi-gold"><div class="kpi-label">Novos este mês</div><div class="kpi-value kpi-gold-val" id="cli-novos">—</div></div>
@@ -478,6 +503,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- PROCEDIMENTOS -->
   <div class="view" id="view-procedimentos">
+    <h1 class="section-title">Procedimentos</h1>
+    <p class="section-sub">Margem real calculada com base nos insumos vinculados ao estoque</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-hero"><div class="kpi-label">Procedimentos</div><div class="kpi-value" id="proc-total">—</div></div>
       <div class="kpi kpi-ok"><div class="kpi-label">Melhor margem</div><div class="kpi-value kpi-ok-val" id="proc-best">—</div><div class="kpi-sub" id="proc-best-name"></div></div>
@@ -491,6 +518,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- ESTOQUE -->
   <div class="view" id="view-estoque">
+    <h1 class="section-title">Estoque</h1>
+    <p class="section-sub">Controle de produtos com baixa automática ao confirmar atendimento</p>
     <div class="kpi-grid kpi-grid-4" id="est-stats"></div>
     <div id="est-alertas"></div>
     <div class="card">
@@ -501,6 +530,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- AGENDA -->
   <div class="view" id="view-agenda">
+    <h1 class="section-title">Agenda</h1>
+    <p class="section-sub">Baixa automática no estoque ao confirmar · não permite dois agendamentos no mesmo horário</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-hero"><div class="kpi-label">Agendamentos hoje</div><div class="kpi-value" id="ag-total">—</div></div>
       <div class="kpi kpi-warn"><div class="kpi-label">Faltas no mês</div><div class="kpi-value kpi-warn-val" id="ag-faltas">—</div></div>
@@ -520,6 +551,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- FINANCEIRO -->
   <div class="view" id="view-financeiro">
+    <h1 class="section-title">Financeiro</h1>
+    <p class="section-sub">Resultado real: receita menos custos de insumos e despesas</p>
     <div class="kpi-grid kpi-grid-4">
       <div class="kpi kpi-hero"><div class="kpi-label">Receita bruta</div><div class="kpi-value" id="fin-rec">—</div><div class="kpi-sub" id="fin-atend"></div></div>
       <div class="kpi"><div class="kpi-label">Custo insumos</div><div class="kpi-value" id="fin-custo">—</div></div>
@@ -536,6 +569,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- DESPESAS -->
   <div class="view" id="view-despesas">
+    <h1 class="section-title">Despesas</h1>
+    <p class="section-sub">Fixas e variáveis — impactam o lucro líquido</p>
     <div id="desp-alertas"></div>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-warn"><div class="kpi-label">Fixas / mês</div><div class="kpi-value kpi-warn-val" id="desp-fix-total">—</div></div>
@@ -554,6 +589,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- MOVIMENTAÇÕES -->
   <div class="view" id="view-movimentacoes">
+    <h1 class="section-title">Movimentações</h1>
+    <p class="section-sub">Histórico completo de entradas e saídas do estoque</p>
     <div class="kpi-grid kpi-grid-3">
       <div class="kpi kpi-warn"><div class="kpi-label">Saídas no período</div><div class="kpi-value kpi-warn-val" id="mov-saidas">—</div></div>
       <div class="kpi kpi-ok"><div class="kpi-label">Entradas no período</div><div class="kpi-value kpi-ok-val" id="mov-entradas">—</div></div>
@@ -584,6 +621,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- RESERVA -->
   <div class="view" id="view-reserva">
+    <h1 class="section-title">Plano de Reserva</h1>
+    <p class="section-sub">Quanto guardar por mês para ter segurança financeira</p>
     <div id="reserva-content"></div>
   </div>
 
@@ -780,14 +819,6 @@ var PAGE_TITLES={
   movimentacoes:['Movimentações','Histórico de entradas e saídas'],
   reserva:['Plano de Reserva','Segurança financeira do negócio'],
 };
-function toggleSidebar(){
-  var s=document.getElementById('sidebar');
-  var m=document.getElementById('main-content');
-  s.classList.toggle('collapsed');
-  m.classList.toggle('expanded');
-  localStorage.setItem('sf_sidebar',s.classList.contains('collapsed')?'1':'0');
-}
-
 function showTab(t,b){
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
   document.getElementById('view-'+t).classList.add('active');
@@ -1510,10 +1541,10 @@ function renderDashboard(){
   var alertas=_estoque.filter(function(e){return Number(e.minimo)>0 && Number(e.qtd)<=Number(e.minimo);});
 
   document.getElementById('dash-stats').innerHTML=
-    '<div class="kpi kpi-hero kpi-link" onclick="showTab(\'agenda\',document.querySelector(\'[data-tab=agenda]\'))"><div class="kpi-label">Receita do mês</div><div class="kpi-value">'+R(tRec)+'</div><div class="kpi-sub">'+tAtend+' atendimentos confirmados</div></div>'+
-    '<div class="kpi '+(tLiq>=0?'kpi-ok':'kpi-warn')+' kpi-link" onclick="showTab(\'financeiro\',document.querySelector(\'[data-tab=financeiro]\'))"><div class="kpi-label">Lucro líquido</div><div class="kpi-value '+(tLiq>=0?'kpi-ok-val':'kpi-warn-val')+'">'+R(tLiq)+'</div></div>'+
-    '<div class="kpi kpi-link" onclick="showTab(\'clientes\',document.querySelector(\'[data-tab=clientes]\'))"><div class="kpi-label">Clientes</div><div class="kpi-value">'+_clientes.length+'</div></div>'+
-    '<div class="kpi '+(alertas.length?'kpi-warn':'kpi-ok')+' kpi-link" onclick="showTab(\'estoque\',document.querySelector(\'[data-tab=estoque]\'))"><div class="kpi-label">Alertas estoque</div><div class="kpi-value '+(alertas.length?'kpi-warn-val':'kpi-ok-val')+'">'+alertas.length+'</div><div class="kpi-sub">'+(alertas.length?'produto(s) em alerta':'todos OK')+'</div></div>';
+    '<div class="kpi kpi-hero"><div class="kpi-label">Receita do mês</div><div class="kpi-value">'+R(tRec)+'</div><div class="kpi-sub">'+tAtend+' atendimentos confirmados</div></div>'+
+    '<div class="kpi '+(tLiq>=0?'kpi-ok':'kpi-warn')+'"><div class="kpi-label">Lucro líquido</div><div class="kpi-value '+(tLiq>=0?'kpi-ok-val':'kpi-warn-val')+'">'+R(tLiq)+'</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Clientes</div><div class="kpi-value">'+_clientes.length+'</div></div>'+
+    '<div class="kpi '+(alertas.length?'kpi-warn':'kpi-ok')+'"><div class="kpi-label">Alertas estoque</div><div class="kpi-value '+(alertas.length?'kpi-warn-val':'kpi-ok-val')+'">'+alertas.length+'</div><div class="kpi-sub">'+(alertas.length?'produto(s) em alerta':'todos OK')+'</div></div>';
 
   // agenda hoje
   var agHoje=_agenda.filter(function(a){return a.data===hoje();}).slice(0,5);
@@ -1555,33 +1586,71 @@ function renderDashboard(){
 }
 
 // ====================================================
+// TEMAS
+// ====================================================
+var _temas=[
+  {id:'floresta',name:'Floresta',desc:'Natural e calmo',swatches:['#1E2820','#4A6741','#B8922A','#F8F7F4']},
+  {id:'rosegold',name:'Rose Gold',desc:'Luxo e feminino',swatches:['#3D1F2D','#C4748A','#D4A96A','#FDF5F7']},
+  {id:'oceano',name:'Oceano',desc:'Profissional e tech',swatches:['#0F2942','#1E6FA8','#27AE8A','#F0F6FB']},
+  {id:'carbono',name:'Carbono',desc:'Premium e minimal',swatches:['#18181B','#52525B','#E4B84D','#FAFAFA']},
+  {id:'lavanda',name:'Lavanda',desc:'Moderno e criativo',swatches:['#2D1B69','#6D4AE8','#3CC8A0','#F7F5FF']},
+];
+
+function renderThemeOptions(){
+  var atual=localStorage.getItem('sf_tema')||'floresta';
+  var el=document.getElementById('theme-options');
+  if(!el)return;
+  el.innerHTML=_temas.map(function(t){
+    return '<div class="theme-option'+(t.id===atual?' active':'')+'" onclick="aplicarTema(\''+t.id+'\')">'+
+      '<div class="theme-swatches">'+t.swatches.map(function(s){return '<div class="theme-swatch" style="background:'+s+'"></div>';}).join('')+'</div>'+
+      '<div class="theme-option-name">'+t.name+'</div>'+
+      '<div class="theme-option-desc">'+t.desc+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function aplicarTema(id){
+  document.documentElement.setAttribute('data-theme',id==='floresta'?'':id);
+  localStorage.setItem('sf_tema',id);
+  renderThemeOptions();
+  toast('Tema '+_temas.find(function(t){return t.id===id;}).name+' aplicado!');
+}
+
+function toggleThemePanel(){
+  var p=document.getElementById('theme-panel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open'))renderThemeOptions();
+}
+
+document.addEventListener('click',function(e){
+  var p=document.getElementById('theme-panel');
+  var b=document.getElementById('theme-btn-toggle');
+  if(p&&b&&!p.contains(e.target)&&!b.contains(e.target)){p.classList.remove('open');}
+});
+
+// ====================================================
 // INIT
 // ====================================================
 document.addEventListener('DOMContentLoaded',function(){
+  // Aplicar tema salvo
+  var temaSalvo=localStorage.getItem('sf_tema')||'floresta';
+  document.documentElement.setAttribute('data-theme',temaSalvo==='floresta'?'':temaSalvo);
   document.getElementById('ag-filtro-data').value=hoje();
   document.getElementById('ag-data-input').value=hoje();
-
-  // Restaurar estado da sidebar
-  var s=document.getElementById('sidebar');
-  var m=document.getElementById('main-content');
-  if(localStorage.getItem('sf_sidebar')==='1'){
-    s.classList.add('collapsed');
-    m.classList.add('expanded');
-  }
-
   // Mobile sidebar toggle
-  if(window.innerWidth<=660&&s){
+  var sidebar=document.getElementById('sidebar');
+  if(window.innerWidth<=660&&sidebar){
     var tog=document.createElement('button');
     tog.innerHTML='☰';
     tog.style.cssText='position:fixed;top:16px;left:16px;z-index:60;background:var(--sidebar);color:#fff;border:none;border-radius:8px;width:36px;height:36px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
-    tog.onclick=function(){s.classList.toggle('open');};
+    tog.onclick=function(){sidebar.classList.toggle('open');};
     document.body.appendChild(tog);
-    document.getElementById('main-content').addEventListener('click',function(){s.classList.remove('open');});
+    document.getElementById('main-content').addEventListener('click',function(){sidebar.classList.remove('open');});
   }
-
+  // Aviso se credenciais não configuradas
   if(!SB){
     var err=document.getElementById('login-error');
-    if(err){err.textContent='⚙️ Credenciais do Supabase não configuradas.';err.style.display='block';}
+    if(err){err.textContent='⚙️ Credenciais do Supabase não configuradas. Abra o arquivo HTML, encontre COLE_SUA_URL_AQUI e substitua com os dados do seu projeto.';err.style.display='block';}
   } else {
     SB.auth.getSession().then(function(r){if(r.data&&r.data.session)mostrarApp(r.data.session.user);});
   }
