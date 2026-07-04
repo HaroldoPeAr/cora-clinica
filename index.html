@@ -1055,8 +1055,23 @@ async function deletarCliente(id){
 // PROCEDIMENTOS
 // ====================================================
 async function carregarProcs(){
-  var {data}=await SB.from('procedimentos').select('*,insumos(*)').order('nome');
-  _procs=data||[];renderProcs();atualizarSelectProcs();
+  // Busca procedimentos e insumos separadamente para evitar falha no join
+  var {data:procs, error:errProcs}=await SB.from('procedimentos').select('*').order('nome');
+  if(errProcs){console.error('Erro procedimentos:',errProcs);toast('Erro ao carregar procedimentos.','err');return;}
+  _procs=procs||[];
+  // Busca insumos e vincula manualmente
+  if(_procs.length){
+    var {data:ins}=await SB.from('insumos').select('*');
+    var insMap={};
+    (ins||[]).forEach(function(i){
+      if(!insMap[i.procedimento_id])insMap[i.procedimento_id]=[];
+      insMap[i.procedimento_id].push(i);
+    });
+    _procs=_procs.map(function(p){
+      return Object.assign({},p,{insumos:insMap[p.id]||[]});
+    });
+  }
+  renderProcs();atualizarSelectProcs();
 }
 
 function renderProcs(){
