@@ -423,6 +423,10 @@ textarea.form-control{resize:vertical;min-height:72px;}
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h14M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         <span class="nav-label">Agenda</span>
       </button>
+      <button class="nav-item" onclick="showTab('sessoes',this)" data-tab="sessoes">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Sessões</span>
+      </button>
       <button class="nav-item" onclick="showTab('movimentacoes',this)" data-tab="movimentacoes">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M1 8h14M11 4l4 4-4 4M5 4L1 8l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="nav-label">Movimentações</span>
@@ -645,6 +649,29 @@ textarea.form-control{resize:vertical;min-height:72px;}
     </div>
   </div>
 
+  <!-- SESSÕES -->
+  <div class="view" id="view-sessoes">
+    <div class="kpi-grid kpi-grid-4" id="ses-stats"></div>
+    <div id="ses-alertas"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-head">
+          <h2>Pacotes disponíveis</h2>
+          <button class="btn btn-primary" onclick="openModal('modal-pacote')">+ Novo pacote</button>
+        </div>
+        <div id="pac-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2>Pacotes dos clientes</h2>
+          <button class="btn btn-primary" onclick="openModal('modal-cli-pacote')">+ Vincular cliente</button>
+        </div>
+        <input type="text" id="ses-busca" class="form-control" placeholder="Buscar cliente..." style="margin-bottom:12px;font-size:12.5px;" oninput="renderClientePacotes()">
+        <div id="clipac-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- RESERVA -->
   <div class="view" id="view-reserva">
     <div id="reserva-content"></div>
@@ -756,7 +783,41 @@ textarea.form-control{resize:vertical;min-height:72px;}
   </div>
 </div>
 
-<!-- MODAL: RESERVA CONFIG -->
+<!-- MODAL: PACOTE -->
+<div class="overlay" id="modal-pacote">
+  <div class="modal">
+    <h3 class="modal-title" id="modal-pacote-title">Novo pacote</h3>
+    <input type="hidden" id="pac-id-edit">
+    <div class="form-group"><label class="form-label">Nome do pacote</label><input type="text" id="pac-nome" class="form-control" placeholder="Ex: Depilação Laser 10 sessões"></div>
+    <div class="form-group"><label class="form-label">Procedimento vinculado</label><select id="pac-proc-sel" class="form-control"><option value="">Selecionar procedimento...</option></select></div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Total de sessões</label><input type="number" id="pac-sessoes" class="form-control" value="10" min="1"></div>
+      <div class="form-group"><label class="form-label">Preço do pacote (R$)</label><input type="number" id="pac-preco" class="form-control" placeholder="0"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-pacote')">Cancelar</button><button class="btn btn-primary" onclick="salvarPacote()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: VINCULAR PACOTE AO CLIENTE -->
+<div class="overlay" id="modal-cli-pacote">
+  <div class="modal">
+    <h3 class="modal-title">Vincular pacote ao cliente</h3>
+    <div class="form-group"><label class="form-label">Cliente</label><select id="clipac-cli-sel" class="form-control"><option value="">Selecionar cliente...</option></select></div>
+    <div class="form-group"><label class="form-label">Pacote</label><select id="clipac-pac-sel" class="form-control" onchange="preencherPrecoPacote()"><option value="">Selecionar pacote...</option></select></div>
+    <div class="form-group"><label class="form-label">Valor pago (R$)</label><input type="number" id="clipac-preco" class="form-control" placeholder="0"></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-cli-pacote')">Cancelar</button><button class="btn btn-primary" onclick="salvarClientePacote()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: USAR SESSÃO MANUAL -->
+<div class="overlay" id="modal-usar-sessao">
+  <div class="modal">
+    <h3 class="modal-title">Registrar sessão</h3>
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;" id="usar-sessao-label"></p>
+    <div class="form-group"><label class="form-label">Observação (opcional)</label><input type="text" id="usar-sessao-obs" class="form-control" placeholder="Ex: sessão realizada sem intercorrências"></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-usar-sessao')">Cancelar</button><button class="btn btn-primary" onclick="confirmarUsarSessao()">Confirmar sessão</button></div>
+  </div>
+</div>
 <div class="overlay" id="modal-res">
   <div class="modal">
     <h3 class="modal-title">Configurar reserva</h3>
@@ -786,7 +847,8 @@ try {
 // ESTADO GLOBAL
 // ====================================================
 var _clientes=[], _procs=[], _estoque=[], _agenda=[], _despesas=[], _movs=[];
-var _reserva={meses_meta:6,percentual:20,acumulado:0,id:null};
+var _pacotes=[], _clientePacotes=[];
+var _usarSessaoId=null;
 var _finExpanded=null, _reporId=null, _reporQtdAtual=0;
 var _movTipo='todos', _movPeriodo='semanal';
 
@@ -841,7 +903,7 @@ var PAGE_TITLES={
   financeiro:['Financeiro','Resultado real do mês'],
   despesas:['Despesas','Fixas e variáveis'],
   movimentacoes:['Movimentações','Histórico de entradas e saídas'],
-  reserva:['Plano de Reserva','Segurança financeira do negócio'],
+  sessoes:['Sessões','Pacotes e controle de sessões por cliente'],
 };
 function toggleSidebar(){
   var s=document.getElementById('sidebar');
@@ -904,7 +966,7 @@ async function fazerLogout(){
 // ====================================================
 async function carregarTudo(){
   // Carrega tudo em paralelo, estoque incluído
-  await Promise.all([carregarClientes(),carregarProcs(),carregarEstoque(),carregarDespesas(),carregarReserva()]);
+  await Promise.all([carregarClientes(),carregarProcs(),carregarEstoque(),carregarDespesas(),carregarReserva(),carregarSessoes()]);
   await Promise.all([carregarAgenda(),carregarMovs()]);
   // Recarrega estoque após movimentações para garantir qtd atualizada no dashboard
   await carregarEstoqueSilencioso();
@@ -1615,6 +1677,204 @@ function renderDashboard(){
       '</div>'+
     '</div>';
   }).join(''):'<p class="empty-state">Nenhuma movimentação registrada.</p>';
+}
+
+// ====================================================
+// SESSÕES
+// ====================================================
+async function carregarSessoes(){
+  var r1=await SB.from('pacotes').select('*,procedimentos(nome)').order('nome');
+  _pacotes=r1.data||[];
+  var r2=await SB.from('cliente_pacotes').select('*').order('criado_em',{ascending:false});
+  _clientePacotes=r2.data||[];
+  renderSessoes();atualizarSelectPacotes();
+}
+
+function renderSessoes(){
+  // KPIs
+  var total=_clientePacotes.length;
+  var ativos=_clientePacotes.filter(function(cp){return cp.sessoes_usadas<cp.total_sessoes;}).length;
+  var alertas=_clientePacotes.filter(function(cp){return cp.total_sessoes-cp.sessoes_usadas<=2&&cp.sessoes_usadas<cp.total_sessoes;}).length;
+  var concluidos=_clientePacotes.filter(function(cp){return cp.sessoes_usadas>=cp.total_sessoes;}).length;
+  var el=document.getElementById('ses-stats');
+  if(el)el.innerHTML=
+    '<div class="kpi kpi-hero"><div class="kpi-label">Pacotes ativos</div><div class="kpi-value">'+ativos+'</div></div>'+
+    '<div class="kpi '+(alertas?'kpi-warn':'kpi-ok')+'"><div class="kpi-label">Acabando (≤2 sess.)</div><div class="kpi-value '+(alertas?'kpi-warn-val':'kpi-ok-val')+'">'+alertas+'</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Concluídos</div><div class="kpi-value">'+concluidos+'</div></div>'+
+    '<div class="kpi kpi-gold"><div class="kpi-label">Total pacotes</div><div class="kpi-value kpi-gold-val">'+_pacotes.length+'</div></div>';
+
+  // Alertas banner
+  var acabando=_clientePacotes.filter(function(cp){return cp.total_sessoes-cp.sessoes_usadas<=2&&cp.sessoes_usadas<cp.total_sessoes;});
+  var alEl=document.getElementById('ses-alertas');
+  if(alEl){
+    alEl.innerHTML=acabando.map(function(cp){
+      var faltam=cp.total_sessoes-cp.sessoes_usadas;
+      return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+cp.cliente_nome+'</strong> — '+cp.pacote_nome+': falta'+(faltam===1?'':'m')+' <strong>'+faltam+' sessão'+(faltam===1?'':'ões')+'</strong>.</div></div>';
+    }).join('');
+  }
+
+  // Lista pacotes disponíveis
+  var pacEl=document.getElementById('pac-list');
+  if(pacEl){
+    if(!_pacotes.length){pacEl.innerHTML='<p class="empty-state">Nenhum pacote cadastrado.</p>';return;}
+    pacEl.innerHTML=_pacotes.map(function(p){
+      var procNome=p.procedimentos?p.procedimentos.nome:'—';
+      return '<div class="list-item">'+
+        '<div>'+
+          '<div class="li-name">'+p.nome+'</div>'+
+          '<div class="li-sub">'+procNome+' · '+p.total_sessoes+' sessões · '+R(p.preco)+'</div>'+
+        '</div>'+
+        '<div class="li-actions">'+
+          '<button class="btn btn-outline btn-sm" onclick="editarPacote(\''+p.id+'\')">Editar</button>'+
+          '<button class="btn btn-danger btn-sm" onclick="deletarPacote(\''+p.id+'\')">Remover</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  renderClientePacotes();
+}
+
+function renderClientePacotes(){
+  var busca=(document.getElementById('ses-busca')||{}).value||'';
+  var lista=busca?_clientePacotes.filter(function(cp){return cp.cliente_nome&&cp.cliente_nome.toLowerCase().includes(busca.toLowerCase());}):_clientePacotes;
+  var el=document.getElementById('clipac-list');
+  if(!el)return;
+  if(!lista.length){el.innerHTML='<p class="empty-state">Nenhum pacote vinculado.</p>';return;}
+  el.innerHTML=lista.map(function(cp){
+    var usadas=cp.sessoes_usadas||0;
+    var total=cp.total_sessoes||0;
+    var restam=total-usadas;
+    var pct=Math.round((usadas/Math.max(total,1))*100);
+    var cor=restam<=2?'var(--terra)':restam<=Math.ceil(total/2)?'var(--gold)':'var(--sage)';
+    var concluido=usadas>=total;
+    return '<div class="list-item" style="flex-direction:column;align-items:stretch;gap:8px;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">'+
+        '<div>'+
+          '<div class="li-name">'+cp.cliente_nome+'</div>'+
+          '<div class="li-sub">'+cp.pacote_nome+(cp.preco_pago?' · '+R(cp.preco_pago):'')+'</div>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:8px;">'+
+          '<span class="pill '+(concluido?'pill-green':restam<=2?'pill-red':'pill-gold')+'">'+(concluido?'Concluído':restam+' restante'+(restam===1?'':'s'))+'</span>'+
+          (!concluido?'<button class="btn btn-outline btn-sm" onclick="abrirUsarSessao(\''+cp.id+'\')">+ Usar sessão</button>':'')+
+          '<button class="btn btn-danger btn-sm" onclick="deletarClientePacote(\''+cp.id+'\')">✕</button>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+        '<div style="flex:1;height:6px;background:var(--sage-pale);border-radius:3px;overflow:hidden;">'+
+          '<div style="width:'+pct+'%;height:100%;background:'+cor+';border-radius:3px;transition:.4s;"></div>'+
+        '</div>'+
+        '<span style="font-size:11px;color:var(--ink-muted);white-space:nowrap;">'+usadas+'/'+total+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function atualizarSelectPacotes(){
+  ['pac-proc-sel','clipac-pac-sel'].forEach(function(sid){
+    var el=document.getElementById(sid);
+    if(!el)return;
+    if(sid==='pac-proc-sel'){
+      el.innerHTML='<option value="">Selecionar procedimento...</option>'+_procs.map(function(p){return '<option value="'+p.id+'">'+p.nome+'</option>';}).join('');
+    } else {
+      el.innerHTML='<option value="">Selecionar pacote...</option>'+_pacotes.map(function(p){return '<option value="'+p.id+'">'+p.nome+' ('+p.total_sessoes+' sess.)</option>';}).join('');
+    }
+  });
+  var cliSel=document.getElementById('clipac-cli-sel');
+  if(cliSel){
+    cliSel.innerHTML='<option value="">Selecionar cliente...</option>'+_clientes.map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
+  }
+}
+
+function preencherPrecoPacote(){
+  var sel=document.getElementById('clipac-pac-sel');
+  var pac=_pacotes.find(function(p){return p.id===sel.value;});
+  if(pac)document.getElementById('clipac-preco').value=pac.preco||0;
+}
+
+async function salvarPacote(){
+  var id=document.getElementById('pac-id-edit').value;
+  var nome=document.getElementById('pac-nome').value.trim();
+  var procId=document.getElementById('pac-proc-sel').value||null;
+  var sessoes=parseInt(document.getElementById('pac-sessoes').value)||1;
+  var preco=parseFloat(document.getElementById('pac-preco').value)||0;
+  if(!nome){toast('Preencha o nome do pacote.','err');return;}
+  var proc=_procs.find(function(p){return p.id===procId;});
+  var obj={nome:nome,procedimento_id:procId||null,procedimento_nome:proc?proc.nome:null,total_sessoes:sessoes,preco:preco};
+  if(id){await SB.from('pacotes').update(obj).eq('id',id);}
+  else{await SB.from('pacotes').insert(obj);}
+  closeModal('modal-pacote');limparFormPacote();
+  await carregarSessoes();toast('Pacote salvo!');
+}
+
+function limparFormPacote(){
+  document.getElementById('pac-id-edit').value='';
+  document.getElementById('pac-nome').value='';
+  document.getElementById('pac-sessoes').value='10';
+  document.getElementById('pac-preco').value='';
+  document.getElementById('modal-pacote-title').textContent='Novo pacote';
+}
+
+function editarPacote(id){
+  var p=_pacotes.find(function(x){return x.id===id;});if(!p)return;
+  document.getElementById('pac-id-edit').value=p.id;
+  document.getElementById('pac-nome').value=p.nome||'';
+  document.getElementById('pac-proc-sel').value=p.procedimento_id||'';
+  document.getElementById('pac-sessoes').value=p.total_sessoes||10;
+  document.getElementById('pac-preco').value=p.preco||0;
+  document.getElementById('modal-pacote-title').textContent='Editar pacote';
+  openModal('modal-pacote');
+}
+
+async function deletarPacote(id){
+  if(!confirm('Remover este pacote?'))return;
+  await SB.from('pacotes').delete().eq('id',id);
+  await carregarSessoes();toast('Pacote removido.');
+}
+
+async function salvarClientePacote(){
+  var cliId=document.getElementById('clipac-cli-sel').value;
+  var pacId=document.getElementById('clipac-pac-sel').value;
+  var preco=parseFloat(document.getElementById('clipac-preco').value)||0;
+  if(!cliId||!pacId){toast('Selecione cliente e pacote.','err');return;}
+  var cli=_clientes.find(function(c){return c.id===cliId;});
+  var pac=_pacotes.find(function(p){return p.id===pacId;});
+  await SB.from('cliente_pacotes').insert({
+    cliente_id:cliId,cliente_nome:cli.nome,
+    pacote_id:pacId,pacote_nome:pac.nome,
+    procedimento_id:pac.procedimento_id,procedimento_nome:pac.procedimento_nome,
+    total_sessoes:pac.total_sessoes,sessoes_usadas:0,preco_pago:preco
+  });
+  closeModal('modal-cli-pacote');
+  await carregarSessoes();toast('Pacote vinculado ao cliente!');
+}
+
+async function deletarClientePacote(id){
+  if(!confirm('Remover este pacote do cliente?'))return;
+  await SB.from('cliente_pacotes').delete().eq('id',id);
+  await carregarSessoes();toast('Pacote removido.');
+}
+
+function abrirUsarSessao(id){
+  var cp=_clientePacotes.find(function(x){return x.id===id;});
+  if(!cp)return;
+  _usarSessaoId=id;
+  var restam=cp.total_sessoes-(cp.sessoes_usadas||0);
+  document.getElementById('usar-sessao-label').textContent=cp.cliente_nome+' · '+cp.pacote_nome+' — '+restam+' sessão(ões) restante(s). Confirmar uso de 1 sessão?';
+  document.getElementById('usar-sessao-obs').value='';
+  openModal('modal-usar-sessao');
+}
+
+async function confirmarUsarSessao(){
+  if(!_usarSessaoId)return;
+  var cp=_clientePacotes.find(function(x){return x.id===_usarSessaoId;});
+  if(!cp)return;
+  var novas=Math.min((cp.sessoes_usadas||0)+1,cp.total_sessoes);
+  await SB.from('cliente_pacotes').update({sessoes_usadas:novas}).eq('id',_usarSessaoId);
+  closeModal('modal-usar-sessao');
+  _usarSessaoId=null;
+  await carregarSessoes();
+  toast('Sessão registrada! '+(cp.total_sessoes-novas)+' restante(s).');
 }
 
 // ====================================================
