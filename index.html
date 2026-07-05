@@ -283,6 +283,80 @@ textarea.form-control{resize:vertical;min-height:72px;}
 .s-canc{background:var(--gold-pale);color:var(--gold);}
 .s-del{background:var(--line);color:var(--ink-muted);}
 
+
+/* ── AGENDA INTELIGENTE ── */
+.agenda-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start;}
+.agenda-main-card{min-height:520px;}
+.agenda-side{display:flex;flex-direction:column;gap:14px;}
+.agenda-side-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.agenda-side-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:12px;color:var(--ink);}
+.agenda-side-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:12.5px;gap:10px;}
+.agenda-side-row:first-of-type{border-top:none;}
+.agenda-side-row strong{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);}
+.agenda-card{display:grid;grid-template-columns:70px 1fr auto;gap:14px;align-items:stretch;padding:15px 0;border-top:1px solid var(--line);}
+.agenda-card:first-child{border-top:none;}
+.agenda-time{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--ink-soft);padding-top:4px;}
+.agenda-card-body{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px;position:relative;box-shadow:0 1px 5px rgba(26,26,24,.04);}
+.agenda-card-body::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:14px 0 0 14px;background:var(--ink-muted);}
+.agenda-card-body.confirmado::before{background:var(--sage);}
+.agenda-card-body.faltou::before{background:var(--terra);}
+.agenda-card-body.cancelou::before{background:var(--gold);}
+.agenda-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px;}
+.agenda-client{font-size:15px;font-weight:700;color:var(--ink);}
+.agenda-proc{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.agenda-status-pill{text-transform:uppercase;letter-spacing:.05em;font-size:10px;font-weight:800;border-radius:999px;padding:5px 9px;background:var(--sage-pale);color:var(--sage-deep);white-space:nowrap;}
+.agenda-status-pill.pendente{background:var(--line);color:var(--ink-soft);}
+.agenda-status-pill.faltou{background:var(--terra-pale);color:var(--terra);}
+.agenda-status-pill.cancelou{background:var(--gold-pale);color:var(--gold);}
+.agenda-package{background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:12px;color:var(--sage-deep);}
+.agenda-package.warn{background:var(--gold-light);border-color:var(--gold-pale);color:var(--gold);}
+.agenda-progress{height:7px;background:#fff;border:1px solid var(--sage-pale);border-radius:999px;overflow:hidden;margin:8px 0 4px;}
+.agenda-progress-fill{height:100%;background:var(--sage);border-radius:999px;}
+.agenda-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.agenda-meta .pill{font-size:10.5px;}
+.agenda-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.agenda-actions .status-btn{padding:6px 10px;}
+.agenda-card-actions{display:flex;align-items:center;}
+.agenda-filter-wrap{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.agenda-quick-btn{width:100%;justify-content:center;padding:10px 12px;}
+.agenda-next-item{background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:10px;padding:12px;font-size:12.5px;color:var(--sage-deep);line-height:1.5;}
+.agenda-viewbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 16px;flex-wrap:wrap;}
+.agenda-view-left,.agenda-view-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.agenda-seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px;}
+.agenda-seg button{border:none;background:transparent;color:var(--ink-soft);font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
+.agenda-seg button.active{background:var(--sidebar);color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.agenda-period-label{font-size:12.5px;color:var(--ink-soft);font-weight:700;}
+.agenda-nav-btn{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;font-weight:800;}
+.agenda-nav-btn:hover{border-color:var(--sage-pale);background:var(--sage-light);color:var(--sage-deep);}
+.agenda-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+.agenda-week-day{border:1px solid var(--line);border-radius:13px;background:#fff;min-height:190px;padding:10px;}
+.agenda-week-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px;}
+.agenda-week-name{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-muted);font-weight:800;}
+.agenda-week-date{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink);line-height:1;}
+.agenda-mini-event{border:1px solid var(--line);border-left:3px solid var(--ink-muted);border-radius:9px;padding:7px 8px;margin-bottom:7px;background:var(--bg);font-size:11.5px;cursor:pointer;}
+.agenda-mini-event.confirmado{border-left-color:var(--sage);background:var(--sage-light);}
+.agenda-mini-event.faltou{border-left-color:var(--terra);background:var(--terra-pale);}
+.agenda-mini-event.cancelou{border-left-color:var(--gold);background:var(--gold-light);}
+.agenda-mini-time{font-family:'JetBrains Mono',monospace;color:var(--ink-muted);font-size:10.5px;margin-bottom:2px;}
+.agenda-mini-client{font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.agenda-mini-proc{color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10.5px;margin-top:1px;}
+.agenda-more{font-size:11px;color:var(--sage-deep);font-weight:700;margin-top:6px;}
+.agenda-month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.agenda-month-dow{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:800;text-align:center;padding:4px;}
+.agenda-month-day{border:1px solid var(--line);border-radius:12px;background:#fff;min-height:115px;padding:9px;display:flex;flex-direction:column;gap:7px;}
+.agenda-month-day.out{opacity:.35;background:var(--bg);}
+.agenda-month-day.today{border-color:var(--sage);box-shadow:0 0 0 2px var(--sage-pale);}
+.agenda-month-number{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);font-weight:800;}
+.agenda-month-count{background:var(--sage-light);border:1px solid var(--sage-pale);color:var(--sage-deep);border-radius:999px;padding:4px 7px;font-size:10.5px;font-weight:800;width:max-content;}
+.agenda-month-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:auto;}
+.agenda-dot{width:7px;height:7px;border-radius:50%;background:var(--ink-muted);}
+.agenda-dot.confirmado{background:var(--sage);}.agenda-dot.faltou{background:var(--terra);}.agenda-dot.cancelou{background:var(--gold);}
+@media(max-width:900px){.agenda-week-grid{grid-template-columns:1fr 1fr}.agenda-month-grid{grid-template-columns:repeat(2,1fr)}.agenda-month-dow{display:none}}
+@media(max-width:560px){.agenda-week-grid,.agenda-month-grid{grid-template-columns:1fr}.agenda-viewbar{align-items:stretch}.agenda-view-left,.agenda-view-right{width:100%}.agenda-seg{width:100%;}.agenda-seg button{flex:1}.agenda-period-label{width:100%;text-align:center}}
+
+@media(max-width:1100px){.agenda-layout{grid-template-columns:1fr}.agenda-side{display:grid;grid-template-columns:1fr 1fr}.agenda-card{grid-template-columns:58px 1fr}.agenda-card-actions{display:none}}
+@media(max-width:700px){.agenda-side{display:block}.agenda-side-card{margin-bottom:12px}.agenda-card{grid-template-columns:1fr}.agenda-time{font-size:12px}.agenda-filter-wrap{width:100%}.agenda-filter-wrap input{width:100%!important}}
+
 /* ── FINANCEIRO ── */
 .fin-row{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr .8fr;align-items:center;gap:8px;padding:13px 0;border-top:1px solid var(--line);font-size:13px;cursor:pointer;transition:.1s;}
 .fin-row:hover{background:var(--sage-light);margin:0 -6px;padding-left:6px;padding-right:6px;border-radius:var(--radius-sm);}
@@ -586,20 +660,57 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- AGENDA -->
   <div class="view" id="view-agenda">
-    <div class="kpi-grid kpi-grid-3">
-      <div class="kpi kpi-hero"><div class="kpi-label">Agendamentos hoje</div><div class="kpi-value" id="ag-total">—</div></div>
-      <div class="kpi kpi-warn"><div class="kpi-label">Faltas no mês</div><div class="kpi-value kpi-warn-val" id="ag-faltas">—</div></div>
-      <div class="kpi kpi-ok"><div class="kpi-label">Taxa de presença</div><div class="kpi-value kpi-ok-val" id="ag-taxa">—</div></div>
+    <div class="kpi-grid kpi-grid-4">
+      <div class="kpi kpi-hero"><div class="kpi-label">Agendamentos hoje</div><div class="kpi-value" id="ag-total">—</div><div class="kpi-sub">atendimentos no dia</div></div>
+      <div class="kpi kpi-ok"><div class="kpi-label">Confirmados</div><div class="kpi-value kpi-ok-val" id="ag-confirmados">—</div><div class="kpi-sub">presenças registradas</div></div>
+      <div class="kpi kpi-warn"><div class="kpi-label">Faltas no dia</div><div class="kpi-value kpi-warn-val" id="ag-faltas">—</div><div class="kpi-sub">acompanhe ausências</div></div>
+      <div class="kpi"><div class="kpi-label">Taxa de presença</div><div class="kpi-value" id="ag-taxa">—</div><div class="kpi-sub">confirmados / total</div></div>
     </div>
-    <div class="card">
-      <div class="card-head">
-        <h2>Hoje · <span id="ag-data-label" style="font-weight:400;font-size:13px;color:var(--ink-soft)"></span></h2>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <input type="date" id="ag-filtro-data" class="form-control" style="padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:var(--bg);outline:none;" onchange="carregarAgenda()">
-          <button class="btn btn-primary" onclick="openModal('modal-ag')">+ Agendar</button>
+    <div class="agenda-layout">
+      <div class="card agenda-main-card">
+        <div class="card-head">
+          <h2>Agenda inteligente · <span id="ag-data-label" style="font-weight:400;font-size:13px;color:var(--ink-soft)"></span></h2>
+          <div class="agenda-filter-wrap">
+            <input type="date" id="ag-filtro-data" class="form-control" style="padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:var(--bg);outline:none;width:170px;" onchange="carregarAgenda()">
+            <button class="btn btn-primary" onclick="abrirNovoAgendamento()">+ Agendar</button>
+          </div>
         </div>
+        <div class="agenda-viewbar">
+          <div class="agenda-view-left">
+            <div class="agenda-seg" id="agenda-view-seg">
+              <button type="button" class="active" data-view="dia" onclick="setAgendaView('dia')">Dia</button>
+              <button type="button" data-view="semana" onclick="setAgendaView('semana')">Semana</button>
+              <button type="button" data-view="mes" onclick="setAgendaView('mes')">Mês</button>
+            </div>
+            <span class="agenda-period-label" id="agenda-period-label">—</span>
+          </div>
+          <div class="agenda-view-right">
+            <button class="agenda-nav-btn" type="button" onclick="mudarPeriodoAgenda(-1)">‹</button>
+            <button class="btn btn-outline btn-sm" type="button" onclick="irParaHojeAgenda()">Hoje</button>
+            <button class="agenda-nav-btn" type="button" onclick="mudarPeriodoAgenda(1)">›</button>
+          </div>
+        </div>
+        <div id="ag-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
       </div>
-      <div id="ag-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+      <aside class="agenda-side">
+        <div class="agenda-side-card">
+          <div class="agenda-side-title">Resumo do dia</div>
+          <div class="agenda-side-row"><span>Pacotes ativos na agenda</span><strong id="ag-pacotes-dia">—</strong></div>
+          <div class="agenda-side-row"><span>Sessões a consumir</span><strong id="ag-sessoes-dia">—</strong></div>
+          <div class="agenda-side-row"><span>Clientes sem pacote</span><strong id="ag-sem-pacote-dia">—</strong></div>
+          <div class="agenda-side-row"><span>Receita potencial</span><strong id="ag-receita-dia">—</strong></div>
+        </div>
+        <div class="agenda-side-card">
+          <div class="agenda-side-title">Próximo atendimento</div>
+          <div id="ag-proximo" class="agenda-next-item">Nenhum próximo atendimento.</div>
+        </div>
+        <div class="agenda-side-card">
+          <div class="agenda-side-title">Ações rápidas</div>
+          <button class="btn btn-outline agenda-quick-btn" onclick="showTab('clientes',document.querySelector('[data-tab=clientes]'))">Ver clientes</button>
+          <button class="btn btn-outline agenda-quick-btn" style="margin-top:8px;" onclick="showTab('sessoes',document.querySelector('[data-tab=sessoes]'))">Ver sessões</button>
+          <button class="btn btn-outline agenda-quick-btn" style="margin-top:8px;" onclick="showTab('financeiro',document.querySelector('[data-tab=financeiro]'))">Ver financeiro</button>
+        </div>
+      </aside>
     </div>
   </div>
 
@@ -910,6 +1021,7 @@ var _reserva={meses_meta:6,percentual:20,acumulado:0,id:null};
 var _usarSessaoId=null;
 var _finExpanded=null, _reporId=null, _reporQtdAtual=0;
 var _movTipo='todos', _movPeriodo='semanal';
+var _agendaView='dia';
 
 // ====================================================
 // UTILITÁRIOS
@@ -919,6 +1031,14 @@ function hoje(){return new Date().toISOString().split('T')[0];}
 function agora(){return new Date().toISOString();}
 function fmtData(d){if(!d)return '—';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 function fmtDt(ts){if(!ts)return '—';var d=new Date(ts);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+
+function isoDateObj(iso){return new Date((iso||hoje())+'T00:00:00');}
+function toISODate(d){var x=new Date(d);x.setHours(0,0,0,0);return x.toISOString().split('T')[0];}
+function addDaysISO(iso,n){var d=isoDateObj(iso);d.setDate(d.getDate()+n);return toISODate(d);}
+function startOfWeekISO(iso){var d=isoDateObj(iso);var day=d.getDay();var diff=(day===0?-6:1-day);d.setDate(d.getDate()+diff);return toISODate(d);}
+function startOfMonthISO(iso){var d=isoDateObj(iso);d.setDate(1);return toISODate(d);}
+function endOfMonthISO(iso){var d=isoDateObj(iso);d.setMonth(d.getMonth()+1);d.setDate(0);return toISODate(d);}
+function monthNameISO(iso){return isoDateObj(iso).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});}
 
 // Retorna a data de início (ISO, 00:00) para cada período de filtro, a partir de hoje
 function inicioPeriodo(periodo){
@@ -958,7 +1078,7 @@ var PAGE_TITLES={
   clientes:['Clientes','Cadastro e histórico de atendimentos'],
   procedimentos:['Procedimentos','Margem real por procedimento'],
   estoque:['Estoque','Controle de produtos com baixa automática'],
-  agenda:['Agenda','Confirme presenças e controle faltas'],
+  agenda:['Agenda','Painel operacional de atendimentos, pacotes e presença'],
   financeiro:['Financeiro','Resultado real do mês'],
   despesas:['Despesas','Fixas e variáveis'],
   movimentacoes:['Movimentações','Histórico de entradas e saídas'],
@@ -1328,36 +1448,207 @@ async function deletarEstoque(id){
 // AGENDA
 // ====================================================
 async function carregarAgenda(){
-  var data=document.getElementById('ag-filtro-data').value||hoje();
-  document.getElementById('ag-data-label').textContent=fmtData(data);
-  var {data:rows}=await SB.from('agenda').select('*').eq('data',data).order('hora');
-  _agenda=rows||[];renderAgenda();
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var range=getAgendaRange(base);
+  document.getElementById('ag-data-label').textContent=range.header;
+  var period=document.getElementById('agenda-period-label');if(period)period.textContent=range.label;
+  var q=SB.from('agenda').select('*').gte('data',range.start).lte('data',range.end).order('data').order('hora');
+  var {data:rows}=await q;
+  _agenda=rows||[];
+  renderAgenda();
+}
+
+function getAgendaRange(base){
+  base=base||hoje();
+  if(_agendaView==='semana'){
+    var ini=startOfWeekISO(base), fim=addDaysISO(ini,6);
+    return {start:ini,end:fim,header:fmtData(ini)+' a '+fmtData(fim),label:'Semana · '+fmtData(ini)+' a '+fmtData(fim)};
+  }
+  if(_agendaView==='mes'){
+    var mi=startOfMonthISO(base), mf=endOfMonthISO(base);
+    return {start:mi,end:mf,header:monthNameISO(base),label:'Mês · '+monthNameISO(base)};
+  }
+  return {start:base,end:base,header:fmtData(base),label:'Dia · '+fmtData(base)};
+}
+
+function setAgendaView(view){
+  _agendaView=view||'dia';
+  document.querySelectorAll('#agenda-view-seg button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-view')===_agendaView);});
+  carregarAgenda();
+}
+
+function mudarPeriodoAgenda(dir){
+  var inp=document.getElementById('ag-filtro-data');
+  var base=inp.value||hoje();
+  var d=isoDateObj(base);
+  if(_agendaView==='semana')d.setDate(d.getDate()+7*dir);
+  else if(_agendaView==='mes')d.setMonth(d.getMonth()+dir);
+  else d.setDate(d.getDate()+dir);
+  inp.value=toISODate(d);
+  carregarAgenda();
+}
+
+function irParaHojeAgenda(){
+  var inp=document.getElementById('ag-filtro-data');
+  if(inp)inp.value=hoje();
+  carregarAgenda();
+}
+
+function statusLabelAg(status){
+  if(status==='confirmado')return 'Confirmado';
+  if(status==='faltou')return 'Faltou';
+  if(status==='cancelou')return 'Cancelou';
+  return 'Aguardando';
+}
+
+function getPacoteAgenda(a){
+  return (_clientePacotes||[]).find(function(cp){
+    var total=Number(cp.total_sessoes||0), usadas=Number(cp.sessoes_usadas||0);
+    return cp.cliente_id===a.cliente_id && cp.procedimento_id===a.procedimento_id && usadas<total;
+  });
+}
+
+function abrirNovoAgendamento(){
+  limparFormAgendamento();
+  openModal('modal-ag');
+}
+
+function abrirPacoteDoAgendamento(cliId,procId,data,hora){
+  limparFormAgendamento();
+  var cli=document.getElementById('ag-cli-sel');if(cli)cli.value=cliId||'';
+  var proc=document.getElementById('ag-proc-sel');if(proc)proc.value=procId||'';
+  var dt=document.getElementById('ag-data-input');if(dt)dt.value=data||hoje();
+  var hr=document.getElementById('ag-hora-input');if(hr)hr.value=(hora||'09:00').substring(0,5);
+  setTipoAtendimentoAg('novo');
+  atualizarCamposPacoteAgendamento();
+  openModal('modal-ag');
 }
 
 function renderAgenda(){
-  var el=document.getElementById('ag-list');
-  var faltas=_agenda.filter(function(a){return a.status==='faltou';}).length;
-  var conf=_agenda.filter(function(a){return a.status==='confirmado';}).length;
+  atualizarResumoAgenda();
+  if(_agendaView==='semana')return renderAgendaSemana();
+  if(_agendaView==='mes')return renderAgendaMes();
+  return renderAgendaDia();
+}
+
+function atualizarResumoAgenda(){
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var hojeRows=_agenda.filter(function(a){return _agendaView==='dia' ? true : a.data===base;});
+  var rowsResumo=(_agendaView==='dia')?_agenda:hojeRows;
+  var faltas=rowsResumo.filter(function(a){return a.status==='faltou';}).length;
+  var conf=rowsResumo.filter(function(a){return a.status==='confirmado';}).length;
+  var pacotesPeriodo=0, sessoesPeriodo=0, semPacote=0, receita=0;
+  (_agenda||[]).forEach(function(a){
+    var p=_procs.find(function(x){return x.id===a.procedimento_id;});
+    if(p)receita+=Number(p.preco||0);
+    var pac=getPacoteAgenda(a);
+    if(pac){pacotesPeriodo++;sessoesPeriodo++;}
+    else{semPacote++;}
+  });
   document.getElementById('ag-faltas').textContent=faltas;
-  document.getElementById('ag-total').textContent=_agenda.length;
-  document.getElementById('ag-taxa').textContent=_agenda.length?Math.round((conf/_agenda.length)*100)+'%':'—';
+  document.getElementById('ag-total').textContent=rowsResumo.length;
+  var agConf=document.getElementById('ag-confirmados');if(agConf)agConf.textContent=conf;
+  document.getElementById('ag-taxa').textContent=rowsResumo.length?Math.round((conf/rowsResumo.length)*100)+'%':'—';
+  var elPac=document.getElementById('ag-pacotes-dia');if(elPac)elPac.textContent=pacotesPeriodo;
+  var elSes=document.getElementById('ag-sessoes-dia');if(elSes)elSes.textContent=sessoesPeriodo;
+  var elSem=document.getElementById('ag-sem-pacote-dia');if(elSem)elSem.textContent=semPacote;
+  var elRec=document.getElementById('ag-receita-dia');if(elRec)elRec.textContent=R(receita);
+  var title=document.querySelector('.agenda-side-card .agenda-side-title');if(title)title.textContent=_agendaView==='dia'?'Resumo do dia':(_agendaView==='semana'?'Resumo da semana':'Resumo do mês');
+  var proximo=document.getElementById('ag-proximo');
+  if(proximo){
+    var hojeISO=hoje();
+    var prox=(_agenda||[]).filter(function(a){return a.data>=hojeISO&&a.status!=='cancelou'&&a.status!=='faltou';})[0];
+    proximo.innerHTML=prox?('<strong>'+fmtData(prox.data)+' · '+prox.hora.substring(0,5)+'</strong><br>'+prox.cliente_nome+'<br><span style="color:var(--ink-soft)">'+prox.procedimento_nome+'</span>'):'Nenhum próximo atendimento.';
+  }
+}
+
+function agendaCardHTML(a){
+  var status=a.status||'pendente';
+  var pac=getPacoteAgenda(a);
+  var proc=_procs.find(function(x){return x.id===a.procedimento_id;});
+  var statusClass=status==='confirmado'?'confirmado':status==='faltou'?'faltou':status==='cancelou'?'cancelou':'pendente';
+  var pacoteHtml='';
+  if(pac){
+    var total=Number(pac.total_sessoes||0), usadas=Number(pac.sessoes_usadas||0), restam=Math.max(0,total-usadas);
+    var pct=total?Math.min(100,Math.round((usadas/total)*100)):0;
+    pacoteHtml='<div class="agenda-package">'+
+      '<strong>Pacote ativo</strong> · '+(pac.pacote_nome||a.procedimento_nome)+
+      '<div class="agenda-progress"><div class="agenda-progress-fill" style="width:'+pct+'%"></div></div>'+ 
+      '<span>'+restam+' de '+total+' sessão(ões) restantes</span>'+ 
+    '</div>';
+  }else{
+    pacoteHtml='<div class="agenda-package warn"><strong>Cliente sem pacote ativo para este procedimento.</strong> <button class="btn btn-gold btn-sm" style="margin-left:8px;" onclick="abrirPacoteDoAgendamento(\''+a.cliente_id+'\',\''+a.procedimento_id+'\',\''+a.data+'\',\''+a.hora+'\')">Criar pacote</button></div>';
+  }
+  return '<div class="agenda-card">'+
+    '<div class="agenda-time">'+a.hora.substring(0,5)+'</div>'+ 
+    '<div class="agenda-card-body '+statusClass+'">'+
+      '<div class="agenda-card-top">'+
+        '<div><div class="agenda-client">'+a.cliente_nome+'</div><div class="agenda-proc">'+a.procedimento_nome+'</div></div>'+ 
+        '<span class="agenda-status-pill '+statusClass+'">'+statusLabelAg(status)+'</span>'+ 
+      '</div>'+pacoteHtml+
+      '<div class="agenda-meta">'+
+        '<span class="pill pill-blue">'+(proc?R(proc.preco):'Valor não informado')+'</span>'+ 
+        (pac?'<span class="pill pill-green">Sessão controlada</span>':'<span class="pill pill-gold">Venda possível</span>')+
+      '</div>'+ 
+      '<div class="agenda-actions">'+
+        (status!=='confirmado'?'<button class="status-btn s-conf" onclick="setStatus(\''+a.id+'\',\'confirmado\',\''+status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✓ Confirmar</button>':'')+
+        (status!=='faltou'?'<button class="status-btn s-falt" onclick="setStatus(\''+a.id+'\',\'faltou\',\''+status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✕ Faltou</button>':'')+
+        (status!=='cancelou'?'<button class="status-btn s-canc" onclick="setStatus(\''+a.id+'\',\'cancelou\',\''+status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">Cancelar</button>':'')+
+        '<button class="status-btn s-del" onclick="deletarAg(\''+a.id+'\')">Excluir</button>'+ 
+      '</div>'+ 
+    '</div>'+ 
+    '<div class="agenda-card-actions"><button class="btn btn-outline btn-sm" onclick="abrirPacoteDoAgendamento(\''+a.cliente_id+'\',\''+a.procedimento_id+'\',\''+a.data+'\',\''+a.hora+'\')">Pacote</button></div>'+ 
+  '</div>';
+}
+
+function renderAgendaDia(){
+  var el=document.getElementById('ag-list');
   if(!_agenda.length){el.innerHTML='<p class="empty-state">Nenhum agendamento para este dia.</p>';return;}
-  el.innerHTML=_agenda.map(function(a){
-    var dc=a.status==='confirmado'?'var(--sage)':a.status==='faltou'?'var(--terra)':a.status==='cancelou'?'var(--gold)':'var(--ink-soft)';
-    return '<div class="ag-item">'+
-      '<div class="ag-time">'+a.hora.substring(0,5)+'</div>'+
-      '<div class="ag-dot" style="background:'+dc+'"></div>'+
-      '<div class="ag-body">'+
-        '<div class="ag-client">'+a.cliente_nome+'</div>'+
-        '<div class="ag-proc">'+a.procedimento_nome+'</div>'+
-        '<div class="ag-actions">'+
-          (a.status!=='confirmado'?'<button class="status-btn s-conf" onclick="setStatus(\''+a.id+'\',\'confirmado\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✓ Confirmou</button>':'')+
-          (a.status!=='faltou'?'<button class="status-btn s-falt" onclick="setStatus(\''+a.id+'\',\'faltou\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✗ Faltou</button>':'')+
-          (a.status!=='cancelou'?'<button class="status-btn s-canc" onclick="setStatus(\''+a.id+'\',\'cancelou\',\''+a.status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">Cancelou</button>':'')+
-          '<button class="status-btn s-del" onclick="deletarAg(\''+a.id+'\')">✕</button>'+
-        '</div>'+
-      '</div></div>';
-  }).join('');
+  el.innerHTML=_agenda.map(agendaCardHTML).join('');
+}
+
+function renderAgendaSemana(){
+  var el=document.getElementById('ag-list');
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var ini=startOfWeekISO(base);
+  var dias=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  var html='<div class="agenda-week-grid">';
+  for(var i=0;i<7;i++){
+    var dia=addDaysISO(ini,i);
+    var rows=_agenda.filter(function(a){return a.data===dia;});
+    html+='<div class="agenda-week-day">'+
+      '<div class="agenda-week-head"><div><div class="agenda-week-name">'+dias[i]+'</div><div class="agenda-week-date">'+fmtData(dia).slice(0,5)+'</div></div><span class="pill '+(rows.length?'pill-green':'pill-gold')+'">'+rows.length+'</span></div>';
+    if(rows.length){
+      html+=rows.slice(0,5).map(function(a){var st=a.status||'pendente';return '<div class="agenda-mini-event '+st+'" onclick="setAgendaView(\'dia\');document.getElementById(\'ag-filtro-data\').value=\''+a.data+'\';carregarAgenda();"><div class="agenda-mini-time">'+a.hora.substring(0,5)+'</div><div class="agenda-mini-client">'+a.cliente_nome+'</div><div class="agenda-mini-proc">'+a.procedimento_nome+'</div></div>';}).join('');
+      if(rows.length>5)html+='<div class="agenda-more">+'+(rows.length-5)+' atendimento(s)</div>';
+    }else html+='<p class="empty-state" style="font-size:11px;padding:8px 0;">Livre</p>';
+    html+='</div>';
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function renderAgendaMes(){
+  var el=document.getElementById('ag-list');
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var first=isoDateObj(startOfMonthISO(base));
+  var gridStart=new Date(first);gridStart.setDate(first.getDate()-(first.getDay()===0?6:first.getDay()-1));
+  var dows=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  var html='<div class="agenda-month-grid">'+dows.map(function(d){return '<div class="agenda-month-dow">'+d+'</div>';}).join('');
+  var month=first.getMonth();
+  for(var i=0;i<42;i++){
+    var d=new Date(gridStart);d.setDate(gridStart.getDate()+i);
+    var iso=toISODate(d);
+    var rows=_agenda.filter(function(a){return a.data===iso;});
+    var cls=(d.getMonth()!==month?' out':'')+(iso===hoje()?' today':'');
+    html+='<div class="agenda-month-day'+cls+'" onclick="setAgendaView(\'dia\');document.getElementById(\'ag-filtro-data\').value=\''+iso+'\';carregarAgenda();">'+
+      '<div class="agenda-month-number">'+String(d.getDate()).padStart(2,'0')+'</div>'+
+      (rows.length?'<div class="agenda-month-count">'+rows.length+' agend.</div>':'')+
+      '<div class="agenda-month-tags">'+rows.slice(0,8).map(function(a){return '<span class="agenda-dot '+(a.status||'pendente')+'"></span>';}).join('')+'</div>'+ 
+    '</div>';
+  }
+  html+='</div>';
+  el.innerHTML=html;
 }
 
 async function setStatus(agId, novoStatus, statusAnterior, procId, cliNome, procNome){
