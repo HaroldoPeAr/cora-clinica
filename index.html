@@ -452,6 +452,103 @@ textarea.form-control{resize:vertical;min-height:72px;}
   .ins-row{grid-template-columns:1fr 1fr;}
   .dash-quick{grid-template-columns:1fr 1fr;}
 }
+
+
+/* ── CLIENTE 360 ── */
+.client360-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px;align-items:start;}
+.client360-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
+.client360-hero{grid-column:span 2;display:flex;gap:18px;align-items:flex-start;min-height:190px;}
+.client-avatar{width:112px;height:112px;border-radius:26px;background:linear-gradient(135deg,var(--sage-pale),var(--gold-pale));display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:36px;color:var(--sage-deep);flex-shrink:0;}
+.client360-name{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;}
+.client360-meta{display:grid;gap:7px;font-size:13px;color:var(--ink-soft);}
+.client360-tabs{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;}
+.client360-tab{border:none;background:var(--bg);padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;color:var(--ink-soft);cursor:pointer;}
+.client360-tab.active{background:var(--sage-pale);color:var(--sage-deep);}
+.client360-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.client360-mini{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);}
+.client360-mini-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:700;margin-bottom:7px;}
+.client360-mini-value{font-family:'DM Serif Display',serif;font-size:24px;line-height:1;color:var(--ink);}
+.client-progress{height:8px;background:var(--sage-pale);border-radius:99px;overflow:hidden;margin:10px 0 7px;}
+.client-progress-fill{height:100%;background:var(--sage);border-radius:99px;}
+.timeline{position:relative;padding-left:24px;}
+.timeline::before{content:'';position:absolute;left:7px;top:10px;bottom:10px;width:2px;background:var(--sage-pale);}
+.timeline-item{position:relative;padding:10px 0 14px;border-bottom:1px solid var(--line);}
+.timeline-item:last-child{border-bottom:none;}
+.timeline-dot{position:absolute;left:-23px;top:14px;width:16px;height:16px;border-radius:50%;background:var(--sage);border:3px solid var(--panel);box-shadow:0 0 0 1px var(--sage-pale);}
+.timeline-date{font-size:11px;color:var(--ink-muted);margin-bottom:3px;}
+.timeline-title{font-weight:700;font-size:13.5px;}
+.timeline-sub{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ba-photo{height:170px;border-radius:12px;background:linear-gradient(135deg,#e9d1bd,#cfa989);position:relative;overflow:hidden;}
+.ba-photo.after{background:linear-gradient(135deg,#f3d8c8,#ddb390);}
+.ba-tag{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.72);color:#fff;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+.client360-side-list{display:grid;gap:10px;}
+.client360-alert{padding:12px 14px;border-radius:12px;border:1px solid var(--line);font-size:12.5px;line-height:1.45;}
+.client360-alert.warn{background:var(--terra-pale);color:var(--terra);border-color:#ECC8BC;}
+.client360-alert.gold{background:var(--gold-light);color:#8A6500;border-color:#E6D6A8;}
+.client360-alert.ok{background:var(--sage-light);color:var(--sage-deep);border-color:var(--sage-pale);}
+.client360-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+@media(max-width:1100px){.client360-grid{grid-template-columns:1fr 1fr}.client360-hero{grid-column:span 2;}.client360-kpis{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:720px){.client360-grid{grid-template-columns:1fr}.client360-hero{grid-column:span 1;flex-direction:column}.client360-kpis{grid-template-columns:1fr}.before-after{grid-template-columns:1fr;}}
+
+
+
+/* ─────────────────────────────────────────────
+   STUDIOFLOW 1.0 RC · POLISH COMERCIAL
+   ───────────────────────────────────────────── */
+.login-wrap.sf-login-v1{padding:0;background:linear-gradient(135deg,var(--sidebar) 0%,var(--sage-deep) 48%,#F8F7F4 48%,#F8F7F4 100%);}
+.sf-login-shell{width:100%;min-height:100vh;display:grid;grid-template-columns:1.08fr .92fr;align-items:stretch;}
+.sf-login-hero{color:#fff;padding:58px 54px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}
+.sf-login-hero:before{content:'';position:absolute;inset:auto -120px -180px auto;width:420px;height:420px;border-radius:50%;background:rgba(184,146,42,.18);}
+.sf-login-hero:after{content:'';position:absolute;inset:90px auto auto -130px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.06);}
+.sf-login-logo{display:flex;align-items:center;gap:14px;position:relative;z-index:1;}
+.sf-login-mark{width:48px;height:48px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px rgba(0,0,0,.16);}
+.sf-login-title{font-family:'DM Serif Display',serif;font-size:32px;letter-spacing:-.4px;}
+.sf-login-copy{max-width:560px;position:relative;z-index:1;}
+.sf-login-copy h1{font-family:'DM Serif Display',serif;font-size:48px;line-height:1.02;font-weight:400;margin-bottom:18px;letter-spacing:-.8px;}
+.sf-login-copy p{font-size:16px;line-height:1.8;color:rgba(255,255,255,.78);max-width:500px;}
+.sf-login-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;max-width:520px;}
+.sf-login-feature{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:14px 16px;backdrop-filter:blur(10px);font-size:13px;font-weight:600;}
+.sf-login-feature span{display:block;color:rgba(255,255,255,.62);font-size:11px;font-weight:500;margin-top:3px;}
+.sf-login-proof{position:relative;z-index:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px 18px;font-size:13px;color:rgba(255,255,255,.78);max-width:520px;}
+.sf-login-panel{display:flex;align-items:center;justify-content:center;padding:36px;}
+.sf-login-card{width:100%;max-width:430px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:24px;padding:34px;box-shadow:0 22px 70px rgba(26,26,24,.12);}
+.sf-login-card .login-name{font-size:28px;margin-bottom:4px;}
+.sf-login-card .login-tagline{margin-bottom:24px;}
+.sf-login-actions{display:flex;justify-content:space-between;align-items:center;margin:4px 0 16px;font-size:12px;color:var(--ink-soft);}
+.sf-login-actions label{display:flex;align-items:center;gap:6px;}
+.sf-login-link{color:var(--sage-deep);font-weight:600;text-decoration:none;cursor:pointer;}
+.sf-login-version{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-muted);display:flex;justify-content:space-between;gap:10px;}
+.release-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--gold-pale);color:var(--gold);border-radius:999px;padding:4px 8px;}
+.sf-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--ink-muted);font-size:11px;padding:12px 28px 22px;}
+.sf-status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sage);margin-right:6px;}
+.help-fab{position:fixed;right:24px;bottom:24px;width:54px;height:54px;border-radius:18px;background:var(--sidebar);color:#fff;border:none;z-index:300;box-shadow:0 12px 30px rgba(26,26,24,.22);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;}
+.help-panel{position:fixed;right:24px;bottom:88px;width:360px;max-width:calc(100vw - 48px);background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-md);z-index:300;display:none;overflow:hidden;}
+.help-panel.open{display:block;}
+.help-head{background:var(--sidebar);color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;}
+.help-head strong{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;}
+.help-body{padding:16px;}
+.help-item{padding:12px 0;border-top:1px solid var(--line);font-size:13px;cursor:pointer;}
+.help-item:first-child{border-top:none;}
+.help-item strong{display:block;color:var(--ink);font-size:13px;margin-bottom:2px;}
+.help-item span{color:var(--ink-soft);font-size:11.5px;line-height:1.5;}
+.sf-settings-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start;}
+.sf-logo-preview{height:132px;border:1.5px dashed var(--line-strong);border-radius:16px;display:flex;align-items:center;justify-content:center;background:var(--sage-light);color:var(--sage-deep);font-family:'DM Serif Display',serif;font-size:22px;}
+.sf-check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.sf-check-card{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:12px 14px;font-size:12px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;}
+.sf-check-card input{accent-color:var(--sage);}
+.backup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.backup-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.backup-card strong{display:block;font-size:14px;color:var(--ink);margin-bottom:6px;}
+.backup-card p{font-size:12px;color:var(--ink-soft);line-height:1.5;margin-bottom:14px;}
+.help-page-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.help-page-card{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.help-page-card h3{font-size:14px;margin-bottom:8px;color:var(--ink);}
+.help-page-card p{font-size:12.5px;color:var(--ink-soft);line-height:1.6;}
+.sf-rc-note{background:var(--gold-light);border:1px solid var(--gold-pale);border-radius:var(--radius);padding:14px 16px;color:var(--ink-soft);font-size:12.5px;line-height:1.6;margin-bottom:16px;}
+@media(max-width:900px){.sf-login-shell{grid-template-columns:1fr}.sf-login-hero{display:none}.backup-grid{grid-template-columns:1fr 1fr}.sf-settings-grid,.help-page-grid{grid-template-columns:1fr}}
+@media(max-width:660px){.backup-grid{grid-template-columns:1fr}.sf-footer{padding-left:16px;padding-right:16px;flex-direction:column;align-items:flex-start}.help-panel{right:16px;bottom:82px}.help-fab{right:16px;bottom:16px}}
+
 </style>
 </head>
 <body>
@@ -460,19 +557,47 @@ textarea.form-control{resize:vertical;min-height:72px;}
 <div class="toast" id="toast"></div>
 
 <!-- LOGIN -->
-<div class="login-wrap" id="login-wrap">
-  <div class="login-box">
-    <div class="login-brand">
-      <div class="login-mark">
-        <svg width="42" height="42" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="#1E2820"/><path d="M 52 130 C 52 78, 100 78, 100 130 C 100 158, 130 158, 130 110" fill="none" stroke="#B8922A" stroke-width="18" stroke-linecap="round"/><circle cx="130" cy="68" r="11" fill="#B8922A"/></svg>
+<div class="login-wrap sf-login-v1" id="login-wrap">
+  <div class="sf-login-shell">
+    <section class="sf-login-hero">
+      <div class="sf-login-logo">
+        <div class="sf-login-mark">
+          <svg width="34" height="34" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="#F0F5EE"/><path d="M 52 130 C 52 78, 100 78, 100 130 C 100 158, 130 158, 130 110" fill="none" stroke="#2D4028" stroke-width="20" stroke-linecap="round"/><circle cx="130" cy="68" r="12" fill="#2D4028"/></svg>
+        </div>
+        <div>
+          <div class="sf-login-title">StudioFlow</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.62);font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Release 1.0</div>
+        </div>
       </div>
-      <div class="login-name">StudioFlow</div>
-    </div>
-    <p class="login-tagline">Sistema de gestão para studios e clínicas de estética</p>
-    <div class="login-error" id="login-error"></div>
-    <div class="form-group"><label class="form-label">E-mail</label><input type="email" id="login-email" class="form-control" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
-    <div class="form-group"><label class="form-label">Senha</label><input type="password" id="login-senha" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
-    <button class="btn btn-primary" style="width:100%;padding:11px;justify-content:center;" onclick="fazerLogin()" id="btn-login">Entrar</button>
+      <div class="sf-login-copy">
+        <h1>Gestão inteligente para clínicas e studios.</h1>
+        <p>Organize sua agenda, controle pacotes, acompanhe o financeiro e encante seus clientes com uma experiência simples e profissional.</p>
+        <div class="sf-login-features">
+          <div class="sf-login-feature">Agenda Inteligente<span>Dia, semana e mês</span></div>
+          <div class="sf-login-feature">Cliente 360º<span>Histórico em um só lugar</span></div>
+          <div class="sf-login-feature">Pacotes e Sessões<span>Baixa automática</span></div>
+          <div class="sf-login-feature">Financeiro<span>Receita, custos e lucro</span></div>
+        </div>
+      </div>
+      <div class="sf-login-proof">Plano Fundadores: acesso completo por valor especial para os primeiros clientes que ajudarem a evoluir o StudioFlow.</div>
+    </section>
+    <section class="sf-login-panel">
+      <div class="sf-login-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
+          <div>
+            <div class="login-name">Entrar no StudioFlow</div>
+            <p class="login-tagline">Acesse o painel da sua clínica.</p>
+          </div>
+          <span class="release-badge">v1.0</span>
+        </div>
+        <div class="login-error" id="login-error"></div>
+        <div class="form-group"><label class="form-label">E-mail</label><input type="email" id="login-email" class="form-control" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+        <div class="form-group"><label class="form-label">Senha</label><input type="password" id="login-senha" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+        <div class="sf-login-actions"><label><input type="checkbox" checked> Lembrar acesso</label><span class="sf-login-link" onclick="toast('Recuperação de senha entrará na próxima atualização.','ok')">Esqueci minha senha</span></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;justify-content:center;font-size:13.5px;" onclick="fazerLogin()" id="btn-login">Entrar</button>
+        <div class="sf-login-version"><span>© StudioFlow</span><span>Status Online</span></div>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -535,6 +660,19 @@ textarea.form-control{resize:vertical;min-height:72px;}
       <button class="nav-item" onclick="showTab('reserva',this)" data-tab="reserva">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1l1.8 3.6L14 5.3l-3 2.9.7 4.1L8 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
         <span class="nav-label">Reserva</span>
+      </button>
+      <div class="nav-section">Sistema</div>
+      <button class="nav-item" onclick="showTab('configuracoes',this);preencherConfigClinica();" data-tab="configuracoes">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M12.8 3.2l-1.4 1.4M4.6 11.4l-1.4 1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span class="nav-label">Configurações</span>
+      </button>
+      <button class="nav-item" onclick="showTab('backup',this)" data-tab="backup">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M3 12h10M4 9l4 4 4-4M8 1v11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Backup</span>
+      </button>
+      <button class="nav-item" onclick="showTab('ajuda',this)" data-tab="ajuda">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M6.2 6a2 2 0 1 1 3.3 1.5c-.8.6-1.5 1-1.5 2M8 12.2h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Ajuda</span>
       </button>
     </nav>
     <div class="sidebar-footer">
@@ -633,6 +771,11 @@ textarea.form-control{resize:vertical;min-height:72px;}
       </div>
       <div id="cli-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
     </div>
+  </div>
+
+  <!-- CLIENTE 360 -->
+  <div class="view" id="view-cliente360">
+    <div id="cliente360-wrap"><div class="loading-box"><div class="spinner"></div>Carregando cliente...</div></div>
   </div>
 
   <!-- PROCEDIMENTOS -->
@@ -806,7 +949,70 @@ textarea.form-control{resize:vertical;min-height:72px;}
     <div id="reserva-content"></div>
   </div>
 
+  <!-- CONFIGURAÇÕES -->
+  <div class="view" id="view-configuracoes">
+    <div class="sf-rc-note"><strong>StudioFlow 1.0</strong> · Configure os dados da clínica para deixar o sistema com identidade profissional durante a apresentação e no uso diário.</div>
+    <div class="sf-settings-grid">
+      <div class="card">
+        <div class="card-head"><h2>Minha clínica</h2><span class="card-label">identidade do negócio</span></div>
+        <div class="form-group"><label class="form-label">Nome da clínica / studio</label><input id="cfg-nome" class="form-control" placeholder="Ex: Clínica Graziele Estética"></div>
+        <div class="fr2">
+          <div class="form-group"><label class="form-label">Telefone</label><input id="cfg-tel" class="form-control" placeholder="(11) 99999-9999"></div>
+          <div class="form-group"><label class="form-label">WhatsApp</label><input id="cfg-whats" class="form-control" placeholder="(11) 99999-9999"></div>
+        </div>
+        <div class="fr2">
+          <div class="form-group"><label class="form-label">Instagram</label><input id="cfg-insta" class="form-control" placeholder="@sua_clinica"></div>
+          <div class="form-group"><label class="form-label">Responsável</label><input id="cfg-resp" class="form-control" placeholder="Nome do responsável"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Endereço</label><input id="cfg-end" class="form-control" placeholder="Rua, número, cidade"></div>
+        <div class="form-group"><label class="form-label">Horário de funcionamento</label><input id="cfg-horario" class="form-control" placeholder="Segunda a sexta, 08h às 18h"></div>
+        <button class="btn btn-primary" onclick="salvarConfigClinica()">Salvar configurações</button>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Marca e módulos</h2><span class="card-label">versão comercial</span></div>
+        <div class="sf-logo-preview" id="cfg-logo-preview">StudioFlow</div>
+        <p class="empty-state">Na V1, a identidade fica salva neste navegador. Na próxima versão, essas configurações poderão ser salvas no Supabase por clínica.</p>
+        <div class="sf-check-grid">
+          <label class="sf-check-card"><input type="checkbox" checked> Agenda</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Cliente 360º</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Financeiro</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Pacotes</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Estoque</label>
+          <label class="sf-check-card"><input type="checkbox"> WhatsApp Pro</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP -->
+  <div class="view" id="view-backup">
+    <div class="sf-rc-note"><strong>Backup básico</strong> · Exporte seus dados em CSV para segurança e conferência. Esse recurso passa confiança para os primeiros clientes.</div>
+    <div class="backup-grid">
+      <div class="backup-card"><strong>Clientes</strong><p>Exporta nome, telefone, e-mail e observações.</p><button class="btn btn-outline" onclick="exportarCSV('clientes')">Exportar CSV</button></div>
+      <div class="backup-card"><strong>Agenda</strong><p>Exporta data, hora, cliente, procedimento e status.</p><button class="btn btn-outline" onclick="exportarCSV('agenda')">Exportar CSV</button></div>
+      <div class="backup-card"><strong>Financeiro</strong><p>Exporta despesas e movimentações financeiras disponíveis.</p><button class="btn btn-outline" onclick="exportarCSV('financeiro')">Exportar CSV</button></div>
+      <div class="backup-card"><strong>Estoque</strong><p>Exporta produtos, quantidades, mínimos e custos.</p><button class="btn btn-outline" onclick="exportarCSV('estoque')">Exportar CSV</button></div>
+    </div>
+  </div>
+
+  <!-- AJUDA -->
+  <div class="view" id="view-ajuda">
+    <div class="card">
+      <div class="card-head"><h2>Central de Ajuda StudioFlow</h2><span class="card-label">guia rápido da versão 1.0</span></div>
+      <input id="ajuda-busca" class="form-control" placeholder="Pesquisar ajuda..." oninput="filtrarAjudaPagina()" style="margin-bottom:14px;">
+      <div class="help-page-grid" id="ajuda-page-grid">
+        <div class="help-page-card" data-ajuda="cliente cadastro"><h3>Como cadastrar cliente</h3><p>Vá em Clientes, clique em Novo cliente, preencha os dados principais e salve. Depois use o botão Ver 360º para acessar a ficha completa.</p></div>
+        <div class="help-page-card" data-ajuda="agenda pacote venda"><h3>Como vender pacote pela agenda</h3><p>Na Agenda, clique em Agendar, escolha o cliente e o procedimento. Em tipo de atendimento selecione Primeira venda de pacote.</p></div>
+        <div class="help-page-card" data-ajuda="sessão pacote baixa"><h3>Como baixar sessão</h3><p>Ao confirmar um atendimento vinculado a pacote, o StudioFlow atualiza as sessões automaticamente. Também é possível usar sessão manual na tela Sessões.</p></div>
+        <div class="help-page-card" data-ajuda="financeiro despesa receita"><h3>Como acompanhar financeiro</h3><p>Acesse Financeiro para ver receita bruta, custos, despesas e lucro líquido. Em Despesas, cadastre contas fixas e variáveis.</p></div>
+        <div class="help-page-card" data-ajuda="estoque produto mínimo"><h3>Como controlar estoque</h3><p>Cadastre os produtos, configure quantidade mínima e custo. O sistema mostra alerta quando o item está abaixo do mínimo.</p></div>
+        <div class="help-page-card" data-ajuda="backup exportar csv"><h3>Como fazer backup</h3><p>Use o menu Backup e exporte os dados principais em CSV. Guarde os arquivos em local seguro.</p></div>
+      </div>
+    </div>
+  </div>
+
     </div><!-- /content -->
+    <div class="sf-footer"><span><span class="sf-status-dot"></span>StudioFlow 1.0 · Online</span><span>©2026 StudioFlow · Release Candidate</span></div>
   </main><!-- /main -->
 </div><!-- /layout -->
 </div><!-- /app -->
@@ -998,6 +1204,24 @@ textarea.form-control{resize:vertical;min-height:72px;}
   </div>
 </div>
 
+
+
+<!-- AJUDA FLUTUANTE -->
+<button class="help-fab" onclick="toggleHelpWidget()" title="Ajuda StudioFlow">?</button>
+<div class="help-panel" id="help-panel">
+  <div class="help-head"><strong>Ajuda StudioFlow</strong><button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;" onclick="toggleHelpWidget()">×</button></div>
+  <div class="help-body">
+    <input id="help-search" class="form-control" placeholder="Pesquisar ajuda..." oninput="filtrarHelpWidget()" style="margin-bottom:10px;">
+    <div id="help-list">
+      <div class="help-item" data-help="cliente cadastro"><strong>Cadastrar cliente</strong><span>Clientes → Novo cliente → Salvar.</span></div>
+      <div class="help-item" data-help="agenda pacote venda"><strong>Vender pacote na agenda</strong><span>Agenda → Agendar → Primeira venda de pacote.</span></div>
+      <div class="help-item" data-help="sessão baixa"><strong>Baixar sessão</strong><span>Confirme o atendimento ou use sessão manual.</span></div>
+      <div class="help-item" data-help="financeiro"><strong>Ver financeiro</strong><span>Acompanhe receita, despesas e lucro.</span></div>
+      <div class="help-item" data-help="backup"><strong>Exportar backup</strong><span>Menu Backup → Exportar CSV.</span></div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ====================================================
 // SUBSTITUA COM SUAS CREDENCIAIS DO SUPABASE
@@ -1076,6 +1300,7 @@ document.querySelectorAll('.overlay').forEach(function(el){
 var PAGE_TITLES={
   dashboard:['Dashboard','Visão geral do seu negócio hoje'],
   clientes:['Clientes','Cadastro e histórico de atendimentos'],
+  cliente360:['Cliente 360º','Ficha completa, pacotes, financeiro e histórico do cliente'],
   procedimentos:['Procedimentos','Margem real por procedimento'],
   estoque:['Estoque','Controle de produtos com baixa automática'],
   agenda:['Agenda','Painel operacional de atendimentos, pacotes e presença'],
@@ -1083,6 +1308,9 @@ var PAGE_TITLES={
   despesas:['Despesas','Fixas e variáveis'],
   movimentacoes:['Movimentações','Histórico de entradas e saídas'],
   sessoes:['Sessões','Pacotes e controle de sessões por cliente'],
+  configuracoes:['Configurações','Identidade da clínica e preferências do StudioFlow'],
+  backup:['Backup','Exportação simples dos dados principais'],
+  ajuda:['Ajuda','Central de suporte e primeiros passos'],
 };
 function toggleSidebar(){
   var s=document.getElementById('sidebar');
@@ -1169,7 +1397,7 @@ async function carregarClientes(){
 
 function renderClientes(){
   var busca=(document.getElementById('cli-busca')||{}).value||'';
-  var lista=busca?_clientes.filter(function(c){return c.nome.toLowerCase().includes(busca.toLowerCase());}) : _clientes;
+  var lista=busca?_clientes.filter(function(c){return (c.nome||'').toLowerCase().includes(busca.toLowerCase());}) : _clientes;
   var now=new Date();var mes=now.getMonth()+1;var ano=now.getFullYear();
   var novos=_clientes.filter(function(c){var d=new Date(c.criado_em);return d.getMonth()+1===mes&&d.getFullYear()===ano;}).length;
   var hojeAtend=_agenda.filter(function(a){return a.data===hoje()&&a.status==='confirmado';});
@@ -1181,15 +1409,17 @@ function renderClientes(){
   if(!lista.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">'+(busca?'Nenhum resultado.':'Nenhum cliente cadastrado.')+'</p>';return;}
   el.innerHTML=lista.map(function(c){
     var ag=_agenda.filter(function(a){return a.cliente_id===c.id;}).length;
+    var pacs=_clientePacotes.filter(function(p){return p.cliente_id===c.id && Number(p.sessoes_usadas||0)<Number(p.total_sessoes||0);}).length;
+    var meta=[]; if(c.telefone)meta.push(c.telefone); if(c.email)meta.push(c.email); if(ag)meta.push(ag+' atendimento'+(ag>1?'s':'')); if(pacs)meta.push(pacs+' pacote'+(pacs>1?'s':'')+' ativo'+(pacs>1?'s':''));
     return '<div class="cli-item">'+
-      '<div><div class="cli-name">'+c.nome+'</div><div class="cli-meta">'+(c.telefone||'')+(c.telefone&&c.email?' · ':''+(c.email||''))+(ag?' · '+ag+' atendimento'+(ag>1?'s':''):'')+'</div></div>'+
-      '<div style="display:flex;gap:6px;">'+
-        '<button class="btn btn-outline btn-sm" onclick="editarCliente(\''+c.id+'\')">Editar</button>'+
-        '<button class="btn btn-danger btn-sm" onclick="deletarCliente(\''+c.id+'\')">Remover</button>'+
+      '<div><div class="cli-name">'+(c.nome||'Cliente')+'</div><div class="cli-meta">'+(meta.join(' · ')||'Sem informações adicionais')+'</div></div>'+ 
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;">'+
+        '<button class="btn btn-primary btn-sm" onclick="abrirCliente360(\''+c.id+'\')">Ver 360º</button>'+ 
+        '<button class="btn btn-outline btn-sm" onclick="editarCliente(\''+c.id+'\')">Editar</button>'+ 
+        '<button class="btn btn-danger btn-sm" onclick="deletarCliente(\''+c.id+'\')">Remover</button>'+ 
       '</div></div>';
   }).join('');
 }
-
 function atualizarSelectClientes(){
   var sel=document.getElementById('ag-cli-sel');
   if(!sel)return;
@@ -1228,6 +1458,93 @@ async function deletarCliente(id){
   if(!confirm('Remover este cliente?'))return;
   await SB.from('clientes').delete().eq('id',id);
   await carregarClientes();toast('Cliente removido.');
+}
+
+
+function iniciaisNome(nome){
+  return (nome||'CL').split(' ').filter(Boolean).slice(0,2).map(function(p){return p[0].toUpperCase();}).join('')||'CL';
+}
+
+function abrirCliente360(id){
+  renderCliente360(id);
+  showTab('cliente360',null);
+}
+
+function renderCliente360(id){
+  var c=_clientes.find(function(x){return x.id===id;});
+  var wrap=document.getElementById('cliente360-wrap');
+  if(!wrap||!c){return;}
+  var ags=_agenda.filter(function(a){return a.cliente_id===id;}).sort(function(a,b){return (b.data+b.hora).localeCompare(a.data+a.hora);});
+  var futuros=ags.filter(function(a){return a.data>=hoje()&&a.status!=='cancelou';}).sort(function(a,b){return (a.data+a.hora).localeCompare(b.data+b.hora);});
+  var pacs=_clientePacotes.filter(function(p){return p.cliente_id===id;});
+  var ativos=pacs.filter(function(p){return Number(p.sessoes_usadas||0)<Number(p.total_sessoes||0);});
+  var pago=pacs.reduce(function(s,p){return s+Number(p.preco_pago||0);},0);
+  var realizados=ags.filter(function(a){return a.status==='confirmado';}).length;
+  var ticket=realizados?Math.round(pago/realizados):pago;
+  var prox=futuros[0];
+  var melhorPacote=ativos[0]||pacs[0];
+  var restantes=melhorPacote?Math.max(0,Number(melhorPacote.total_sessoes||0)-Number(melhorPacote.sessoes_usadas||0)):0;
+  var total=melhorPacote?Number(melhorPacote.total_sessoes||0):0;
+  var usado=melhorPacote?Number(melhorPacote.sessoes_usadas||0):0;
+  var pct=total?Math.min(100,Math.round((usado/total)*100)):0;
+  var timeline=[];
+  ags.slice(0,6).forEach(function(a){timeline.push({data:a.data,hora:a.hora,titulo:a.procedimento_nome||'Procedimento',sub:(a.status==='confirmado'?'Sessão realizada':'Agendamento')+(a.status?' · '+a.status:''),tipo:a.status==='confirmado'?'ok':'ag'});});
+  pacs.slice(0,4).forEach(function(p){timeline.push({data:(p.criado_em||hoje()).split('T')[0],hora:'',titulo:'Venda de pacote',sub:(p.pacote_nome||p.procedimento_nome||'Pacote')+' · '+R(p.preco_pago||0),tipo:'money'});});
+  timeline.sort(function(a,b){return (b.data+(b.hora||'')).localeCompare(a.data+(a.hora||''));});
+  var telefone=c.telefone?'<div>☎ '+c.telefone+'</div>':'';
+  var email=c.email?'<div>✉ '+c.email+'</div>':'';
+  var nasc=c.data_nascimento?'<div>🎂 '+fmtData(c.data_nascimento)+'</div>':'';
+  var obs=c.observacoes||'Nenhuma observação cadastrada.';
+  wrap.innerHTML=
+  '<div class="client360-grid">'+
+    '<div class="client360-card client360-hero">'+
+      '<div class="client-avatar">'+iniciaisNome(c.nome)+'</div>'+
+      '<div style="flex:1;min-width:0;">'+
+        '<button class="btn btn-outline btn-sm" onclick="showTab(\'clientes\',document.querySelector(\'[data-tab=clientes]\'))" style="margin-bottom:12px;">← Voltar para clientes</button>'+ 
+        '<div class="client360-name">'+(c.nome||'Cliente')+' <span class="pill pill-green">Cliente ativo</span></div>'+ 
+        '<div class="client360-meta">'+telefone+email+nasc+'<div>📝 '+obs+'</div></div>'+ 
+        '<div class="client360-tabs"><button class="client360-tab active">Visão geral</button><button class="client360-tab">Histórico clínico</button><button class="client360-tab">Evolução</button><button class="client360-tab">Documentos</button></div>'+ 
+        '<div class="client360-actions"><button class="btn btn-primary" onclick="abrirNovoAgendamento()">+ Agendar</button><button class="btn btn-outline" onclick="openModal(\'modal-cli-pacote\')">+ Pacote</button><button class="btn btn-outline" onclick="editarCliente(\''+c.id+'\')">Editar cliente</button></div>'+ 
+      '</div>'+ 
+    '</div>'+ 
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Próximo agendamento</h2></div>'+ 
+      (prox?'<div class="client360-mini"><div class="client360-mini-label">'+fmtData(prox.data)+' às '+(prox.hora||'')+'</div><div style="font-weight:700;font-size:16px;">'+(prox.procedimento_nome||'Procedimento')+'</div><div class="li-sub">Status: '+(prox.status||'agendado')+'</div></div>':'<p class="empty-state">Nenhum agendamento futuro.</p>')+
+    '</div>'+ 
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Resumo</h2></div>'+ 
+      '<div class="client360-kpis">'+
+        '<div class="client360-mini"><div class="client360-mini-label">Atendimentos</div><div class="client360-mini-value">'+realizados+'</div></div>'+ 
+        '<div class="client360-mini"><div class="client360-mini-label">Pago</div><div class="client360-mini-value" style="color:var(--sage);">'+R(pago)+'</div></div>'+ 
+        '<div class="client360-mini"><div class="client360-mini-label">Ticket</div><div class="client360-mini-value">'+R(ticket)+'</div></div>'+ 
+      '</div>'+ 
+    '</div>'+ 
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Pacote ativo</h2><button class="btn btn-outline btn-sm" onclick="showTab(\'sessoes\',document.querySelector(\'[data-tab=sessoes]\'))">Ver sessões</button></div>'+ 
+      (melhorPacote?'<div><div style="font-weight:700;">'+(melhorPacote.pacote_nome||melhorPacote.procedimento_nome||'Pacote')+'</div><div class="li-sub">'+usado+' usadas de '+total+' sessões</div><div class="client-progress"><div class="client-progress-fill" style="width:'+pct+'%"></div></div><div style="font-size:13px;color:var(--sage-deep);font-weight:700;">'+restantes+' sessão'+(restantes===1?'':'ões')+' restante'+(restantes===1?'':'s')+'</div></div>':'<p class="empty-state">Nenhum pacote ativo.</p>')+
+    '</div>'+ 
+    '<div class="client360-card" style="grid-row:span 2;">'+
+      '<div class="card-head"><h2>Linha do tempo</h2></div>'+ 
+      '<div class="timeline">'+(timeline.length?timeline.slice(0,8).map(function(t){return '<div class="timeline-item"><div class="timeline-dot" style="background:'+(t.tipo==='money'?'var(--gold)':t.tipo==='ok'?'var(--sage)':'#6EA8D8')+'"></div><div class="timeline-date">'+fmtData(t.data)+(t.hora?' · '+t.hora:'')+'</div><div class="timeline-title">'+t.titulo+'</div><div class="timeline-sub">'+t.sub+'</div></div>';}).join(''):'<p class="empty-state">Nenhum histórico encontrado.</p>')+'</div>'+ 
+    '</div>'+ 
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Evolução / Antes e Depois</h2><button class="btn btn-outline btn-sm">Ver todas</button></div>'+ 
+      '<div class="before-after"><div class="ba-photo"><span class="ba-tag">Antes</span></div><div class="ba-photo after"><span class="ba-tag">Depois</span></div></div>'+ 
+      '<div class="client360-alert ok" style="margin-top:12px;"><strong>Evolução:</strong> registre fotos, observações e retorno recomendado.</div>'+ 
+    '</div>'+ 
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Alertas e lembretes</h2></div>'+ 
+      '<div class="client360-side-list">'+
+        (restantes>0&&restantes<=2?'<div class="client360-alert warn"><strong>Atenção:</strong> cliente com '+restantes+' sessão'+(restantes===1?'':'ões')+' restante'+(restantes===1?'':'s')+'.</div>':'<div class="client360-alert ok"><strong>Pacote:</strong> saldo sob controle.</div>')+
+        '<div class="client360-alert gold"><strong>Retorno recomendado:</strong> sugerir próximo atendimento em 15 dias.</div>'+ 
+        '<div class="client360-alert ok"><strong>Preferências:</strong> '+obs+'</div>'+ 
+      '</div>'+ 
+    '</div>'+ 
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Histórico financeiro</h2><button class="btn btn-outline btn-sm" onclick="showTab(\'financeiro\',document.querySelector(\'[data-tab=financeiro]\'))">Ver financeiro</button></div>'+ 
+      (pacs.length?pacs.slice(0,4).map(function(p){return '<div class="list-item"><div><div class="li-name">'+(p.pacote_nome||p.procedimento_nome||'Pacote')+'</div><div class="li-sub">'+fmtData((p.criado_em||hoje()).split('T')[0])+'</div></div><strong style="color:var(--sage);">'+R(p.preco_pago||0)+'</strong></div>';}).join(''):'<p class="empty-state">Sem pagamentos registrados.</p>')+
+    '</div>'+ 
+  '</div>';
 }
 
 // ====================================================
@@ -2434,6 +2751,65 @@ document.addEventListener('click',function(e){
     p.classList.remove('open');
   }
 });
+
+
+// ====================================================
+// STUDIOFLOW 1.0 · CONFIGURAÇÕES, BACKUP E AJUDA
+// ====================================================
+function getConfigClinica(){
+  try{return JSON.parse(localStorage.getItem('sf_config_clinica')||'{}');}catch(e){return {};}
+}
+function preencherConfigClinica(){
+  var c=getConfigClinica();
+  [['cfg-nome','nome'],['cfg-tel','tel'],['cfg-whats','whats'],['cfg-insta','insta'],['cfg-resp','resp'],['cfg-end','end'],['cfg-horario','horario']].forEach(function(x){var el=document.getElementById(x[0]);if(el)el.value=c[x[1]]||'';});
+  var prev=document.getElementById('cfg-logo-preview');if(prev)prev.textContent=c.nome||'StudioFlow';
+}
+function salvarConfigClinica(){
+  var c={
+    nome:(document.getElementById('cfg-nome')||{}).value||'',
+    tel:(document.getElementById('cfg-tel')||{}).value||'',
+    whats:(document.getElementById('cfg-whats')||{}).value||'',
+    insta:(document.getElementById('cfg-insta')||{}).value||'',
+    resp:(document.getElementById('cfg-resp')||{}).value||'',
+    end:(document.getElementById('cfg-end')||{}).value||'',
+    horario:(document.getElementById('cfg-horario')||{}).value||''
+  };
+  localStorage.setItem('sf_config_clinica',JSON.stringify(c));
+  preencherConfigClinica();toast('Configurações salvas!');
+}
+function csvEscape(v){v=(v==null?'':String(v));return '"'+v.replace(/"/g,'""')+'"';}
+function baixarCSV(nome,linhas){
+  var csv=linhas.map(function(r){return r.map(csvEscape).join(';');}).join('\n');
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nome+'.csv';document.body.appendChild(a);a.click();a.remove();
+}
+function exportarCSV(tipo){
+  if(tipo==='clientes'){
+    var rows=[['Nome','Telefone','Email','Nascimento','Observações']].concat((_clientes||[]).map(function(c){return [c.nome,c.telefone,c.email,c.nascimento,c.observacoes];}));
+    baixarCSV('studioflow_clientes',rows);return;
+  }
+  if(tipo==='agenda'){
+    var rows=[['Data','Hora','Cliente','Procedimento','Status']].concat((_agenda||[]).map(function(a){return [a.data,a.hora,a.cliente_nome,a.procedimento_nome,a.status];}));
+    baixarCSV('studioflow_agenda',rows);return;
+  }
+  if(tipo==='estoque'){
+    var rows=[['Produto','Quantidade','Mínimo','Unidade','Custo']].concat((_estoque||[]).map(function(e){return [e.nome,e.qtd,e.minimo,e.unidade,e.custo_unitario];}));
+    baixarCSV('studioflow_estoque',rows);return;
+  }
+  if(tipo==='financeiro'){
+    var rows=[['Tipo','Nome','Valor','Vencimento','Categoria']].concat((_despesas||[]).map(function(d){return [d.tipo,d.nome,d.valor,d.vencimento,d.categoria];}));
+    baixarCSV('studioflow_financeiro',rows);return;
+  }
+}
+function toggleHelpWidget(){var p=document.getElementById('help-panel');if(p)p.classList.toggle('open');}
+function filtrarHelpWidget(){
+  var q=((document.getElementById('help-search')||{}).value||'').toLowerCase();
+  document.querySelectorAll('#help-list .help-item').forEach(function(el){el.style.display=((el.getAttribute('data-help')||'')+el.textContent).toLowerCase().indexOf(q)>-1?'block':'none';});
+}
+function filtrarAjudaPagina(){
+  var q=((document.getElementById('ajuda-busca')||{}).value||'').toLowerCase();
+  document.querySelectorAll('#ajuda-page-grid .help-page-card').forEach(function(el){el.style.display=((el.getAttribute('data-ajuda')||'')+el.textContent).toLowerCase().indexOf(q)>-1?'block':'none';});
+}
 
 // ====================================================
 // INIT
