@@ -213,6 +213,24 @@ textarea.form-control{resize:vertical;min-height:72px;}
 .fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
+
+/* ── AGENDAMENTO COM PACOTES ── */
+.ag-type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.ag-type-card{border:1.5px solid var(--line);background:#fff;border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:.15s;min-height:82px;display:flex;gap:10px;align-items:flex-start;}
+.ag-type-card:hover{border-color:var(--sage);background:var(--sage-light);}
+.ag-type-card.active{border-color:var(--sage);background:var(--sage-light);box-shadow:0 0 0 3px rgba(74,103,65,.08);}
+.ag-radio-dot{width:18px;height:18px;border:1.5px solid var(--line-strong);border-radius:50%;flex-shrink:0;margin-top:2px;position:relative;background:#fff;}
+.ag-type-card.active .ag-radio-dot{border-color:var(--sage);}
+.ag-type-card.active .ag-radio-dot::after{content:'';position:absolute;inset:4px;background:var(--sage);border-radius:50%;}
+.ag-type-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.ag-type-desc{font-size:11.2px;color:var(--ink-soft);line-height:1.4;}
+.ag-package-box{display:none;background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:var(--radius-sm);padding:14px;margin:10px 0 14px;}
+.ag-package-box.open{display:block;}
+.ag-package-box.gold{background:var(--gold-light);border-color:var(--gold-pale);}
+.ag-summary{font-size:12px;color:var(--sage-deep);background:#fff;border:1px dashed var(--sage-pale);border-radius:var(--radius-sm);padding:10px;margin-top:8px;line-height:1.5;}
+.ag-summary strong{font-weight:700;}
+@media(max-width:660px){.ag-type-grid{grid-template-columns:1fr;}}
+
 /* ── MODAL ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(26,26,24,.5);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px);}
 .overlay.open{display:flex;}
@@ -752,17 +770,57 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
 <!-- MODAL: AGENDAMENTO -->
 <div class="overlay" id="modal-ag">
-  <div class="modal">
+  <div class="modal" style="max-width:720px;">
     <h3 class="modal-title">Novo agendamento</h3>
-    <div class="form-group"><label class="form-label">Cliente</label><select id="ag-cli-sel" class="form-control"><option value="">Selecionar cliente...</option></select>
-    </div>
-    <div class="form-group"><label class="form-label">Procedimento</label><select id="ag-proc-sel" class="form-control"><option value="">Selecionar procedimento...</option></select>
-    </div>
     <div class="fr2">
-      <div class="form-group"><label class="form-label">Data</label><input type="date" id="ag-data-input"></div>
+      <div class="form-group"><label class="form-label">Cliente</label><select id="ag-cli-sel" class="form-control" onchange="atualizarCamposPacoteAgendamento()"><option value="">Selecionar cliente...</option></select></div>
+      <div class="form-group"><label class="form-label">Procedimento</label><select id="ag-proc-sel" class="form-control" onchange="atualizarCamposPacoteAgendamento()"><option value="">Selecionar procedimento...</option></select></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tipo de atendimento</label>
+      <div class="ag-type-grid">
+        <div class="ag-type-card active" id="ag-tipo-avulso-card" onclick="setTipoAtendimentoAg('avulso')">
+          <span class="ag-radio-dot"></span>
+          <div><div class="ag-type-title">Avulso</div><div class="ag-type-desc">Apenas agenda o atendimento, sem controlar pacote.</div></div>
+        </div>
+        <div class="ag-type-card" id="ag-tipo-novo-card" onclick="setTipoAtendimentoAg('novo')">
+          <span class="ag-radio-dot"></span>
+          <div><div class="ag-type-title">Primeira venda</div><div class="ag-type-desc">Cria o pacote do cliente junto com o agendamento.</div></div>
+        </div>
+        <div class="ag-type-card" id="ag-tipo-existente-card" onclick="setTipoAtendimentoAg('existente')">
+          <span class="ag-radio-dot"></span>
+          <div><div class="ag-type-title">Usar pacote</div><div class="ag-type-desc">Desconta sessões de um pacote ativo do cliente.</div></div>
+        </div>
+      </div>
+      <input type="hidden" id="ag-tipo-atendimento" value="avulso">
+    </div>
+
+    <div class="ag-package-box" id="ag-pacote-novo-box">
+      <div style="font-size:13px;font-weight:700;color:var(--sage-deep);margin-bottom:10px;">Dados do pacote que será criado automaticamente</div>
+      <div class="fr3">
+        <div class="form-group"><label class="form-label">Total de sessões</label><input type="number" id="ag-pac-total" class="form-control" value="10" min="1" oninput="atualizarResumoPacoteAgendamento()"></div>
+        <div class="form-group"><label class="form-label">Valor pago (R$)</label><input type="number" id="ag-pac-preco" class="form-control" value="0" min="0" oninput="atualizarResumoPacoteAgendamento()"></div>
+        <div class="form-group"><label class="form-label">Sessões usadas hoje</label><input type="number" id="ag-pac-usadas" class="form-control" value="1" min="0" oninput="atualizarResumoPacoteAgendamento()"></div>
+      </div>
+      <div class="ag-summary" id="ag-pac-novo-resumo">Ao salvar, o pacote será criado para este cliente.</div>
+    </div>
+
+    <div class="ag-package-box gold" id="ag-pacote-existente-box">
+      <div class="form-group"><label class="form-label">Pacote ativo do cliente</label><select id="ag-pac-existente-sel" class="form-control" onchange="atualizarResumoPacoteAgendamento()"><option value="">Selecione cliente e procedimento...</option></select></div>
+      <div class="fr2">
+        <div class="form-group"><label class="form-label">Sessões usadas hoje</label><input type="number" id="ag-pac-existente-usadas" class="form-control" value="1" min="1" oninput="atualizarResumoPacoteAgendamento()"></div>
+        <div class="form-group"><label class="form-label">Saldo após atendimento</label><input type="text" id="ag-pac-existente-saldo" class="form-control" value="—" readonly></div>
+      </div>
+      <div class="ag-summary" id="ag-pac-existente-resumo">O sistema buscará pacotes ativos deste cliente para o procedimento escolhido.</div>
+    </div>
+
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Data</label><input type="date" id="ag-data-input" class="form-control"></div>
       <div class="form-group"><label class="form-label">Horário</label><input type="time" id="ag-hora-input" class="form-control" value="09:00"></div>
     </div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-ag')">Cancelar</button><button class="btn btn-primary" onclick="salvarAgendamento()">Agendar</button></div>
+    <div class="form-group"><label class="form-label">Observações</label><textarea id="ag-obs-input" class="form-control" placeholder="Opcional: preferências, cuidados, observações do atendimento..."></textarea></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-ag')">Cancelar</button><button class="btn btn-primary" onclick="salvarAgendamento()">Salvar agendamento</button></div>
   </div>
 </div>
 
@@ -848,6 +906,7 @@ try {
 // ====================================================
 var _clientes=[], _procs=[], _estoque=[], _agenda=[], _despesas=[], _movs=[];
 var _pacotes=[], _clientePacotes=[];
+var _reserva={meses_meta:6,percentual:20,acumulado:0,id:null};
 var _usarSessaoId=null;
 var _finExpanded=null, _reporId=null, _reporQtdAtual=0;
 var _movTipo='todos', _movPeriodo='semanal';
@@ -1375,27 +1434,151 @@ async function deletarAg(id){
   await carregarAgenda();
 }
 
+function limparFormAgendamento(){
+  var cli=document.getElementById('ag-cli-sel');if(cli)cli.value='';
+  var proc=document.getElementById('ag-proc-sel');if(proc)proc.value='';
+  var data=document.getElementById('ag-data-input');if(data)data.value=hoje();
+  var hora=document.getElementById('ag-hora-input');if(hora)hora.value='09:00';
+  var obs=document.getElementById('ag-obs-input');if(obs)obs.value='';
+  var total=document.getElementById('ag-pac-total');if(total)total.value='10';
+  var preco=document.getElementById('ag-pac-preco');if(preco)preco.value='0';
+  var usadas=document.getElementById('ag-pac-usadas');if(usadas)usadas.value='1';
+  var usadasEx=document.getElementById('ag-pac-existente-usadas');if(usadasEx)usadasEx.value='1';
+  setTipoAtendimentoAg('avulso');
+  atualizarCamposPacoteAgendamento();
+}
+
+function setTipoAtendimentoAg(tipo){
+  var input=document.getElementById('ag-tipo-atendimento');if(input)input.value=tipo;
+  ['avulso','novo','existente'].forEach(function(t){
+    var card=document.getElementById('ag-tipo-'+t+'-card');
+    if(card)card.classList.toggle('active',t===tipo);
+  });
+  var novo=document.getElementById('ag-pacote-novo-box');
+  var ex=document.getElementById('ag-pacote-existente-box');
+  if(novo)novo.classList.toggle('open',tipo==='novo');
+  if(ex)ex.classList.toggle('open',tipo==='existente');
+  atualizarCamposPacoteAgendamento();
+}
+
+function getPacotesAtivosAgendamento(){
+  var cliId=(document.getElementById('ag-cli-sel')||{}).value;
+  var procId=(document.getElementById('ag-proc-sel')||{}).value;
+  return _clientePacotes.filter(function(cp){
+    var total=Number(cp.total_sessoes||0), usadas=Number(cp.sessoes_usadas||0);
+    return cp.cliente_id===cliId && cp.procedimento_id===procId && usadas<total;
+  });
+}
+
+function atualizarCamposPacoteAgendamento(){
+  var tipo=(document.getElementById('ag-tipo-atendimento')||{}).value||'avulso';
+  var sel=document.getElementById('ag-pac-existente-sel');
+  if(sel){
+    var pacs=getPacotesAtivosAgendamento();
+    if(!pacs.length){
+      sel.innerHTML='<option value="">Nenhum pacote ativo para este procedimento</option>';
+    }else{
+      sel.innerHTML=pacs.map(function(cp){
+        var restam=Number(cp.total_sessoes||0)-Number(cp.sessoes_usadas||0);
+        return '<option value="'+cp.id+'">'+cp.pacote_nome+' · '+restam+' restante'+(restam===1?'':'s')+'</option>';
+      }).join('');
+    }
+  }
+  if(tipo==='existente'){
+    var pacsAtivos=getPacotesAtivosAgendamento();
+    if(!pacsAtivos.length){
+      var resumo=document.getElementById('ag-pac-existente-resumo');
+      if(resumo)resumo.innerHTML='Nenhum pacote ativo encontrado. Use <strong>Primeira venda</strong> para criar um novo pacote.';
+    }
+  }
+  atualizarResumoPacoteAgendamento();
+}
+
+function atualizarResumoPacoteAgendamento(){
+  var tipo=(document.getElementById('ag-tipo-atendimento')||{}).value||'avulso';
+  var procId=(document.getElementById('ag-proc-sel')||{}).value;
+  var proc=_procs.find(function(p){return p.id===procId;});
+  if(tipo==='novo'){
+    var total=parseInt((document.getElementById('ag-pac-total')||{}).value)||0;
+    var usadas=parseInt((document.getElementById('ag-pac-usadas')||{}).value)||0;
+    var restam=Math.max(0,total-usadas);
+    var resumo=document.getElementById('ag-pac-novo-resumo');
+    if(resumo)resumo.innerHTML='Ao salvar, será criado um pacote de <strong>'+total+' sessão(ões)</strong>'+(proc?' para <strong>'+proc.nome+'</strong>':'')+'. Após este atendimento, restarão <strong>'+restam+' sessão(ões)</strong>.';
+  }
+  if(tipo==='existente'){
+    var pacId=(document.getElementById('ag-pac-existente-sel')||{}).value;
+    var pac=_clientePacotes.find(function(cp){return cp.id===pacId;});
+    var usadasEx=parseInt((document.getElementById('ag-pac-existente-usadas')||{}).value)||0;
+    var saldoInput=document.getElementById('ag-pac-existente-saldo');
+    var resumoEx=document.getElementById('ag-pac-existente-resumo');
+    if(!pac){if(saldoInput)saldoInput.value='—';return;}
+    var saldo=Number(pac.total_sessoes||0)-Number(pac.sessoes_usadas||0);
+    var restam=Math.max(0,saldo-usadasEx);
+    if(saldoInput)saldoInput.value=restam+' sessão(ões)';
+    if(resumoEx)resumoEx.innerHTML='Pacote atual: <strong>'+saldo+' sessão(ões) disponíveis</strong>. Ao salvar, serão descontadas <strong>'+usadasEx+' sessão(ões)</strong>.';
+  }
+}
+
 async function salvarAgendamento(){
   var cliId=document.getElementById('ag-cli-sel').value;
   var procId=document.getElementById('ag-proc-sel').value;
   var data=document.getElementById('ag-data-input').value;
   var hora=document.getElementById('ag-hora-input').value;
+  var tipo=(document.getElementById('ag-tipo-atendimento')||{}).value||'avulso';
+  var obs=(document.getElementById('ag-obs-input')||{}).value||'';
   if(!cliId||!procId||!data||!hora){toast('Preencha cliente, procedimento, data e horário.','err');return;}
 
   // Verifica conflito: mesmo dia + mesmo horário, com agendamento ainda ativo
-  // (ignora os que já foram cancelados, já que o horário fica livre de novo)
   var {data:existentes}=await SB.from('agenda').select('id,status').eq('data',data).eq('hora',hora);
   var conflito=(existentes||[]).some(function(a){return a.status!=='cancelou';});
-  if(conflito){
-    toast('⚠ Já existe um agendamento neste dia e horário. Escolha outro horário.','err');
-    return;
-  }
+  if(conflito){toast('⚠ Já existe um agendamento neste dia e horário. Escolha outro horário.','err');return;}
 
   var cli=_clientes.find(function(c){return c.id===cliId;});
   var proc=_procs.find(function(p){return p.id===procId;});
-  await SB.from('agenda').insert({cliente_id:cliId,cliente_nome:cli.nome,procedimento_id:procId,procedimento_nome:proc.nome,data:data,hora:hora,status:'pendente'});
+  if(!cli||!proc){toast('Cliente ou procedimento não encontrado.','err');return;}
+
+  var pacoteMsg='';
+  if(tipo==='novo'){
+    var total=parseInt(document.getElementById('ag-pac-total').value)||0;
+    var preco=parseFloat(document.getElementById('ag-pac-preco').value)||0;
+    var usadas=parseInt(document.getElementById('ag-pac-usadas').value)||0;
+    if(total<=0){toast('Informe o total de sessões do pacote.','err');return;}
+    if(usadas<0||usadas>total){toast('Sessões usadas hoje não pode ser maior que o total do pacote.','err');return;}
+    var nomePacote=proc.nome+' - '+total+' sessões';
+    var resPac=await SB.from('cliente_pacotes').insert({
+      cliente_id:cliId,cliente_nome:cli.nome,
+      pacote_id:null,pacote_nome:nomePacote,
+      procedimento_id:procId,procedimento_nome:proc.nome,
+      total_sessoes:total,sessoes_usadas:usadas,preco_pago:preco
+    });
+    if(resPac.error){console.error('Erro ao criar pacote pelo agendamento:',resPac.error);toast(resPac.error.message,'err');alert(resPac.error.message);return;}
+    pacoteMsg=' Pacote criado com '+total+' sessões.'+(usadas?(' '+usadas+' sessão(ões) já contabilizada(s).'):'');
+  }
+
+  if(tipo==='existente'){
+    var pacId=document.getElementById('ag-pac-existente-sel').value;
+    var usadasEx=parseInt(document.getElementById('ag-pac-existente-usadas').value)||0;
+    var pac=_clientePacotes.find(function(cp){return cp.id===pacId;});
+    if(!pac){toast('Selecione um pacote ativo do cliente.','err');return;}
+    var saldo=Number(pac.total_sessoes||0)-Number(pac.sessoes_usadas||0);
+    if(usadasEx<=0){toast('Informe quantas sessões serão usadas hoje.','err');return;}
+    if(usadasEx>saldo){toast('Sessões usadas hoje não pode ser maior que o saldo disponível.','err');return;}
+    var novas=Number(pac.sessoes_usadas||0)+usadasEx;
+    var resUpd=await SB.from('cliente_pacotes').update({sessoes_usadas:novas}).eq('id',pac.id);
+    if(resUpd.error){console.error('Erro ao baixar sessão pelo agendamento:',resUpd.error);toast(resUpd.error.message,'err');alert(resUpd.error.message);return;}
+    pacoteMsg=' '+usadasEx+' sessão(ões) descontada(s) do pacote.';
+  }
+
+  var agObj={cliente_id:cliId,cliente_nome:cli.nome,procedimento_id:procId,procedimento_nome:proc.nome,data:data,hora:hora,status:'pendente'};
+  // Se a tabela agenda tiver coluna observacoes, o Supabase aceitará após ajuste de schema. Por compatibilidade, não enviamos por padrão.
+  var resAg=await SB.from('agenda').insert(agObj);
+  if(resAg.error){console.error('Erro ao criar agendamento:',resAg.error);toast(resAg.error.message,'err');alert(resAg.error.message);return;}
+
   closeModal('modal-ag');
-  await carregarAgenda();toast('Agendamento criado!');
+  limparFormAgendamento();
+  await Promise.all([carregarAgenda(),carregarSessoes()]);
+  renderDashboard();
+  toast('Agendamento criado!'+pacoteMsg);
 }
 
 // ====================================================
@@ -1970,6 +2153,10 @@ document.addEventListener('DOMContentLoaded',function(){
   document.documentElement.setAttribute('data-theme',temaSalvo==='floresta'?'':temaSalvo);
   document.getElementById('ag-filtro-data').value=hoje();
   document.getElementById('ag-data-input').value=hoje();
+  ['ag-cli-sel','ag-proc-sel','ag-pac-total','ag-pac-preco','ag-pac-usadas','ag-pac-existente-sel','ag-pac-existente-usadas'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.addEventListener('change',atualizarCamposPacoteAgendamento);
+  });
 
   // Restaurar estado da sidebar
   var s=document.getElementById('sidebar');
