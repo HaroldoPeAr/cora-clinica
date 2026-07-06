@@ -549,6 +549,46 @@ textarea.form-control{resize:vertical;min-height:72px;}
 @media(max-width:900px){.sf-login-shell{grid-template-columns:1fr}.sf-login-hero{display:none}.backup-grid{grid-template-columns:1fr 1fr}.sf-settings-grid,.help-page-grid{grid-template-columns:1fr}}
 @media(max-width:660px){.backup-grid{grid-template-columns:1fr}.sf-footer{padding-left:16px;padding-right:16px;flex-direction:column;align-items:flex-start}.help-panel{right:16px;bottom:82px}.help-fab{right:16px;bottom:16px}}
 
+
+/* ── STUDIOFLOW 1.0.1 · AJUSTES COMERCIAIS ── */
+/* Menu lateral enxuto: os módulos complementares ficam dentro de Clientes, Financeiro e Configurações */
+.sidebar-nav .nav-item[data-tab="movimentacoes"],
+.sidebar-nav .nav-item[data-tab="despesas"],
+.sidebar-nav .nav-item[data-tab="reserva"],
+.sidebar-nav .nav-item[data-tab="backup"],
+.sidebar-nav .nav-item[data-tab="ajuda"]{display:none!important;}
+
+.sf-logo-img,.clinic-logo-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:inherit;display:block;}
+.sidebar-mark img{width:32px;height:32px;object-fit:cover;border-radius:8px;background:#fff;}
+.sf-login-mark img{width:42px;height:42px;object-fit:cover;border-radius:12px;}
+
+.client-photo-mini{width:44px;height:44px;border-radius:14px;object-fit:cover;background:var(--sage-pale);flex-shrink:0;}
+.cli-item-main{display:flex;align-items:center;gap:12px;min-width:0;}
+.client-avatar.has-photo{background:none;overflow:hidden;}
+.client-avatar.has-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+
+.upload-card{border:1.5px dashed var(--line-strong);border-radius:14px;background:var(--bg);padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.upload-preview{width:72px;height:72px;border-radius:16px;background:var(--sage-light);border:1px solid var(--sage-pale);display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--sage-deep);font-family:'DM Serif Display',serif;font-size:20px;flex-shrink:0;}
+.upload-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+.upload-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.upload-actions input[type="file"]{font-size:12px;max-width:220px;}
+
+.sf-config-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.sf-config-tab{border:none;background:var(--bg);padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;color:var(--ink-soft);cursor:pointer;}
+.sf-config-tab.active{background:var(--sidebar);color:#fff;}
+.sf-config-section{display:none;}
+.sf-config-section.active{display:block;}
+
+.evolucao-form{display:grid;gap:12px;}
+.evolucao-photos{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.evolucao-preview{height:160px;border:1.5px dashed var(--line-strong);border-radius:14px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);overflow:hidden;font-size:12px;text-align:center;padding:12px;}
+.evolucao-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+.evolucao-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff;margin-top:10px;}
+.evolucao-card .before-after{margin-top:10px;}
+.ba-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+
+@media(max-width:660px){.evolucao-photos{grid-template-columns:1fr}.upload-card{align-items:flex-start;flex-direction:column}}
+
 </style>
 </head>
 <body>
@@ -566,7 +606,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
         </div>
         <div>
           <div class="sf-login-title">StudioFlow</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.62);font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Release 1.0</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.62);font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Gestão inteligente</div>
         </div>
       </div>
       <div class="sf-login-copy">
@@ -579,23 +619,23 @@ textarea.form-control{resize:vertical;min-height:72px;}
           <div class="sf-login-feature">Financeiro<span>Receita, custos e lucro</span></div>
         </div>
       </div>
-      <div class="sf-login-proof">Plano Fundadores: acesso completo por valor especial para os primeiros clientes que ajudarem a evoluir o StudioFlow.</div>
+      <div class="sf-login-proof sf-login-proof-clean">Tudo que sua clínica precisa para agenda, clientes, pacotes, financeiro e estoque em um único lugar.</div>
     </section>
     <section class="sf-login-panel">
       <div class="sf-login-card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
           <div>
-            <div class="login-name">Entrar no StudioFlow</div>
-            <p class="login-tagline">Acesse o painel da sua clínica.</p>
+            <div class="login-name">Bem-vindo!</div>
+            <p class="login-tagline">Entre para acessar sua clínica.</p>
           </div>
-          <span class="release-badge">v1.0</span>
+          
         </div>
         <div class="login-error" id="login-error"></div>
         <div class="form-group"><label class="form-label">E-mail</label><input type="email" id="login-email" class="form-control" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
         <div class="form-group"><label class="form-label">Senha</label><input type="password" id="login-senha" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
         <div class="sf-login-actions"><label><input type="checkbox" checked> Lembrar acesso</label><span class="sf-login-link" onclick="toast('Recuperação de senha entrará na próxima atualização.','ok')">Esqueci minha senha</span></div>
         <button class="btn btn-primary" style="width:100%;padding:12px;justify-content:center;font-size:13.5px;" onclick="fazerLogin()" id="btn-login">Entrar</button>
-        <div class="sf-login-version"><span>© StudioFlow</span><span>Status Online</span></div>
+        <div class="sf-login-version"><span>© 2026 StudioFlow</span><span>Gestão inteligente para negócios da beleza</span></div>
       </div>
     </section>
   </div>
@@ -642,7 +682,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
       </button>
       <button class="nav-item" onclick="showTab('sessoes',this)" data-tab="sessoes">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        <span class="nav-label">Sessões</span>
+        <span class="nav-label">Pacotes</span>
       </button>
       <button class="nav-item" onclick="showTab('movimentacoes',this)" data-tab="movimentacoes">
         <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M1 8h14M11 4l4 4-4 4M5 4L1 8l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -871,6 +911,19 @@ textarea.form-control{resize:vertical;min-height:72px;}
       <div id="fin-list"></div>
     </div>
     <div class="card"><div class="card-head"><h2>DRE do mês</h2></div><div id="fin-dre"></div></div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>Despesas</h2>
+          <span class="card-label">fixas e esporádicas em um só lugar</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="openDesp('fixa')">+ Despesa fixa</button>
+          <button class="btn btn-outline btn-sm" onclick="openDesp('variavel')">+ Despesa esporádica</button>
+        </div>
+      </div>
+      <div id="fin-despesas-resumo"></div>
+    </div>
   </div>
 
   <!-- DESPESAS -->
@@ -907,12 +960,17 @@ textarea.form-control{resize:vertical;min-height:72px;}
             <button class="seg-btn" data-tipo="entrada" onclick="setMovTipo('entrada')">Entrada</button>
             <button class="seg-btn" data-tipo="saida" onclick="setMovTipo('saida')">Saída</button>
           </div>
-          <div class="seg" id="mov-periodo-seg">
-            <button class="seg-btn active" data-periodo="semanal" onclick="setMovPeriodo('semanal')">Semanal</button>
-            <button class="seg-btn" data-periodo="mensal" onclick="setMovPeriodo('mensal')">Mensal</button>
-            <button class="seg-btn" data-periodo="trimestral" onclick="setMovPeriodo('trimestral')">Trimestral</button>
-            <button class="seg-btn" data-periodo="semestral" onclick="setMovPeriodo('semestral')">Semestral</button>
-            <button class="seg-btn" data-periodo="anual" onclick="setMovPeriodo('anual')">Anual</button>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <label style="font-size:11px;color:var(--ink-muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">De</label>
+            <input type="date" id="mov-data-inicio" class="form-control" style="width:145px;padding:7px 10px;" onchange="setMovPeriodoManual()">
+            <label style="font-size:11px;color:var(--ink-muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Até</label>
+            <input type="date" id="mov-data-fim" class="form-control" style="width:145px;padding:7px 10px;" onchange="setMovPeriodoManual()">
+          </div>
+          <div class="seg" id="mov-atalhos-seg">
+            <button class="seg-btn active" data-periodo="hoje" onclick="setMovAtalho('hoje')">Hoje</button>
+            <button class="seg-btn" data-periodo="semana" onclick="setMovAtalho('semana')">7 dias</button>
+            <button class="seg-btn" data-periodo="mes" onclick="setMovAtalho('mes')">Mês</button>
+            <button class="seg-btn" data-periodo="ano" onclick="setMovAtalho('ano')">Ano</button>
           </div>
         </div>
       </div>
@@ -951,27 +1009,59 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- CONFIGURAÇÕES -->
   <div class="view" id="view-configuracoes">
-    <div class="sf-rc-note"><strong>StudioFlow 1.0</strong> · Configure os dados da clínica para deixar o sistema com identidade profissional durante a apresentação e no uso diário.</div>
-    <div class="sf-settings-grid">
-      <div class="card">
-        <div class="card-head"><h2>Minha clínica</h2><span class="card-label">identidade do negócio</span></div>
-        <div class="form-group"><label class="form-label">Nome da clínica / studio</label><input id="cfg-nome" class="form-control" placeholder="Ex: Clínica Graziele Estética"></div>
-        <div class="fr2">
-          <div class="form-group"><label class="form-label">Telefone</label><input id="cfg-tel" class="form-control" placeholder="(11) 99999-9999"></div>
-          <div class="form-group"><label class="form-label">WhatsApp</label><input id="cfg-whats" class="form-control" placeholder="(11) 99999-9999"></div>
+    <div class="sf-rc-note"><strong>StudioFlow</strong> · Configure a identidade da clínica, módulos, backup e ajuda em um único lugar.</div>
+    <div class="sf-config-tabs">
+      <button class="sf-config-tab active" onclick="abrirConfigAba('clinica',this)">Clínica</button>
+      <button class="sf-config-tab" onclick="abrirConfigAba('aparencia',this)">Aparência</button>
+      <button class="sf-config-tab" onclick="abrirConfigAba('backup',this)">Backup</button>
+      <button class="sf-config-tab" onclick="abrirConfigAba('ajuda',this)">Ajuda</button>
+    </div>
+
+    <div class="sf-config-section active" id="cfg-section-clinica">
+      <div class="sf-settings-grid">
+        <div class="card">
+          <div class="card-head"><h2>Minha clínica</h2><span class="card-label">dados principais</span></div>
+          <div class="form-group"><label class="form-label">Nome da clínica / studio</label><input id="cfg-nome" class="form-control" placeholder="Ex: Clínica Graziele Estética"></div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">Telefone</label><input id="cfg-tel" class="form-control" placeholder="(11) 99999-9999"></div>
+            <div class="form-group"><label class="form-label">WhatsApp</label><input id="cfg-whats" class="form-control" placeholder="(11) 99999-9999"></div>
+          </div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">E-mail</label><input id="cfg-email" class="form-control" placeholder="contato@clinica.com"></div>
+            <div class="form-group"><label class="form-label">E-mail financeiro</label><input id="cfg-email-fin" class="form-control" placeholder="financeiro@clinica.com"></div>
+          </div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">Instagram</label><input id="cfg-insta" class="form-control" placeholder="@sua_clinica"></div>
+            <div class="form-group"><label class="form-label">Responsável</label><input id="cfg-resp" class="form-control" placeholder="Nome do responsável"></div>
+          </div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">CNPJ</label><input id="cfg-cnpj" class="form-control" placeholder="00.000.000/0000-00"></div>
+            <div class="form-group"><label class="form-label">Site</label><input id="cfg-site" class="form-control" placeholder="www.suaclinica.com.br"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Endereço</label><input id="cfg-end" class="form-control" placeholder="Rua, número, cidade"></div>
+          <div class="form-group"><label class="form-label">Horário de funcionamento</label><input id="cfg-horario" class="form-control" placeholder="Segunda a sexta, 08h às 18h"></div>
+          <div class="form-group"><label class="form-label">Slogan</label><input id="cfg-slogan" class="form-control" placeholder="Ex: Realçando sua beleza natural"></div>
+          <button class="btn btn-primary" onclick="salvarConfigClinica()">Salvar configurações</button>
         </div>
-        <div class="fr2">
-          <div class="form-group"><label class="form-label">Instagram</label><input id="cfg-insta" class="form-control" placeholder="@sua_clinica"></div>
-          <div class="form-group"><label class="form-label">Responsável</label><input id="cfg-resp" class="form-control" placeholder="Nome do responsável"></div>
+        <div class="card">
+          <div class="card-head"><h2>Logo da clínica</h2><span class="card-label">aparece no sistema</span></div>
+          <div class="upload-card">
+            <div class="upload-preview" id="cfg-logo-preview">SF</div>
+            <div style="flex:1;min-width:0;">
+              <div class="li-name">Identidade visual</div>
+              <div class="li-sub" style="margin-bottom:10px;">Use PNG ou JPG. A logo será exibida no login e no menu lateral.</div>
+              <div class="upload-actions"><input type="file" id="cfg-logo-file" accept="image/*" onchange="previewImagemInput(this,'cfg-logo-preview')"></div>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Cor principal</label><input id="cfg-cor" class="form-control" type="color" value="#4A6741"></div>
+          <p class="empty-state">O StudioFlow mantém sua marca de forma discreta, enquanto a clínica aparece como protagonista para a equipe.</p>
         </div>
-        <div class="form-group"><label class="form-label">Endereço</label><input id="cfg-end" class="form-control" placeholder="Rua, número, cidade"></div>
-        <div class="form-group"><label class="form-label">Horário de funcionamento</label><input id="cfg-horario" class="form-control" placeholder="Segunda a sexta, 08h às 18h"></div>
-        <button class="btn btn-primary" onclick="salvarConfigClinica()">Salvar configurações</button>
       </div>
+    </div>
+
+    <div class="sf-config-section" id="cfg-section-aparencia">
       <div class="card">
-        <div class="card-head"><h2>Marca e módulos</h2><span class="card-label">versão comercial</span></div>
-        <div class="sf-logo-preview" id="cfg-logo-preview">StudioFlow</div>
-        <p class="empty-state">Na V1, a identidade fica salva neste navegador. Na próxima versão, essas configurações poderão ser salvas no Supabase por clínica.</p>
+        <div class="card-head"><h2>Módulos e experiência</h2><span class="card-label">visão da versão comercial</span></div>
         <div class="sf-check-grid">
           <label class="sf-check-card"><input type="checkbox" checked> Agenda</label>
           <label class="sf-check-card"><input type="checkbox" checked> Cliente 360º</label>
@@ -979,6 +1069,31 @@ textarea.form-control{resize:vertical;min-height:72px;}
           <label class="sf-check-card"><input type="checkbox" checked> Pacotes</label>
           <label class="sf-check-card"><input type="checkbox" checked> Estoque</label>
           <label class="sf-check-card"><input type="checkbox"> WhatsApp Pro</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="sf-config-section" id="cfg-section-backup">
+      <div class="sf-rc-note"><strong>Backup básico</strong> · Exporte seus dados em CSV para segurança e conferência.</div>
+      <div class="backup-grid">
+        <div class="backup-card"><strong>Clientes</strong><p>Exporta nome, telefone, e-mail e observações.</p><button class="btn btn-outline" onclick="exportarCSV('clientes')">Exportar CSV</button></div>
+        <div class="backup-card"><strong>Agenda</strong><p>Exporta data, hora, cliente, procedimento e status.</p><button class="btn btn-outline" onclick="exportarCSV('agenda')">Exportar CSV</button></div>
+        <div class="backup-card"><strong>Financeiro</strong><p>Exporta despesas e movimentações financeiras disponíveis.</p><button class="btn btn-outline" onclick="exportarCSV('financeiro')">Exportar CSV</button></div>
+        <div class="backup-card"><strong>Estoque</strong><p>Exporta produtos, quantidades, mínimos e custos.</p><button class="btn btn-outline" onclick="exportarCSV('estoque')">Exportar CSV</button></div>
+      </div>
+    </div>
+
+    <div class="sf-config-section" id="cfg-section-ajuda">
+      <div class="card">
+        <div class="card-head"><h2>Central de Ajuda StudioFlow</h2><span class="card-label">guia rápido da versão 1.0</span></div>
+        <input id="ajuda-busca" class="form-control" placeholder="Pesquisar ajuda..." oninput="filtrarAjudaPagina()" style="margin-bottom:14px;">
+        <div class="help-page-grid" id="ajuda-page-grid">
+          <div class="help-page-card" data-ajuda="cliente cadastro"><h3>Como cadastrar cliente</h3><p>Vá em Clientes, clique em Novo cliente, preencha os dados principais e salve. Depois use o botão Ver 360º para acessar a ficha completa.</p></div>
+          <div class="help-page-card" data-ajuda="agenda pacote venda"><h3>Como vender pacote pela agenda</h3><p>Na Agenda, clique em Agendar, escolha o cliente e o procedimento. Em tipo de atendimento selecione Primeira venda de pacote.</p></div>
+          <div class="help-page-card" data-ajuda="sessão pacote baixa"><h3>Como baixar sessão</h3><p>Ao confirmar um atendimento vinculado a pacote, o StudioFlow atualiza as sessões automaticamente. Também é possível usar sessão manual na tela Pacotes.</p></div>
+          <div class="help-page-card" data-ajuda="financeiro despesa receita"><h3>Como acompanhar financeiro</h3><p>Acesse Financeiro para ver receita bruta, custos, despesas e lucro líquido. Em Despesas, cadastre contas fixas e variáveis.</p></div>
+          <div class="help-page-card" data-ajuda="estoque produto mínimo"><h3>Como controlar estoque</h3><p>Cadastre os produtos, configure quantidade mínima e custo. O sistema mostra alerta quando o item está abaixo do mínimo.</p></div>
+          <div class="help-page-card" data-ajuda="backup exportar csv"><h3>Como fazer backup</h3><p>Use Configurações → Backup e exporte os dados principais em CSV. Guarde os arquivos em local seguro.</p></div>
         </div>
       </div>
     </div>
@@ -1012,7 +1127,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
   </div>
 
     </div><!-- /content -->
-    <div class="sf-footer"><span><span class="sf-status-dot"></span>StudioFlow 1.0 · Online</span><span>©2026 StudioFlow · Release Candidate</span></div>
+    <div class="sf-footer"><span><span class="sf-status-dot"></span>StudioFlow</span><span>©2026 StudioFlow</span></div>
   </main><!-- /main -->
 </div><!-- /layout -->
 </div><!-- /app -->
@@ -1024,6 +1139,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <div class="modal">
     <h3 class="modal-title" id="modal-cli-title">Novo cliente</h3>
     <input type="hidden" id="cli-id-edit">
+    <div class="upload-card"><div class="upload-preview" id="cli-foto-preview">CL</div><div style="flex:1"><div class="li-name">Foto do cliente</div><div class="li-sub" style="margin-bottom:10px;">Aparece no Cliente 360º e nas listas.</div><input type="file" id="cli-foto-file" accept="image/*" onchange="previewImagemInput(this,'cli-foto-preview')"></div></div>
     <div class="form-group"><label class="form-label">Nome completo</label><input type="text" id="cli-nome" class="form-control" placeholder="Nome da cliente"></div>
     <div class="fr2">
       <div class="form-group"><label class="form-label">Telefone</label><input type="tel" id="cli-tel" class="form-control" placeholder="(11) 99999-9999"></div>
@@ -1206,6 +1322,34 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
 
 
+<!-- MODAL: EVOLUÇÃO / ANTES E DEPOIS -->
+<div class="overlay" id="modal-evolucao">
+  <div class="modal">
+    <h3 class="modal-title">Adicionar evolução</h3>
+    <input type="hidden" id="evo-cliente-id">
+    <div class="evolucao-form">
+      <div class="fr2">
+        <div class="form-group"><label class="form-label">Título</label><input id="evo-titulo" class="form-control" placeholder="Ex: Evolução corporal"></div>
+        <div class="form-group"><label class="form-label">Procedimento</label><select id="evo-proc-sel" class="form-control"><option value="">Selecionar...</option></select></div>
+      </div>
+      <div class="evolucao-photos">
+        <div>
+          <label class="form-label">Foto Antes</label>
+          <div class="evolucao-preview" id="evo-antes-preview">Selecionar foto antes</div>
+          <input type="file" id="evo-antes-file" accept="image/*" class="form-control" onchange="previewImagemInput(this,'evo-antes-preview')">
+        </div>
+        <div>
+          <label class="form-label">Foto Depois</label>
+          <div class="evolucao-preview" id="evo-depois-preview">Selecionar foto depois</div>
+          <input type="file" id="evo-depois-file" accept="image/*" class="form-control" onchange="previewImagemInput(this,'evo-depois-preview')">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Observações</label><textarea id="evo-obs" class="form-control" placeholder="Observações da evolução, retorno recomendado, medidas..."></textarea></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-evolucao')">Cancelar</button><button class="btn btn-primary" onclick="salvarEvolucao()">Salvar evolução</button></div>
+  </div>
+</div>
+
 <!-- AJUDA FLUTUANTE -->
 <button class="help-fab" onclick="toggleHelpWidget()" title="Ajuda StudioFlow">?</button>
 <div class="help-panel" id="help-panel">
@@ -1217,7 +1361,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
       <div class="help-item" data-help="agenda pacote venda"><strong>Vender pacote na agenda</strong><span>Agenda → Agendar → Primeira venda de pacote.</span></div>
       <div class="help-item" data-help="sessão baixa"><strong>Baixar sessão</strong><span>Confirme o atendimento ou use sessão manual.</span></div>
       <div class="help-item" data-help="financeiro"><strong>Ver financeiro</strong><span>Acompanhe receita, despesas e lucro.</span></div>
-      <div class="help-item" data-help="backup"><strong>Exportar backup</strong><span>Menu Backup → Exportar CSV.</span></div>
+      <div class="help-item" data-help="backup"><strong>Exportar backup</strong><span>Configurações → Backup → Exportar CSV.</span></div>
     </div>
   </div>
 </div>
@@ -1244,7 +1388,7 @@ var _pacotes=[], _clientePacotes=[];
 var _reserva={meses_meta:6,percentual:20,acumulado:0,id:null};
 var _usarSessaoId=null;
 var _finExpanded=null, _reporId=null, _reporQtdAtual=0;
-var _movTipo='todos', _movPeriodo='semanal';
+var _movTipo='todos', _movPeriodo='hoje', _movInicio=null, _movFim=null;
 var _agendaView='dia';
 
 // ====================================================
@@ -1297,6 +1441,63 @@ document.querySelectorAll('.overlay').forEach(function(el){
   el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});
 });
 
+
+// ====================================================
+// UPLOAD DE IMAGENS · SUPABASE STORAGE
+// ====================================================
+var _configClinica={};
+var _evolucoes=[];
+var STORAGE_BUCKET='fotos';
+
+function extensaoArquivo(nome){
+  var p=(nome||'').split('.');
+  return (p.length>1?p.pop():'jpg').toLowerCase();
+}
+
+async function uploadImagem(file,pasta){
+  if(!file)return null;
+  if(!SB){toast('Supabase não configurado.','err');return null;}
+  var ext=extensaoArquivo(file.name);
+  var path=(pasta||'uploads')+'/'+Date.now()+'_'+Math.random().toString(36).slice(2)+'.'+ext;
+  var res=await SB.storage.from(STORAGE_BUCKET).upload(path,file,{cacheControl:'3600',upsert:true});
+  if(res.error){console.error('Erro no upload:',res.error);toast(res.error.message,'err');return null;}
+  var pub=SB.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+  return pub.data.publicUrl;
+}
+
+function previewImagemInput(input,previewId){
+  var prev=document.getElementById(previewId);if(!prev||!input.files||!input.files[0])return;
+  var url=URL.createObjectURL(input.files[0]);
+  prev.innerHTML='<img src="'+url+'" alt="Prévia">';
+}
+
+function imgOrInitial(url,txt,cls){
+  if(url)return '<img class="'+(cls||'')+'" src="'+url+'" alt="Foto">';
+  return txt||'';
+}
+
+function aplicarConfigVisual(){
+  var c=_configClinica||getConfigClinica();
+  var logo=c.logo_url||c.logoUrl||'';
+  var nome=c.nome_clinica||c.nome||'StudioFlow';
+  var prev=document.getElementById('cfg-logo-preview');
+  if(prev)prev.innerHTML=logo?'<img src="'+logo+'" alt="Logo da clínica">':(nome||'StudioFlow');
+  var loginMark=document.querySelector('.sf-login-mark');
+  if(loginMark&&logo)loginMark.innerHTML='<img src="'+logo+'" alt="Logo">';
+  var sideMark=document.querySelector('.sidebar-mark');
+  if(sideMark&&logo)sideMark.innerHTML='<img src="'+logo+'" alt="Logo">';
+  var sub=document.getElementById('page-sub');
+  if(sub&&c.nome_clinica)sub.textContent=c.nome_clinica+' · '+(PAGE_TITLES.dashboard?PAGE_TITLES.dashboard[1]:'');
+  if(c.cor_primaria){document.documentElement.style.setProperty('--sage',c.cor_primaria);}
+}
+
+function abrirConfigAba(aba,btn){
+  document.querySelectorAll('.sf-config-section').forEach(function(x){x.classList.remove('active');});
+  var sec=document.getElementById('cfg-section-'+aba);if(sec)sec.classList.add('active');
+  document.querySelectorAll('.sf-config-tab').forEach(function(x){x.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+}
+
 var PAGE_TITLES={
   dashboard:['Dashboard','Visão geral do seu negócio hoje'],
   clientes:['Clientes','Cadastro e histórico de atendimentos'],
@@ -1307,7 +1508,7 @@ var PAGE_TITLES={
   financeiro:['Financeiro','Resultado real do mês'],
   despesas:['Despesas','Fixas e variáveis'],
   movimentacoes:['Movimentações','Histórico de entradas e saídas'],
-  sessoes:['Sessões','Pacotes e controle de sessões por cliente'],
+  sessoes:['Pacotes','Pacotes e controle de sessões por cliente'],
   configuracoes:['Configurações','Identidade da clínica e preferências do StudioFlow'],
   backup:['Backup','Exportação simples dos dados principais'],
   ajuda:['Ajuda','Central de suporte e primeiros passos'],
@@ -1358,6 +1559,7 @@ function mostrarApp(user){
   var saud=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
   var greetEl=document.getElementById('dash-greeting');
   if(greetEl)greetEl.textContent=saud;
+  carregarConfigClinica();
   carregarTudo();
 }
 
@@ -1373,7 +1575,7 @@ async function fazerLogout(){
 // ====================================================
 async function carregarTudo(){
   // Carrega tudo em paralelo, estoque incluído
-  await Promise.all([carregarClientes(),carregarProcs(),carregarEstoque(),carregarDespesas(),carregarReserva(),carregarSessoes()]);
+  await Promise.all([carregarClientes(),carregarProcs(),carregarEstoque(),carregarDespesas(),carregarReserva(),carregarSessoes(),carregarEvolucoes()]);
   await Promise.all([carregarAgenda(),carregarMovs()]);
   // Recarrega estoque após movimentações para garantir qtd atualizada no dashboard
   await carregarEstoqueSilencioso();
@@ -1412,7 +1614,7 @@ function renderClientes(){
     var pacs=_clientePacotes.filter(function(p){return p.cliente_id===c.id && Number(p.sessoes_usadas||0)<Number(p.total_sessoes||0);}).length;
     var meta=[]; if(c.telefone)meta.push(c.telefone); if(c.email)meta.push(c.email); if(ag)meta.push(ag+' atendimento'+(ag>1?'s':'')); if(pacs)meta.push(pacs+' pacote'+(pacs>1?'s':'')+' ativo'+(pacs>1?'s':''));
     return '<div class="cli-item">'+
-      '<div><div class="cli-name">'+(c.nome||'Cliente')+'</div><div class="cli-meta">'+(meta.join(' · ')||'Sem informações adicionais')+'</div></div>'+ 
+      '<div class="cli-item-main">'+(c.foto_url?'<img class="client-photo-mini" src="'+c.foto_url+'" alt="Foto">':'<div class="client-photo-mini" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--sage-deep);">'+iniciaisNome(c.nome)+'</div>')+'<div><div class="cli-name">'+(c.nome||'Cliente')+'</div><div class="cli-meta">'+(meta.join(' · ')||'Sem informações adicionais')+'</div></div></div>'+ 
       '<div style="display:flex;gap:6px;flex-wrap:wrap;">'+
         '<button class="btn btn-primary btn-sm" onclick="abrirCliente360(\''+c.id+'\')">Ver 360º</button>'+ 
         '<button class="btn btn-outline btn-sm" onclick="editarCliente(\''+c.id+'\')">Editar</button>'+ 
@@ -1431,14 +1633,21 @@ async function salvarCliente(){
   var nome=document.getElementById('cli-nome').value.trim();
   if(!nome){toast('Preencha o nome.','err');return;}
   var obj={nome:nome,telefone:document.getElementById('cli-tel').value.trim(),email:document.getElementById('cli-email').value.trim(),data_nascimento:document.getElementById('cli-nasc').value||null,observacoes:document.getElementById('cli-obs').value.trim()};
-  if(id){await SB.from('clientes').update(obj).eq('id',id);}
-  else{await SB.from('clientes').insert(obj);}
+  var fotoFile=(document.getElementById('cli-foto-file')||{}).files;
+  if(fotoFile&&fotoFile[0]){
+    var fotoUrl=await uploadImagem(fotoFile[0],'clientes');
+    if(fotoUrl)obj.foto_url=fotoUrl;
+  }
+  var res=id?await SB.from('clientes').update(obj).eq('id',id):await SB.from('clientes').insert(obj);
+  if(res.error){console.error('Erro ao salvar cliente:',res.error);toast(res.error.message,'err');return;}
   closeModal('modal-cli');limparFormCli();
   await carregarClientes();toast('Cliente salvo!');
 }
 
 function limparFormCli(){
   ['cli-id-edit','cli-nome','cli-tel','cli-email','cli-nasc','cli-obs'].forEach(function(id){document.getElementById(id).value='';});
+  var f=document.getElementById('cli-foto-file');if(f)f.value='';
+  var prev=document.getElementById('cli-foto-preview');if(prev)prev.innerHTML='CL';
   document.getElementById('modal-cli-title').textContent='Novo cliente';
 }
 
@@ -1450,6 +1659,8 @@ function editarCliente(id){
   document.getElementById('cli-email').value=c.email||'';
   document.getElementById('cli-nasc').value=c.data_nascimento||'';
   document.getElementById('cli-obs').value=c.observacoes||'';
+  var prev=document.getElementById('cli-foto-preview');if(prev)prev.innerHTML=c.foto_url?'<img src="'+c.foto_url+'" alt="Foto">':iniciaisNome(c.nome);
+  var f=document.getElementById('cli-foto-file');if(f)f.value='';
   document.getElementById('modal-cli-title').textContent='Editar cliente';
   openModal('modal-cli');
 }
@@ -1477,6 +1688,7 @@ function renderCliente360(id){
   var ags=_agenda.filter(function(a){return a.cliente_id===id;}).sort(function(a,b){return (b.data+b.hora).localeCompare(a.data+a.hora);});
   var futuros=ags.filter(function(a){return a.data>=hoje()&&a.status!=='cancelou';}).sort(function(a,b){return (a.data+a.hora).localeCompare(b.data+b.hora);});
   var pacs=_clientePacotes.filter(function(p){return p.cliente_id===id;});
+  var evos=(_evolucoes||[]).filter(function(e){return e.cliente_id===id;});
   var ativos=pacs.filter(function(p){return Number(p.sessoes_usadas||0)<Number(p.total_sessoes||0);});
   var pago=pacs.reduce(function(s,p){return s+Number(p.preco_pago||0);},0);
   var realizados=ags.filter(function(a){return a.status==='confirmado';}).length;
@@ -1498,13 +1710,13 @@ function renderCliente360(id){
   wrap.innerHTML=
   '<div class="client360-grid">'+
     '<div class="client360-card client360-hero">'+
-      '<div class="client-avatar">'+iniciaisNome(c.nome)+'</div>'+
+      '<div class="client-avatar '+(c.foto_url?'has-photo':'')+'">'+(c.foto_url?'<img src="'+c.foto_url+'" alt="Foto">':iniciaisNome(c.nome))+'</div>'+
       '<div style="flex:1;min-width:0;">'+
         '<button class="btn btn-outline btn-sm" onclick="showTab(\'clientes\',document.querySelector(\'[data-tab=clientes]\'))" style="margin-bottom:12px;">← Voltar para clientes</button>'+ 
         '<div class="client360-name">'+(c.nome||'Cliente')+' <span class="pill pill-green">Cliente ativo</span></div>'+ 
         '<div class="client360-meta">'+telefone+email+nasc+'<div>📝 '+obs+'</div></div>'+ 
         '<div class="client360-tabs"><button class="client360-tab active">Visão geral</button><button class="client360-tab">Histórico clínico</button><button class="client360-tab">Evolução</button><button class="client360-tab">Documentos</button></div>'+ 
-        '<div class="client360-actions"><button class="btn btn-primary" onclick="abrirNovoAgendamento()">+ Agendar</button><button class="btn btn-outline" onclick="openModal(\'modal-cli-pacote\')">+ Pacote</button><button class="btn btn-outline" onclick="editarCliente(\''+c.id+'\')">Editar cliente</button></div>'+ 
+        '<div class="client360-actions"><button class="btn btn-primary" onclick="abrirNovoAgendamento()">+ Agendar</button><button class="btn btn-outline" onclick="openModal(\'modal-cli-pacote\')">+ Pacote</button><button class="btn btn-outline" onclick="abrirModalEvolucao(\''+c.id+'\')">+ Evolução</button><button class="btn btn-outline" onclick="editarCliente(\''+c.id+'\')">Editar cliente</button></div>'+ 
       '</div>'+ 
     '</div>'+ 
     '<div class="client360-card">'+
@@ -1528,9 +1740,8 @@ function renderCliente360(id){
       '<div class="timeline">'+(timeline.length?timeline.slice(0,8).map(function(t){return '<div class="timeline-item"><div class="timeline-dot" style="background:'+(t.tipo==='money'?'var(--gold)':t.tipo==='ok'?'var(--sage)':'#6EA8D8')+'"></div><div class="timeline-date">'+fmtData(t.data)+(t.hora?' · '+t.hora:'')+'</div><div class="timeline-title">'+t.titulo+'</div><div class="timeline-sub">'+t.sub+'</div></div>';}).join(''):'<p class="empty-state">Nenhum histórico encontrado.</p>')+'</div>'+ 
     '</div>'+ 
     '<div class="client360-card">'+
-      '<div class="card-head"><h2>Evolução / Antes e Depois</h2><button class="btn btn-outline btn-sm">Ver todas</button></div>'+ 
-      '<div class="before-after"><div class="ba-photo"><span class="ba-tag">Antes</span></div><div class="ba-photo after"><span class="ba-tag">Depois</span></div></div>'+ 
-      '<div class="client360-alert ok" style="margin-top:12px;"><strong>Evolução:</strong> registre fotos, observações e retorno recomendado.</div>'+ 
+      '<div class="card-head"><h2>Evolução / Antes e Depois</h2><button class="btn btn-outline btn-sm" onclick="abrirModalEvolucao(\''+c.id+'\')">+ Adicionar</button></div>'+ 
+      (evos.length?evos.slice(0,2).map(function(e){return '<div class="evolucao-card"><div class="li-name">'+(e.titulo||e.procedimento_nome||'Evolução')+'</div><div class="li-sub">'+fmtDt(e.criado_em)+'</div><div class="before-after"><div class="ba-photo">'+(e.foto_antes_url?'<img src="'+e.foto_antes_url+'" alt="Antes">':'<span class="ba-tag">Antes</span>')+'</div><div class="ba-photo after">'+(e.foto_depois_url?'<img src="'+e.foto_depois_url+'" alt="Depois">':'<span class="ba-tag">Depois</span>')+'</div></div><div class="li-sub" style="margin-top:8px;">'+(e.observacoes||'')+'</div></div>';}).join(''):'<div class="client360-alert ok"><strong>Evolução:</strong> adicione fotos de antes e depois para acompanhar o progresso.</div>')+ 
     '</div>'+ 
     '<div class="client360-card">'+
       '<div class="card-head"><h2>Alertas e lembretes</h2></div>'+ 
@@ -2308,7 +2519,23 @@ function renderDespesas(){
     }).join('');
   }
   rl(fixas,'desp-fix-list');rl(vars,'desp-var-list');
+  renderDespesasFinanceiro(fixas,vars,tf,tv);
   renderFin();renderReserva();renderDashboard();
+}
+
+function renderDespesasFinanceiro(fixas,vars,tf,tv){
+  var el=document.getElementById('fin-despesas-resumo');
+  if(!el)return;
+  function bloco(titulo,list,total,tipo){
+    var ult=list.slice(0,4).map(function(d){
+      var dias=diasParaVencer(d.vencimento);
+      var badge=dias===null?'':(dias<0?'<span class="pill pill-red">vencida</span>':dias<=5?'<span class="pill pill-gold">vence em '+dias+'d</span>':'<span class="pill" style="background:var(--line);color:var(--ink-soft);">'+fmtData(d.vencimento)+'</span>');
+      return '<div class="list-item"><div><div class="li-name">'+d.nome+'</div><div class="li-sub">'+(d.categoria||'Sem categoria')+'</div></div><div class="li-actions">'+badge+'<span class="mono" style="font-size:13px;">'+R(d.valor)+'</span></div></div>';
+    }).join('');
+    if(!ult)ult='<p class="empty-state">Nenhuma despesa '+(tipo==='fixa'?'fixa':'esporádica')+' cadastrada.</p>';
+    return '<div class="card" style="box-shadow:none;margin:0;border-radius:12px;"><div class="card-head"><h2>'+titulo+'</h2><span class="mono" style="font-size:13px;font-weight:700;">'+R(total)+'</span></div>'+ult+'</div>';
+  }
+  el.innerHTML='<div class="fr2">'+bloco('Fixas',fixas,tf,'fixa')+bloco('Esporádicas',vars,tv,'variavel')+'</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-outline btn-sm" onclick="showTab(\'despesas\',document.querySelector(\'[data-tab=despesas]\'))">Ver tela completa de despesas</button></div>';
 }
 
 function openDesp(tipo){
@@ -2348,18 +2575,38 @@ function setMovTipo(tipo){
   document.querySelectorAll('#mov-tipo-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.tipo===tipo);});
   renderMovs();
 }
-function setMovPeriodo(periodo){
+function setMovAtalho(periodo){
   _movPeriodo=periodo;
-  document.querySelectorAll('#mov-periodo-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.periodo===periodo);});
+  var hojeD=new Date(); hojeD.setHours(0,0,0,0);
+  var inicio=new Date(hojeD), fim=new Date(hojeD);
+  if(periodo==='semana'){inicio.setDate(inicio.getDate()-6);}
+  else if(periodo==='mes'){inicio=new Date(hojeD.getFullYear(),hojeD.getMonth(),1);}
+  else if(periodo==='ano'){inicio=new Date(hojeD.getFullYear(),0,1);}
+  fim.setHours(23,59,59,999);
+  _movInicio=toISODate(inicio);
+  _movFim=toISODate(fim);
+  var ini=document.getElementById('mov-data-inicio'), f=document.getElementById('mov-data-fim');
+  if(ini)ini.value=_movInicio; if(f)f.value=_movFim;
+  document.querySelectorAll('#mov-atalhos-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.periodo===periodo);});
+  renderMovs();
+}
+function setMovPeriodoManual(){
+  var ini=document.getElementById('mov-data-inicio'), fim=document.getElementById('mov-data-fim');
+  _movInicio=ini&&ini.value?ini.value:null;
+  _movFim=fim&&fim.value?fim.value:null;
+  _movPeriodo='manual';
+  document.querySelectorAll('#mov-atalhos-seg .seg-btn').forEach(function(b){b.classList.remove('active');});
   renderMovs();
 }
 
 function renderMovs(){
-  var inicio=inicioPeriodo(_movPeriodo);
+  if(!_movInicio||!_movFim){setMovAtalho(_movPeriodo||'hoje');return;}
+  var inicio=new Date(_movInicio+'T00:00:00');
+  var fim=new Date(_movFim+'T23:59:59');
   var filtradas=_movs.filter(function(m){
     if(!m.criado_em)return false;
     var d=new Date(m.criado_em);
-    if(d<inicio)return false;
+    if(d<inicio||d>fim)return false;
     if(_movTipo!=='todos'&&m.tipo!==_movTipo)return false;
     return true;
   });
@@ -2759,24 +3006,133 @@ document.addEventListener('click',function(e){
 function getConfigClinica(){
   try{return JSON.parse(localStorage.getItem('sf_config_clinica')||'{}');}catch(e){return {};}
 }
-function preencherConfigClinica(){
-  var c=getConfigClinica();
-  [['cfg-nome','nome'],['cfg-tel','tel'],['cfg-whats','whats'],['cfg-insta','insta'],['cfg-resp','resp'],['cfg-end','end'],['cfg-horario','horario']].forEach(function(x){var el=document.getElementById(x[0]);if(el)el.value=c[x[1]]||'';});
-  var prev=document.getElementById('cfg-logo-preview');if(prev)prev.textContent=c.nome||'StudioFlow';
+
+async function carregarConfigClinica(){
+  var local=getConfigClinica();
+  _configClinica=local||{};
+  if(SB){
+    try{
+      var r=await SB.from('configuracoes').select('*').order('criado_em',{ascending:true}).limit(1);
+      if(!r.error && r.data && r.data[0]){
+        _configClinica=r.data[0];
+        localStorage.setItem('sf_config_clinica',JSON.stringify(_configClinica));
+      }
+    }catch(e){console.warn('Configurações não carregadas do Supabase',e);}
+  }
+  preencherConfigClinica();
+  aplicarConfigVisual();
 }
-function salvarConfigClinica(){
-  var c={
-    nome:(document.getElementById('cfg-nome')||{}).value||'',
-    tel:(document.getElementById('cfg-tel')||{}).value||'',
-    whats:(document.getElementById('cfg-whats')||{}).value||'',
-    insta:(document.getElementById('cfg-insta')||{}).value||'',
-    resp:(document.getElementById('cfg-resp')||{}).value||'',
-    end:(document.getElementById('cfg-end')||{}).value||'',
-    horario:(document.getElementById('cfg-horario')||{}).value||''
+
+function preencherConfigClinica(){
+  var c=_configClinica&&Object.keys(_configClinica).length?_configClinica:getConfigClinica();
+  var map={
+    'cfg-nome':c.nome_clinica||c.nome,
+    'cfg-tel':c.telefone||c.tel,
+    'cfg-whats':c.whatsapp||c.whats,
+    'cfg-email':c.email,
+    'cfg-email-fin':c.email_financeiro,
+    'cfg-insta':c.instagram||c.insta,
+    'cfg-resp':c.responsavel||c.resp,
+    'cfg-end':c.endereco||c.end,
+    'cfg-horario':c.horario,
+    'cfg-slogan':c.slogan,
+    'cfg-cnpj':c.cnpj,
+    'cfg-site':c.site,
+    'cfg-cor':c.cor_primaria
   };
+  Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el&&map[id]!=null)el.value=map[id]||'';});
+  aplicarConfigVisual();
+}
+
+async function salvarConfigClinica(){
+  var logoAtual=(_configClinica||{}).logo_url||'';
+  var logoFile=(document.getElementById('cfg-logo-file')||{}).files;
+  if(logoFile&&logoFile[0]){
+    var novaLogo=await uploadImagem(logoFile[0],'logos');
+    if(novaLogo)logoAtual=novaLogo;
+  }
+  var c={
+    nome_clinica:(document.getElementById('cfg-nome')||{}).value||'',
+    telefone:(document.getElementById('cfg-tel')||{}).value||'',
+    whatsapp:(document.getElementById('cfg-whats')||{}).value||'',
+    email:(document.getElementById('cfg-email')||{}).value||'',
+    email_financeiro:(document.getElementById('cfg-email-fin')||{}).value||'',
+    instagram:(document.getElementById('cfg-insta')||{}).value||'',
+    responsavel:(document.getElementById('cfg-resp')||{}).value||'',
+    endereco:(document.getElementById('cfg-end')||{}).value||'',
+    horario:(document.getElementById('cfg-horario')||{}).value||'',
+    slogan:(document.getElementById('cfg-slogan')||{}).value||'',
+    cnpj:(document.getElementById('cfg-cnpj')||{}).value||'',
+    site:(document.getElementById('cfg-site')||{}).value||'',
+    cor_primaria:(document.getElementById('cfg-cor')||{}).value||'#4A6741',
+    logo_url:logoAtual,
+    tema:localStorage.getItem('sf_tema')||'floresta'
+  };
+  var error=null;
+  if(SB){
+    try{
+      if((_configClinica||{}).id){
+        var r=await SB.from('configuracoes').update(c).eq('id',_configClinica.id).select().single();
+        error=r.error;if(r.data)c=r.data;
+      }else{
+        var r2=await SB.from('configuracoes').insert(c).select().single();
+        error=r2.error;if(r2.data)c=r2.data;
+      }
+    }catch(e){console.warn(e);}
+  }
+  if(error){console.error(error);toast(error.message,'err');return;}
+  _configClinica=c;
   localStorage.setItem('sf_config_clinica',JSON.stringify(c));
   preencherConfigClinica();toast('Configurações salvas!');
 }
+
+async function carregarEvolucoes(){
+  if(!SB)return;
+  try{
+    var r=await SB.from('evolucoes').select('*').order('criado_em',{ascending:false});
+    if(!r.error)_evolucoes=r.data||[];
+  }catch(e){_evolucoes=[];}
+}
+
+function abrirModalEvolucao(clienteId){
+  document.getElementById('evo-cliente-id').value=clienteId||'';
+  document.getElementById('evo-titulo').value='';
+  document.getElementById('evo-obs').value='';
+  document.getElementById('evo-antes-file').value='';
+  document.getElementById('evo-depois-file').value='';
+  document.getElementById('evo-antes-preview').innerHTML='Selecionar foto antes';
+  document.getElementById('evo-depois-preview').innerHTML='Selecionar foto depois';
+  var sel=document.getElementById('evo-proc-sel');
+  if(sel)sel.innerHTML='<option value="">Selecionar...</option>'+(_procs||[]).map(function(p){return '<option value="'+p.id+'">'+p.nome+'</option>';}).join('');
+  openModal('modal-evolucao');
+}
+
+async function salvarEvolucao(){
+  var clienteId=document.getElementById('evo-cliente-id').value;
+  if(!clienteId){toast('Cliente não selecionado.','err');return;}
+  var procId=document.getElementById('evo-proc-sel').value||null;
+  var proc=_procs.find(function(p){return p.id===procId;});
+  var antesFile=(document.getElementById('evo-antes-file')||{}).files;
+  var depoisFile=(document.getElementById('evo-depois-file')||{}).files;
+  var antes=antesFile&&antesFile[0]?await uploadImagem(antesFile[0],'evolucoes/'+clienteId):null;
+  var depois=depoisFile&&depoisFile[0]?await uploadImagem(depoisFile[0],'evolucoes/'+clienteId):null;
+  var obj={
+    cliente_id:clienteId,
+    procedimento_id:procId,
+    procedimento_nome:proc?proc.nome:null,
+    titulo:(document.getElementById('evo-titulo')||{}).value||'Evolução',
+    observacoes:(document.getElementById('evo-obs')||{}).value||'',
+    foto_antes_url:antes,
+    foto_depois_url:depois
+  };
+  var r=await SB.from('evolucoes').insert(obj);
+  if(r.error){console.error(r.error);toast(r.error.message,'err');return;}
+  closeModal('modal-evolucao');
+  await carregarEvolucoes();
+  var id=clienteId;renderCliente360(id);
+  toast('Evolução salva!');
+}
+
 function csvEscape(v){v=(v==null?'':String(v));return '"'+v.replace(/"/g,'""')+'"';}
 function baixarCSV(nome,linhas){
   var csv=linhas.map(function(r){return r.map(csvEscape).join(';');}).join('\n');
