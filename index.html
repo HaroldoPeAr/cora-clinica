@@ -610,23 +610,23 @@ textarea.form-control{resize:vertical;min-height:72px;}
         </div>
       </div>
       <div class="sf-login-copy">
-        <h1>Gestão inteligente para clínicas e studios.</h1>
-        <p>Organize sua agenda, controle pacotes, acompanhe o financeiro e encante seus clientes com uma experiência simples e profissional.</p>
+        <h1>Gestão inteligente para o seu negócio.</h1>
+        <p>Organize sua agenda, acompanhe seus clientes e controle seu negócio em um único lugar.</p>
         <div class="sf-login-features">
           <div class="sf-login-feature">Agenda Inteligente<span>Dia, semana e mês</span></div>
-          <div class="sf-login-feature">Cliente 360º<span>Histórico em um só lugar</span></div>
+          <div class="sf-login-feature">Perfil do Cliente<span>Histórico em um só lugar</span></div>
           <div class="sf-login-feature">Pacotes e Sessões<span>Baixa automática</span></div>
           <div class="sf-login-feature">Financeiro<span>Receita, custos e lucro</span></div>
         </div>
       </div>
-      <div class="sf-login-proof sf-login-proof-clean">Tudo que sua clínica precisa para agenda, clientes, pacotes, financeiro e estoque em um único lugar.</div>
+      <div class="sf-login-proof sf-login-proof-clean">Organize sua agenda, acompanhe seus clientes e controle seu negócio em um único lugar.</div>
     </section>
     <section class="sf-login-panel">
       <div class="sf-login-card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
           <div>
             <div class="login-name">Bem-vindo!</div>
-            <p class="login-tagline">Entre para acessar sua clínica.</p>
+            <p class="login-tagline">Entre para acessar seu negócio.</p>
           </div>
           
         </div>
@@ -635,7 +635,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
         <div class="form-group"><label class="form-label">Senha</label><input type="password" id="login-senha" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
         <div class="sf-login-actions"><label><input type="checkbox" checked> Lembrar acesso</label><span class="sf-login-link" onclick="toast('Recuperação de senha entrará na próxima atualização.','ok')">Esqueci minha senha</span></div>
         <button class="btn btn-primary" style="width:100%;padding:12px;justify-content:center;font-size:13.5px;" onclick="fazerLogin()" id="btn-login">Entrar</button>
-        <div class="sf-login-version"><span>© 2026 StudioFlow</span><span>Gestão inteligente para negócios da beleza</span></div>
+        <div class="sf-login-version"><span>© 2026 StudioFlow</span><span>Plataforma para negócios baseados em agendamentos.</span></div>
       </div>
     </section>
   </div>
@@ -749,8 +749,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- DASHBOARD -->
   <div class="view active" id="view-dashboard">
-    <h1 class="section-title" id="dash-greeting">Bom dia</h1>
-    <p class="section-sub">Visão geral do seu negócio hoje</p>
+    <h1 class="section-title" id="dash-greeting">Bom dia! 👋</h1>
+    <p class="section-sub">Vamos organizar seu dia?</p>
     <div class="dash-quick">
       <button class="dash-quick-btn" onclick="openModal('modal-ag')">
         <svg fill="none" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h14M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -1009,9 +1009,9 @@ textarea.form-control{resize:vertical;min-height:72px;}
 
   <!-- CONFIGURAÇÕES -->
   <div class="view" id="view-configuracoes">
-    <div class="sf-rc-note"><strong>StudioFlow</strong> · Configure a identidade da clínica, módulos, backup e ajuda em um único lugar.</div>
+    <div class="sf-rc-note"><strong>StudioFlow</strong> · Configure a identidade do seu negócio, módulos, backup e ajuda em um único lugar.</div>
     <div class="sf-config-tabs">
-      <button class="sf-config-tab active" onclick="abrirConfigAba('clinica',this)">Clínica</button>
+      <button class="sf-config-tab active" onclick="abrirConfigAba('clinica',this)">Meu Negócio</button>
       <button class="sf-config-tab" onclick="abrirConfigAba('aparencia',this)">Aparência</button>
       <button class="sf-config-tab" onclick="abrirConfigAba('backup',this)">Backup</button>
       <button class="sf-config-tab" onclick="abrirConfigAba('ajuda',this)">Ajuda</button>
@@ -1020,8 +1020,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
     <div class="sf-config-section active" id="cfg-section-clinica">
       <div class="sf-settings-grid">
         <div class="card">
-          <div class="card-head"><h2>Minha clínica</h2><span class="card-label">dados principais</span></div>
-          <div class="form-group"><label class="form-label">Nome da clínica / studio</label><input id="cfg-nome" class="form-control" placeholder="Ex: Clínica Graziele Estética"></div>
+          <div class="card-head"><h2>Meu negócio</h2><span class="card-label">dados principais</span></div>
+          <div class="form-group"><label class="form-label">Nome do negócio</label><input id="cfg-nome" class="form-control" placeholder="Ex: Studio Graziele"></div>
           <div class="fr2">
             <div class="form-group"><label class="form-label">Telefone</label><input id="cfg-tel" class="form-control" placeholder="(11) 99999-9999"></div>
             <div class="form-group"><label class="form-label">WhatsApp</label><input id="cfg-whats" class="form-control" placeholder="(11) 99999-9999"></div>
@@ -1044,7 +1044,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
           <button class="btn btn-primary" onclick="salvarConfigClinica()">Salvar configurações</button>
         </div>
         <div class="card">
-          <div class="card-head"><h2>Logo da clínica</h2><span class="card-label">aparece no sistema</span></div>
+          <div class="card-head"><h2>Logo do negócio</h2><span class="card-label">aparece no sistema</span></div>
           <div class="upload-card">
             <div class="upload-preview" id="cfg-logo-preview">SF</div>
             <div style="flex:1;min-width:0;">
@@ -1054,7 +1054,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
             </div>
           </div>
           <div class="form-group"><label class="form-label">Cor principal</label><input id="cfg-cor" class="form-control" type="color" value="#4A6741"></div>
-          <p class="empty-state">O StudioFlow mantém sua marca de forma discreta, enquanto a clínica aparece como protagonista para a equipe.</p>
+          <p class="empty-state">O StudioFlow mantém sua marca de forma discreta, enquanto o negócio aparece como protagonista para a equipe.</p>
         </div>
       </div>
     </div>
@@ -1064,7 +1064,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
         <div class="card-head"><h2>Módulos e experiência</h2><span class="card-label">visão da versão comercial</span></div>
         <div class="sf-check-grid">
           <label class="sf-check-card"><input type="checkbox" checked> Agenda</label>
-          <label class="sf-check-card"><input type="checkbox" checked> Cliente 360º</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Perfil do Cliente</label>
           <label class="sf-check-card"><input type="checkbox" checked> Financeiro</label>
           <label class="sf-check-card"><input type="checkbox" checked> Pacotes</label>
           <label class="sf-check-card"><input type="checkbox" checked> Estoque</label>
@@ -1139,7 +1139,7 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <div class="modal">
     <h3 class="modal-title" id="modal-cli-title">Novo cliente</h3>
     <input type="hidden" id="cli-id-edit">
-    <div class="upload-card"><div class="upload-preview" id="cli-foto-preview">CL</div><div style="flex:1"><div class="li-name">Foto do cliente</div><div class="li-sub" style="margin-bottom:10px;">Aparece no Cliente 360º e nas listas.</div><input type="file" id="cli-foto-file" accept="image/*" onchange="previewImagemInput(this,'cli-foto-preview')"></div></div>
+    <div class="upload-card"><div class="upload-preview" id="cli-foto-preview">CL</div><div style="flex:1"><div class="li-name">Foto do cliente</div><div class="li-sub" style="margin-bottom:10px;">Aparece no Perfil do Cliente e nas listas.</div><input type="file" id="cli-foto-file" accept="image/*" onchange="previewImagemInput(this,'cli-foto-preview')"></div></div>
     <div class="form-group"><label class="form-label">Nome completo</label><input type="text" id="cli-nome" class="form-control" placeholder="Nome da cliente"></div>
     <div class="fr2">
       <div class="form-group"><label class="form-label">Telefone</label><input type="tel" id="cli-tel" class="form-control" placeholder="(11) 99999-9999"></div>
@@ -1481,7 +1481,7 @@ function aplicarConfigVisual(){
   var logo=c.logo_url||c.logoUrl||'';
   var nome=c.nome_clinica||c.nome||'StudioFlow';
   var prev=document.getElementById('cfg-logo-preview');
-  if(prev)prev.innerHTML=logo?'<img src="'+logo+'" alt="Logo da clínica">':(nome||'StudioFlow');
+  if(prev)prev.innerHTML=logo?'<img src="'+logo+'" alt="Logo do negócio">':(nome||'StudioFlow');
   var loginMark=document.querySelector('.sf-login-mark');
   if(loginMark&&logo)loginMark.innerHTML='<img src="'+logo+'" alt="Logo">';
   var sideMark=document.querySelector('.sidebar-mark');
@@ -1501,7 +1501,7 @@ function abrirConfigAba(aba,btn){
 var PAGE_TITLES={
   dashboard:['Dashboard','Visão geral do seu negócio hoje'],
   clientes:['Clientes','Cadastro e histórico de atendimentos'],
-  cliente360:['Cliente 360º','Ficha completa, pacotes, financeiro e histórico do cliente'],
+  cliente360:['Perfil do Cliente','Ficha completa, pacotes, financeiro e histórico do cliente'],
   procedimentos:['Procedimentos','Margem real por procedimento'],
   estoque:['Estoque','Controle de produtos com baixa automática'],
   agenda:['Agenda','Painel operacional de atendimentos, pacotes e presença'],
@@ -1556,7 +1556,7 @@ function mostrarApp(user){
   document.getElementById('app').style.display='block';
   document.getElementById('user-email').textContent=user.email;
   var h=new Date().getHours();
-  var saud=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+  var saud=h<12?'Bom dia! 👋':h<18?'Boa tarde! 👋':'Boa noite! 👋';
   var greetEl=document.getElementById('dash-greeting');
   if(greetEl)greetEl.textContent=saud;
   carregarConfigClinica();
