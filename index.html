@@ -1402,16 +1402,28 @@ try {
 } catch(e) { console.warn('Supabase config error', e); }
 
 // ====================================================
-// CONTEXTO GLOBAL DA EMPRESA
-// Base para o modo multiempresa. Nesta etapa, não altera
-// nenhuma tela nem consulta existente.
+// CONTEXTO GLOBAL DA APLICAÇÃO
+// O cadastro de usuários será feito somente pelo StudioFlow Admin.
 // ====================================================
 var APP = {
+  usuario: {
+    id: null,
+    nome: '',
+    email: '',
+    perfil: ''
+  },
   empresa: {
     id: null,
     nome: '',
+    nome_exibicao: '',
+    logo: '',
+    status: '',
+    assinatura_id: null,
+    assinatura_status: '',
+    plano_id: null,
     plano: '',
-    logo: ''
+    valor_contratado: 0,
+    proximo_vencimento: null
   }
 };
 
@@ -1595,24 +1607,146 @@ async function fazerLogin(){
   var senha=document.getElementById('login-senha').value;
   var btn=document.getElementById('btn-login');
   var errEl=document.getElementById('login-error');
-  if(!SB){errEl.textContent='⚙️ Configure as credenciais do Supabase no arquivo HTML (substitua COLE_SUA_URL_AQUI e COLE_SUA_CHAVE_AQUI).';errEl.style.display='block';return;}
-  if(!email||!senha){errEl.textContent='Preencha e-mail e senha.';errEl.style.display='block';return;}
-  btn.innerHTML='<span class="spinner"></span>Entrando...';btn.disabled=true;
+
+  errEl.style.display='none';
+  errEl.textContent='';
+
+  if(!SB){
+    errEl.textContent='Não foi possível conectar ao StudioFlow.';
+    errEl.style.display='block';
+    return;
+  }
+
+  if(!email||!senha){
+    errEl.textContent='Preencha e-mail e senha.';
+    errEl.style.display='block';
+    return;
+  }
+
+  btn.innerHTML='<span class="spinner"></span>Entrando...';
+  btn.disabled=true;
+
   var {data,error}=await SB.auth.signInWithPassword({email:email,password:senha});
-  if(error){errEl.textContent='E-mail ou senha incorretos.';errEl.style.display='block';btn.innerHTML='Entrar';btn.disabled=false;return;}
-  mostrarApp(data.user);
+
+  if(error){
+    errEl.textContent='E-mail ou senha incorretos.';
+    errEl.style.display='block';
+    btn.innerHTML='Entrar';
+    btn.disabled=false;
+    return;
+  }
+
+  var abriu=await mostrarApp(data.user);
+
+  btn.innerHTML='Entrar';
+  btn.disabled=false;
+
+  if(!abriu){
+    await SB.auth.signOut();
+  }
 }
 
-function mostrarApp(user){
-  document.getElementById('login-wrap').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('user-email').textContent=user.email;
-  var h=new Date().getHours();
-  var saud=h<12?'Bom dia! 👋':h<18?'Boa tarde! 👋':'Boa noite! 👋';
-  var greetEl=document.getElementById('dash-greeting');
-  if(greetEl)greetEl.textContent=saud;
-  carregarConfigClinica();
-  carregarTudo();
+async function carregarEmpresaAtual(user){
+  if(!user||!user.id)throw new Error('Usuário autenticado não encontrado.');
+
+  var usuarioRes=await SB
+    .from('usuarios')
+    .select('id,nome,email,empresa_id,perfil,ativo')
+    .eq('id',user.id)
+    .maybeSingle();
+
+  if(usuarioRes.error)throw usuarioRes.error;
+  if(!usuarioRes.data)throw new Error('Seu acesso ainda não foi liberado no StudioFlow Admin.');
+  if(usuarioRes.data.ativo===false)throw new Error('Este usuário está inativo. Entre em contato com o suporte.');
+  if(!usuarioRes.data.empresa_id)throw new Error('Este usuário não está vinculado a uma empresa.');
+
+  var empresaRes=await SB
+    .from('empresas')
+    .select('*')
+    .eq('id',usuarioRes.data.empresa_id)
+    .single();
+
+  if(empresaRes.error)throw empresaRes.error;
+  if(!empresaRes.data)throw new Error('Empresa não encontrada.');
+  if(empresaRes.data.ativo===false)throw new Error('O acesso desta empresa está suspenso.');
+
+  var assinaturaRes=await SB
+    .from('assinaturas')
+    .select('id,empresa_id,plano_id,status,valor_contratado,proximo_vencimento')
+    .eq('empresa_id',empresaRes.data.id)
+    .order('criado_em',{ascending:false})
+    .limit(1)
+    .maybeSingle();
+
+  if(assinaturaRes.error)throw assinaturaRes.error;
+  if(!assinaturaRes.data)throw new Error('Nenhuma assinatura foi encontrada para esta empresa.');
+
+  if(assinaturaRes.data.status==='Suspensa'||assinaturaRes.data.status==='Cancelada'){
+    throw new Error('A assinatura desta empresa está '+assinaturaRes.data.status.toLowerCase()+'.');
+  }
+
+  var plano=null;
+  if(assinaturaRes.data.plano_id){
+    var planoRes=await SB
+      .from('planos')
+      .select('*')
+      .eq('id',assinaturaRes.data.plano_id)
+      .maybeSingle();
+
+    if(planoRes.error)throw planoRes.error;
+    plano=planoRes.data||null;
+  }
+
+  APP.usuario={
+    id:usuarioRes.data.id,
+    nome:usuarioRes.data.nome||'',
+    email:usuarioRes.data.email||user.email||'',
+    perfil:usuarioRes.data.perfil||''
+  };
+
+  APP.empresa={
+    id:empresaRes.data.id,
+    nome:empresaRes.data.nome||'',
+    nome_exibicao:empresaRes.data.nome_exibicao||empresaRes.data.nome||'',
+    logo:empresaRes.data.logo_url||'',
+    status:empresaRes.data.status||empresaRes.data.plano_status||'',
+    assinatura_id:assinaturaRes.data.id,
+    assinatura_status:assinaturaRes.data.status||'',
+    plano_id:assinaturaRes.data.plano_id||null,
+    plano:plano?plano.nome:'',
+    valor_contratado:Number(assinaturaRes.data.valor_contratado||0),
+    proximo_vencimento:assinaturaRes.data.proximo_vencimento||null
+  };
+
+  return APP.empresa;
+}
+
+async function mostrarApp(user){
+  var errEl=document.getElementById('login-error');
+
+  try{
+    await carregarEmpresaAtual(user);
+
+    document.getElementById('login-wrap').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('user-email').textContent=APP.usuario.email||user.email;
+
+    var h=new Date().getHours();
+    var saud=h<12?'Bom dia! 👋':h<18?'Boa tarde! 👋':'Boa noite! 👋';
+    var greetEl=document.getElementById('dash-greeting');
+    if(greetEl)greetEl.textContent=saud;
+
+    carregarConfigClinica();
+    await carregarTudo();
+    return true;
+  }catch(e){
+    console.error('Erro ao carregar empresa atual:',e);
+    document.getElementById('app').style.display='none';
+    document.getElementById('login-wrap').style.display='flex';
+    errEl.textContent=e.message||'Não foi possível liberar o acesso à empresa.';
+    errEl.style.display='block';
+    return false;
+  }
 }
 
 async function fazerLogout(){
@@ -1645,8 +1779,29 @@ async function carregarEstoqueSilencioso(){
 // CLIENTES
 // ====================================================
 async function carregarClientes(){
-  var {data}=await SB.from('clientes').select('*').order('nome');
-  _clientes=data||[];renderClientes();atualizarSelectClientes();
+  if(!APP.empresa.id){
+    _clientes=[];
+    renderClientes();
+    atualizarSelectClientes();
+    return;
+  }
+
+  var {data,error}=await SB
+    .from('clientes')
+    .select('*')
+    .eq('empresa_id',APP.empresa.id)
+    .order('nome');
+
+  if(error){
+    console.error('Erro ao carregar clientes:',error);
+    toast('Não foi possível carregar os clientes.','err');
+    _clientes=[];
+  }else{
+    _clientes=data||[];
+  }
+
+  renderClientes();
+  atualizarSelectClientes();
 }
 
 function renderClientes(){
@@ -1683,17 +1838,56 @@ function atualizarSelectClientes(){
 async function salvarCliente(){
   var id=document.getElementById('cli-id-edit').value;
   var nome=document.getElementById('cli-nome').value.trim();
-  if(!nome){toast('Preencha o nome.','err');return;}
-  var obj={nome:nome,telefone:document.getElementById('cli-tel').value.trim(),email:document.getElementById('cli-email').value.trim(),data_nascimento:document.getElementById('cli-nasc').value||null,observacoes:document.getElementById('cli-obs').value.trim()};
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  if(!nome){
+    toast('Preencha o nome.','err');
+    return;
+  }
+
+  var obj={
+    nome:nome,
+    telefone:document.getElementById('cli-tel').value.trim(),
+    email:document.getElementById('cli-email').value.trim(),
+    data_nascimento:document.getElementById('cli-nasc').value||null,
+    observacoes:document.getElementById('cli-obs').value.trim(),
+    empresa_id:APP.empresa.id
+  };
+
   var fotoFile=(document.getElementById('cli-foto-file')||{}).files;
   if(fotoFile&&fotoFile[0]){
     var fotoUrl=await uploadImagem(fotoFile[0],'clientes');
     if(fotoUrl)obj.foto_url=fotoUrl;
   }
-  var res=id?await SB.from('clientes').update(obj).eq('id',id):await SB.from('clientes').insert(obj);
-  if(res.error){console.error('Erro ao salvar cliente:',res.error);toast(res.error.message,'err');return;}
-  closeModal('modal-cli');limparFormCli();
-  await carregarClientes();toast('Cliente salvo!');
+
+  var res;
+
+  if(id){
+    res=await SB
+      .from('clientes')
+      .update(obj)
+      .eq('id',id)
+      .eq('empresa_id',APP.empresa.id);
+  }else{
+    res=await SB
+      .from('clientes')
+      .insert(obj);
+  }
+
+  if(res.error){
+    console.error('Erro ao salvar cliente:',res.error);
+    toast(res.error.message,'err');
+    return;
+  }
+
+  closeModal('modal-cli');
+  limparFormCli();
+  await carregarClientes();
+  toast('Cliente salvo!');
 }
 
 function limparFormCli(){
@@ -1719,8 +1913,26 @@ function editarCliente(id){
 
 async function deletarCliente(id){
   if(!confirm('Remover este cliente?'))return;
-  await SB.from('clientes').delete().eq('id',id);
-  await carregarClientes();toast('Cliente removido.');
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('clientes')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover cliente:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarClientes();
+  toast('Cliente removido.');
 }
 
 
