@@ -1402,6 +1402,20 @@ try {
 } catch(e) { console.warn('Supabase config error', e); }
 
 // ====================================================
+// CONTEXTO GLOBAL DA EMPRESA
+// Base para o modo multiempresa. Nesta etapa, não altera
+// nenhuma tela nem consulta existente.
+// ====================================================
+var APP = {
+  empresa: {
+    id: null,
+    nome: '',
+    plano: '',
+    logo: ''
+  }
+};
+
+// ====================================================
 // ESTADO GLOBAL
 // ====================================================
 var _clientes=[], _procs=[], _estoque=[], _agenda=[], _despesas=[], _movs=[];
