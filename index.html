@@ -2262,9 +2262,30 @@ async function carregarAgenda(){
   var range=getAgendaRange(base);
   document.getElementById('ag-data-label').textContent=range.header;
   var period=document.getElementById('agenda-period-label');if(period)period.textContent=range.label;
-  var q=SB.from('agenda').select('*').gte('data',range.start).lte('data',range.end).order('data').order('hora');
-  var {data:rows}=await q;
-  _agenda=rows||[];
+
+  if(!APP.empresa.id){
+    _agenda=[];
+    renderAgenda();
+    return;
+  }
+
+  var {data:rows,error}=await SB
+    .from('agenda')
+    .select('*')
+    .eq('empresa_id',APP.empresa.id)
+    .gte('data',range.start)
+    .lte('data',range.end)
+    .order('data')
+    .order('hora');
+
+  if(error){
+    console.error('Erro ao carregar agenda:',error);
+    toast('Não foi possível carregar a agenda.','err');
+    _agenda=[];
+  }else{
+    _agenda=rows||[];
+  }
+
   renderAgenda();
 }
 
@@ -2473,7 +2494,17 @@ async function setStatus(agId, novoStatus, statusAnterior, procId, cliNome, proc
   if(statusAnterior==='confirmado' && (novoStatus==='cancelou'||novoStatus==='faltou')){
     await restituirEstoque(procId, agId, cliNome, procNome);
   }
-  await SB.from('agenda').update({status:novoStatus,status_anterior:statusAnterior}).eq('id',agId);
+  var {error}=await SB
+    .from('agenda')
+    .update({status:novoStatus,status_anterior:statusAnterior})
+    .eq('id',agId)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao atualizar status do agendamento:',error);
+    toast(error.message,'err');
+    return;
+  }
   await Promise.all([carregarAgenda(),carregarEstoque(),carregarMovs()]);
   await carregarEstoqueSilencioso();
   renderFin();renderDashboard();
@@ -2503,11 +2534,21 @@ async function baixarEstoque(procId, agId, cliNome, procNome){
     var item2=_estoque.find(function(e){return e.id===ins2.estoque_id;});
     if(!item2)continue;
     var novaQtd=Number(item2.qtd)-Number(ins2.quantidade);
-    await SB.from('estoque').update({qtd:Math.max(0,novaQtd)}).eq('id',ins2.estoque_id);
+    await SB
+      .from('estoque')
+      .update({qtd:Math.max(0,novaQtd)})
+      .eq('id',ins2.estoque_id)
+      .eq('empresa_id',APP.empresa.id);
+
     await SB.from('movimentacoes_estoque').insert({
-      produto_id:ins2.estoque_id,produto_nome:item2.nome,
-      agendamento_id:agId,cliente_nome:cliNome,procedimento_nome:procNome,
-      tipo:'saida',quantidade:ins2.quantidade
+      produto_id:ins2.estoque_id,
+      produto_nome:item2.nome,
+      agendamento_id:agId,
+      cliente_nome:cliNome,
+      procedimento_nome:procNome,
+      tipo:'saida',
+      quantidade:ins2.quantidade,
+      empresa_id:APP.empresa.id
     });
   }
   return true;
@@ -2522,18 +2563,44 @@ async function restituirEstoque(procId, agId, cliNome, procNome){
     if(!ins.estoque_id)continue;
     var item=_estoque.find(function(e){return e.id===ins.estoque_id;});
     if(!item)continue;
-    await SB.from('estoque').update({qtd:Number(item.qtd)+Number(ins.quantidade)}).eq('id',ins.estoque_id);
+    await SB
+      .from('estoque')
+      .update({qtd:Number(item.qtd)+Number(ins.quantidade)})
+      .eq('id',ins.estoque_id)
+      .eq('empresa_id',APP.empresa.id);
+
     await SB.from('movimentacoes_estoque').insert({
-      produto_id:ins.estoque_id,produto_nome:item.nome,
-      agendamento_id:agId,cliente_nome:cliNome,procedimento_nome:procNome,
-      tipo:'entrada',quantidade:ins.quantidade
+      produto_id:ins.estoque_id,
+      produto_nome:item.nome,
+      agendamento_id:agId,
+      cliente_nome:cliNome,
+      procedimento_nome:procNome,
+      tipo:'entrada',
+      quantidade:ins.quantidade,
+      empresa_id:APP.empresa.id
     });
   }
   toast('Estoque restituído automaticamente.');
 }
 
 async function deletarAg(id){
-  await SB.from('agenda').delete().eq('id',id);
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('agenda')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao excluir agendamento:',error);
+    toast(error.message,'err');
+    return;
+  }
+
   await carregarAgenda();
 }
 
@@ -2626,6 +2693,11 @@ function atualizarResumoPacoteAgendamento(){
 }
 
 async function salvarAgendamento(){
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
   var cliId=document.getElementById('ag-cli-sel').value;
   var procId=document.getElementById('ag-proc-sel').value;
   var data=document.getElementById('ag-data-input').value;
@@ -2635,7 +2707,18 @@ async function salvarAgendamento(){
   if(!cliId||!procId||!data||!hora){toast('Preencha cliente, procedimento, data e horário.','err');return;}
 
   // Verifica conflito: mesmo dia + mesmo horário, com agendamento ainda ativo
-  var {data:existentes}=await SB.from('agenda').select('id,status').eq('data',data).eq('hora',hora);
+  var {data:existentes,error:erroConflito}=await SB
+    .from('agenda')
+    .select('id,status')
+    .eq('empresa_id',APP.empresa.id)
+    .eq('data',data)
+    .eq('hora',hora);
+
+  if(erroConflito){
+    console.error('Erro ao verificar conflito de horário:',erroConflito);
+    toast(erroConflito.message,'err');
+    return;
+  }
   var conflito=(existentes||[]).some(function(a){return a.status!=='cancelou';});
   if(conflito){toast('⚠ Já existe um agendamento neste dia e horário. Escolha outro horário.','err');return;}
 
@@ -2658,7 +2741,10 @@ async function salvarAgendamento(){
       pacote_id:null,pacote_nome:nomePacote,
       procedimento_id:procId,procedimento_nome:proc.nome,
       total_sessoes:total,sessoes_usadas:usadas,preco_pago:preco,
-      data_venda:dataVendaPac,validade:validadePac,status:'ativo'
+      data_venda:dataVendaPac,
+      validade:validadePac,
+      status:'ativo',
+      empresa_id:APP.empresa.id
     });
     if(resPac.error){console.error('Erro ao criar pacote pelo agendamento:',resPac.error);toast(resPac.error.message,'err');alert(resPac.error.message);return;}
     pacoteMsg=' Pacote criado com '+total+' sessões.'+(usadas?(' '+usadas+' sessão(ões) já contabilizada(s).'):'');
@@ -2673,12 +2759,25 @@ async function salvarAgendamento(){
     if(usadasEx<=0){toast('Informe quantas sessões serão usadas hoje.','err');return;}
     if(usadasEx>saldo){toast('Sessões usadas hoje não pode ser maior que o saldo disponível.','err');return;}
     var novas=Number(pac.sessoes_usadas||0)+usadasEx;
-    var resUpd=await SB.from('cliente_pacotes').update({sessoes_usadas:novas}).eq('id',pac.id);
+    var resUpd=await SB
+      .from('cliente_pacotes')
+      .update({sessoes_usadas:novas})
+      .eq('id',pac.id)
+      .eq('empresa_id',APP.empresa.id);
     if(resUpd.error){console.error('Erro ao baixar sessão pelo agendamento:',resUpd.error);toast(resUpd.error.message,'err');alert(resUpd.error.message);return;}
     pacoteMsg=' '+usadasEx+' sessão(ões) descontada(s) do pacote.';
   }
 
-  var agObj={cliente_id:cliId,cliente_nome:cli.nome,procedimento_id:procId,procedimento_nome:proc.nome,data:data,hora:hora,status:'pendente'};
+  var agObj={
+    cliente_id:cliId,
+    cliente_nome:cli.nome,
+    procedimento_id:procId,
+    procedimento_nome:proc.nome,
+    data:data,
+    hora:hora,
+    status:'pendente',
+    empresa_id:APP.empresa.id
+  };
   // Se a tabela agenda tiver coluna observacoes, o Supabase aceitará após ajuste de schema. Por compatibilidade, não enviamos por padrão.
   var resAg=await SB.from('agenda').insert(agObj);
   if(resAg.error){console.error('Erro ao criar agendamento:',resAg.error);toast(resAg.error.message,'err');alert(resAg.error.message);return;}
