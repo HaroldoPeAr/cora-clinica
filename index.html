@@ -2137,8 +2137,21 @@ async function salvarProc(){
       ins.push({estoque_id:eid,nome:est?est.nome:'',quantidade:qtd,custo:custo});
     }
   });
-  var {data:proc}=await SB.from('procedimentos').insert({nome:nome,preco:preco,duracao:dur}).select().single();
-  if(proc&&ins.length)await SB.from('insumos').insert(ins.map(function(i){return Object.assign({},i,{procedimento_id:proc.id});}));
+  var {data:proc}=await SB.from('procedimentos').insert({
+    nome:nome,
+    preco:preco,
+    duracao:dur,
+    empresa_id:APP.empresa.id
+}).select().single();
+  if(proc&&ins.length)
+    await SB.from('insumos').insert(
+        ins.map(function(i){
+            return Object.assign({}, i, {
+                procedimento_id: proc.id,
+                empresa_id: APP.empresa.id
+            });
+        })
+    );
   closeModal('modal-proc');await carregarProcs();renderFin();toast('Procedimento salvo!');
 }
 
