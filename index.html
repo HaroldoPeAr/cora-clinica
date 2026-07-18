@@ -1167,7 +1167,8 @@ textarea.form-control{resize:vertical;min-height:72px;}
 <!-- MODAL: PROCEDIMENTO -->
 <div class="overlay" id="modal-proc">
   <div class="modal">
-    <h3 class="modal-title">Novo procedimento</h3>
+    <h3 class="modal-title" id="modal-proc-title">Novo procedimento</h3>
+    <input type="hidden" id="proc-id-edit">
     <div class="form-group"><label class="form-label">Nome</label><input type="text" id="proc-nome" class="form-control" placeholder="Ex: Botox, Limpeza de pele..."></div>
     <div class="fr2">
       <div class="form-group"><label class="form-label">Preço de venda (R$)</label><input type="number" id="proc-preco" class="form-control" placeholder="0"></div>
@@ -2078,7 +2079,10 @@ function renderProcs(){
       '<div class="margin-row"><div class="margin-bar"><div class="margin-bar-cost" style="width:'+cp+'%"></div><div class="margin-bar-profit" style="width:'+m.margem+'%"></div></div>'+
       '<span class="pill '+(good?'pill-green':'pill-red')+'">'+m.margem+'%</span><span class="margin-info">lucro: '+R(m.lucro)+'</span></div>'+
       ((p.insumos&&p.insumos.length)?'<div style="font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;margin:7px 0 4px;">Insumos</div>'+p.insumos.map(function(i){return '<span class="ins-tag">'+i.nome+' × '+i.quantidade+' · '+R(i.custo)+'</span>';}).join(''):'')+
-      '<div style="margin-top:8px;"><button class="btn btn-danger btn-sm" onclick="deletarProc(\''+p.id+'\')">Remover</button></div>'+
+      '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">'+
+        '<button class="btn btn-outline btn-sm" onclick="editarProc(\''+p.id+'\')">Editar</button>'+
+        '<button class="btn btn-danger btn-sm" onclick="deletarProc(\''+p.id+'\')">Remover</button>'+
+      '</div>'+
     '</div>';
   }).join('');
   document.getElementById('proc-total').textContent=_procs.length;
@@ -2114,6 +2118,8 @@ function addInsRow(estoqueId,nome,qtd,custo){
 }
 
 function abrirModalProc(){
+  document.getElementById('proc-id-edit').value='';
+  document.getElementById('modal-proc-title').textContent='Novo procedimento';
   document.getElementById('ins-wrap').innerHTML='';
   document.getElementById('proc-nome').value='';
   document.getElementById('proc-preco').value='';
@@ -2121,44 +2127,154 @@ function abrirModalProc(){
   openModal('modal-proc');
 }
 
+function editarProc(id){
+  var proc=_procs.find(function(p){return p.id===id;});
+  if(!proc){toast('Procedimento não encontrado.','err');return;}
+
+  document.getElementById('proc-id-edit').value=proc.id;
+  document.getElementById('modal-proc-title').textContent='Editar procedimento';
+  document.getElementById('proc-nome').value=proc.nome||'';
+  document.getElementById('proc-preco').value=proc.preco||0;
+  document.getElementById('proc-dur').value=proc.duracao||60;
+  document.getElementById('ins-wrap').innerHTML='';
+
+  (proc.insumos||[]).forEach(function(i){
+    addInsRow(i.estoque_id,i.nome,i.quantidade,i.custo);
+  });
+
+  openModal('modal-proc');
+}
+
 async function salvarProc(){
+  var id=document.getElementById('proc-id-edit').value;
   var nome=document.getElementById('proc-nome').value.trim();
   var preco=parseFloat(document.getElementById('proc-preco').value);
   var dur=parseInt(document.getElementById('proc-dur').value)||60;
-  if(!nome||!preco){toast('Preencha nome e preço.','err');return;}
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  if(!nome||!preco){
+    toast('Preencha nome e preço.','err');
+    return;
+  }
+
   var rows=document.querySelectorAll('#ins-wrap .ins-row');
   var ins=[];
+
   rows.forEach(function(r){
     var eid=r.querySelector('.ins-est-id').value;
     var qtd=parseFloat(r.querySelector('.ins-qtd').value);
     var custo=parseFloat(r.querySelector('.ins-custo').value)||0;
+
     if(eid&&!isNaN(qtd)){
       var est=_estoque.find(function(e){return e.id===eid;});
-      ins.push({estoque_id:eid,nome:est?est.nome:'',quantidade:qtd,custo:custo});
+      ins.push({
+        estoque_id:eid,
+        nome:est?est.nome:'',
+        quantidade:qtd,
+        custo:custo,
+        empresa_id:APP.empresa.id
+      });
     }
   });
-  var {data:proc}=await SB.from('procedimentos').insert({
-    nome:nome,
-    preco:preco,
-    duracao:dur,
-    empresa_id:APP.empresa.id
-}).select().single();
-  if(proc&&ins.length)
-    await SB.from('insumos').insert(
-        ins.map(function(i){
-            return Object.assign({}, i, {
-                procedimento_id: proc.id,
-                empresa_id: APP.empresa.id
-            });
-        })
+
+  var procRes;
+
+  if(id){
+    procRes=await SB
+      .from('procedimentos')
+      .update({
+        nome:nome,
+        preco:preco,
+        duracao:dur,
+        empresa_id:APP.empresa.id
+      })
+      .eq('id',id)
+      .eq('empresa_id',APP.empresa.id)
+      .select()
+      .single();
+  }else{
+    procRes=await SB
+      .from('procedimentos')
+      .insert({
+        nome:nome,
+        preco:preco,
+        duracao:dur,
+        empresa_id:APP.empresa.id
+      })
+      .select()
+      .single();
+  }
+
+  if(procRes.error){
+    console.error('Erro ao salvar procedimento:',procRes.error);
+    toast(procRes.error.message,'err');
+    return;
+  }
+
+  var proc=procRes.data;
+
+  if(id){
+    var delIns=await SB
+      .from('insumos')
+      .delete()
+      .eq('procedimento_id',id)
+      .eq('empresa_id',APP.empresa.id);
+
+    if(delIns.error){
+      console.error('Erro ao atualizar insumos:',delIns.error);
+      toast(delIns.error.message,'err');
+      return;
+    }
+  }
+
+  if(proc&&ins.length){
+    var insRes=await SB.from('insumos').insert(
+      ins.map(function(i){
+        return Object.assign({},i,{procedimento_id:proc.id});
+      })
     );
-  closeModal('modal-proc');await carregarProcs();renderFin();toast('Procedimento salvo!');
+
+    if(insRes.error){
+      console.error('Erro ao salvar insumos:',insRes.error);
+      toast(insRes.error.message,'err');
+      return;
+    }
+  }
+
+  closeModal('modal-proc');
+  await carregarProcs();
+  renderFin();
+  toast(id?'Procedimento atualizado!':'Procedimento salvo!');
 }
 
 async function deletarProc(id){
   if(!confirm('Remover este procedimento?'))return;
-  await SB.from('procedimentos').delete().eq('id',id);
-  await carregarProcs();renderFin();toast('Procedimento removido.');
+
+  await SB
+    .from('insumos')
+    .delete()
+    .eq('procedimento_id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  var {error}=await SB
+    .from('procedimentos')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover procedimento:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarProcs();
+  renderFin();
+  toast('Procedimento removido.');
 }
 
 // ====================================================
