@@ -1218,7 +1218,12 @@ textarea.form-control{resize:vertical;min-height:72px;}
   <div class="modal" style="max-width:720px;">
     <h3 class="modal-title">Novo agendamento</h3>
     <div class="fr2">
-      <div class="form-group"><label class="form-label">Cliente</label><select id="ag-cli-sel" class="form-control" onchange="atualizarCamposPacoteAgendamento()"><option value="">Selecionar cliente...</option></select></div>
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <input type="text" id="ag-cli-busca" class="form-control" list="ag-clientes-lista" placeholder="Digite o nome da cliente..." autocomplete="off" oninput="sincronizarClienteAgenda()" onchange="sincronizarClienteAgenda()">
+        <datalist id="ag-clientes-lista"></datalist>
+        <input type="hidden" id="ag-cli-sel">
+      </div>
       <div class="form-group"><label class="form-label">Procedimento</label><select id="ag-proc-sel" class="form-control" onchange="atualizarCamposPacoteAgendamento()"><option value="">Selecionar procedimento...</option></select></div>
     </div>
 
@@ -1831,9 +1836,34 @@ function renderClientes(){
   }).join('');
 }
 function atualizarSelectClientes(){
-  var sel=document.getElementById('ag-cli-sel');
-  if(!sel)return;
-  sel.innerHTML='<option value="">Selecionar cliente...</option>'+_clientes.map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
+  var lista=document.getElementById('ag-clientes-lista');
+  if(!lista)return;
+  lista.innerHTML=_clientes.map(function(c){
+    return '<option value="'+String(c.nome||'').replace(/"/g,'&quot;')+'"></option>';
+  }).join('');
+}
+
+function sincronizarClienteAgenda(){
+  var busca=document.getElementById('ag-cli-busca');
+  var hidden=document.getElementById('ag-cli-sel');
+  if(!busca||!hidden)return;
+
+  var termo=(busca.value||'').trim().toLowerCase();
+  var cliente=_clientes.find(function(c){
+    return String(c.nome||'').trim().toLowerCase()===termo;
+  });
+
+  hidden.value=cliente?cliente.id:'';
+  atualizarCamposPacoteAgendamento();
+}
+
+function definirClienteAgenda(clienteId){
+  var cliente=_clientes.find(function(c){return c.id===clienteId;});
+  var busca=document.getElementById('ag-cli-busca');
+  var hidden=document.getElementById('ag-cli-sel');
+
+  if(busca)busca.value=cliente?cliente.nome:'';
+  if(hidden)hidden.value=cliente?cliente.id:'';
 }
 
 async function salvarCliente(){
@@ -2106,7 +2136,7 @@ function addInsRow(estoqueId,nome,qtd,custo){
   div.innerHTML=
     '<div class="form-group"><label class="form-label">Produto do estoque</label><select class="ins-est-id">'+
     '<option value="">Selecionar...</option>'+opts+'</select></div>'+
-    '<div class="form-group"><label class="form-label">Quantidade</label><input type="number" class="ins-qtd" value="'+(qtd||1)+'" min="0.01" step="0.01"></div>'+
+    '<div class="form-group"><label class="form-label">Quantidade</label><input type="number" class="ins-qtd" value="'+(qtd||1)+'" min="1" step="1"></div>'+
     '<div class="form-group"><label class="form-label">Custo (R$)</label><input type="number" class="ins-custo" value="'+(custo||0)+'" min="0"></div>'+
     '<button class="ins-rm" onclick="this.parentElement.remove()">✕</button>';
   // auto-preencher custo ao selecionar produto
@@ -2166,7 +2196,7 @@ async function salvarProc(){
 
   rows.forEach(function(r){
     var eid=r.querySelector('.ins-est-id').value;
-    var qtd=parseFloat(r.querySelector('.ins-qtd').value);
+    var qtd=parseInt(r.querySelector('.ins-qtd').value,10);
     var custo=parseFloat(r.querySelector('.ins-custo').value)||0;
 
     if(eid&&!isNaN(qtd)){
@@ -2477,7 +2507,7 @@ function abrirNovoAgendamento(){
 
 function abrirPacoteDoAgendamento(cliId,procId,data,hora){
   limparFormAgendamento();
-  var cli=document.getElementById('ag-cli-sel');if(cli)cli.value=cliId||'';
+  definirClienteAgenda(cliId||'');
   var proc=document.getElementById('ag-proc-sel');if(proc)proc.value=procId||'';
   var dt=document.getElementById('ag-data-input');if(dt)dt.value=data||hoje();
   var hr=document.getElementById('ag-hora-input');if(hr)hr.value=(hora||'09:00').substring(0,5);
@@ -2735,6 +2765,7 @@ async function deletarAg(id){
 
 function limparFormAgendamento(){
   var cli=document.getElementById('ag-cli-sel');if(cli)cli.value='';
+  var cliBusca=document.getElementById('ag-cli-busca');if(cliBusca)cliBusca.value='';
   var proc=document.getElementById('ag-proc-sel');if(proc)proc.value='';
   var data=document.getElementById('ag-data-input');if(data)data.value=hoje();
   var hora=document.getElementById('ag-hora-input');if(hora)hora.value='09:00';
@@ -2864,6 +2895,21 @@ async function salvarAgendamento(){
     var validadePac=(document.getElementById('ag-pac-validade')||{}).value||addDaysISO(dataVendaPac,90);
     if(total<=0){toast('Informe o total de sessões do pacote.','err');return;}
     if(usadas<0||usadas>total){toast('Sessões usadas hoje não pode ser maior que o total do pacote.','err');return;}
+
+    var pacoteDuplicado=_clientePacotes.find(function(cp){
+      var restante=Number(cp.total_sessoes||0)-Number(cp.sessoes_usadas||0);
+      return cp.cliente_id===cliId &&
+             cp.procedimento_id===procId &&
+             cp.status==='ativo' &&
+             restante>0 &&
+             !pacoteVencido(cp);
+    });
+
+    if(pacoteDuplicado){
+      toast('Este cliente já possui um pacote ativo para este procedimento.','err');
+      return;
+    }
+
     var nomePacote=proc.nome+' - '+total+' sessões';
     var resPac=await SB.from('cliente_pacotes').insert({
       cliente_id:cliId,cliente_nome:cli.nome,
@@ -3254,11 +3300,44 @@ function renderDashboard(){
 // SESSÕES
 // ====================================================
 async function carregarSessoes(){
-  var r1=await SB.from('pacotes').select('*,procedimentos(nome)').order('nome');
-  _pacotes=r1.data||[];
-  var r2=await SB.from('cliente_pacotes').select('*').order('criado_em',{ascending:false});
-  _clientePacotes=r2.data||[];
-  renderSessoes();atualizarSelectPacotes();
+  if(!APP.empresa.id){
+    _pacotes=[];
+    _clientePacotes=[];
+    renderSessoes();
+    atualizarSelectPacotes();
+    return;
+  }
+
+  var r1=await SB
+    .from('pacotes')
+    .select('*,procedimentos(nome)')
+    .eq('empresa_id',APP.empresa.id)
+    .order('nome');
+
+  if(r1.error){
+    console.error('Erro ao carregar pacotes:',r1.error);
+    toast(r1.error.message,'err');
+    _pacotes=[];
+  }else{
+    _pacotes=r1.data||[];
+  }
+
+  var r2=await SB
+    .from('cliente_pacotes')
+    .select('*')
+    .eq('empresa_id',APP.empresa.id)
+    .order('criado_em',{ascending:false});
+
+  if(r2.error){
+    console.error('Erro ao carregar pacotes dos clientes:',r2.error);
+    toast(r2.error.message,'err');
+    _clientePacotes=[];
+  }else{
+    _clientePacotes=r2.data||[];
+  }
+
+  renderSessoes();
+  atualizarSelectPacotes();
 }
 
 function renderSessoes(){
@@ -3396,10 +3475,33 @@ async function salvarPacote(){
 
   // A tabela pacotes não possui procedimento_nome.
   // O nome do procedimento é buscado pela relação procedimentos(nome) em carregarSessoes().
-  var obj={nome:nome,procedimento_id:procId||null,total_sessoes:sessoes,preco:preco,validade_padrao:validadeDias};
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var obj={
+    nome:nome,
+    procedimento_id:procId||null,
+    total_sessoes:sessoes,
+    preco:preco,
+    validade_padrao:validadeDias,
+    empresa_id:APP.empresa.id
+  };
+
   var res;
-  if(id){res=await SB.from('pacotes').update(obj).eq('id',id);}
-  else{res=await SB.from('pacotes').insert(obj);}
+
+  if(id){
+    res=await SB
+      .from('pacotes')
+      .update(obj)
+      .eq('id',id)
+      .eq('empresa_id',APP.empresa.id);
+  }else{
+    res=await SB
+      .from('pacotes')
+      .insert(obj);
+  }
 
   if(res.error){
     console.error('Erro ao salvar pacote:',res.error);
@@ -3436,8 +3538,26 @@ function editarPacote(id){
 
 async function deletarPacote(id){
   if(!confirm('Remover este pacote?'))return;
-  await SB.from('pacotes').delete().eq('id',id);
-  await carregarSessoes();toast('Pacote removido.');
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('pacotes')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover pacote:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarSessoes();
+  toast('Pacote removido.');
 }
 
 async function salvarClientePacote(){
@@ -3451,12 +3571,40 @@ async function salvarClientePacote(){
   var pac=_pacotes.find(function(p){return p.id===pacId;});
   if(!cli||!pac){toast('Cliente ou pacote não encontrado.','err');return;}
   var procNome=pac.procedimentos?pac.procedimentos.nome:null;
+
+  var pacoteDuplicado=_clientePacotes.find(function(cp){
+    var restante=Number(cp.total_sessoes||0)-Number(cp.sessoes_usadas||0);
+    return cp.cliente_id===cliId &&
+           cp.procedimento_id===pac.procedimento_id &&
+           cp.status==='ativo' &&
+           restante>0 &&
+           !pacoteVencido(cp);
+  });
+
+  if(pacoteDuplicado){
+    toast('Este cliente já possui um pacote ativo para este procedimento.','err');
+    return;
+  }
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
   var res=await SB.from('cliente_pacotes').insert({
-    cliente_id:cliId,cliente_nome:cli.nome,
-    pacote_id:pacId,pacote_nome:pac.nome,
-    procedimento_id:pac.procedimento_id,procedimento_nome:procNome,
-    total_sessoes:pac.total_sessoes,sessoes_usadas:0,preco_pago:preco,
-    data_venda:dataVenda,validade:validade||addDaysISO(dataVenda,Number(pac.validade_padrao||90)),status:'ativo'
+    cliente_id:cliId,
+    cliente_nome:cli.nome,
+    pacote_id:pacId,
+    pacote_nome:pac.nome,
+    procedimento_id:pac.procedimento_id,
+    procedimento_nome:procNome,
+    total_sessoes:pac.total_sessoes,
+    sessoes_usadas:0,
+    preco_pago:preco,
+    data_venda:dataVenda,
+    validade:validade||addDaysISO(dataVenda,Number(pac.validade_padrao||90)),
+    status:'ativo',
+    empresa_id:APP.empresa.id
   });
   if(res.error){
     console.error('Erro ao vincular pacote:',res.error);
@@ -3472,8 +3620,26 @@ async function salvarClientePacote(){
 
 async function deletarClientePacote(id){
   if(!confirm('Remover este pacote do cliente?'))return;
-  await SB.from('cliente_pacotes').delete().eq('id',id);
-  await carregarSessoes();toast('Pacote removido.');
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('cliente_pacotes')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover pacote do cliente:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarSessoes();
+  toast('Pacote removido.');
 }
 
 function abrirUsarSessao(id){
@@ -3491,7 +3657,18 @@ async function confirmarUsarSessao(){
   var cp=_clientePacotes.find(function(x){return x.id===_usarSessaoId;});
   if(!cp)return;
   var novas=Math.min((cp.sessoes_usadas||0)+1,cp.total_sessoes);
-  await SB.from('cliente_pacotes').update({sessoes_usadas:novas}).eq('id',_usarSessaoId);
+  var {error}=await SB
+    .from('cliente_pacotes')
+    .update({sessoes_usadas:novas})
+    .eq('id',_usarSessaoId)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao registrar sessão:',error);
+    toast(error.message,'err');
+    return;
+  }
+
   closeModal('modal-usar-sessao');
   _usarSessaoId=null;
   await carregarSessoes();
@@ -3724,7 +3901,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.documentElement.setAttribute('data-theme',temaSalvo==='floresta'?'':temaSalvo);
   document.getElementById('ag-filtro-data').value=hoje();
   document.getElementById('ag-data-input').value=hoje();
-  ['ag-cli-sel','ag-proc-sel','ag-pac-total','ag-pac-preco','ag-pac-usadas','ag-pac-existente-sel','ag-pac-existente-usadas'].forEach(function(id){
+  ['ag-proc-sel','ag-pac-total','ag-pac-preco','ag-pac-usadas','ag-pac-existente-sel','ag-pac-existente-usadas'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.addEventListener('change',atualizarCamposPacoteAgendamento);
   });
