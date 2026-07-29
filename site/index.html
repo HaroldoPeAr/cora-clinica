@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ORIKO: agenda, clientes, pacotes, financeiro e estoque em um único sistema para clínicas, salões, barbearias e prestadores de serviço.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#1b2117">
+<meta property="og:title" content="ORIKO — Gestão inteligente para o seu negócio">
+<meta property="og:description" content="Organize agenda, clientes, pacotes, financeiro e estoque em um único sistema.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://oriko.com.br">
+<link rel="canonical" href="https://oriko.com.br">
 <title>ORIKO — Gestão inteligente para o seu negócio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -344,6 +352,34 @@
   .modal-foot{text-align:center;font-size:12.5px;color:var(--muted);margin-top:20px;}
  
   :focus-visible{outline:2px solid var(--clay);outline-offset:2px;}
+
+  .proof-strip{background:#fff;border-top:1px solid var(--stone);border-bottom:1px solid var(--stone);padding:22px 0;}
+  .proof-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;text-align:center;}
+  .proof-item strong{display:block;font-family:var(--serif);font-size:22px;color:var(--ink);}
+  .proof-item span{font-size:12.5px;color:var(--muted);}
+  .problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .problem-card{padding:30px;border-radius:20px;border:1px solid var(--stone);background:#fff;}
+  .problem-card.bad{background:#f8f3eb;}
+  .problem-card.good{background:var(--ink);color:var(--cream);}
+  .problem-card h3{font-family:var(--serif);font-size:23px;margin-bottom:16px;}
+  .problem-card ul{display:flex;flex-direction:column;gap:12px;}
+  .problem-card li{list-style:none;font-size:14px;display:flex;gap:10px;}
+  .problem-card.bad li::before{content:"×";color:var(--clay);font-weight:700;}
+  .problem-card.good li::before{content:"✓";color:var(--gold);font-weight:700;}
+  .cta-mini{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;}
+  .sticky-mobile-cta{display:none;}
+  @media(max-width:900px){
+    .proof-grid{grid-template-columns:1fr 1fr;}
+    .problem-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:640px){
+    .nav-right .link-quiet{display:none;}
+    .nav-right .btn{padding:9px 14px;font-size:12px;}
+    .sticky-mobile-cta{display:block;position:fixed;left:12px;right:12px;bottom:12px;z-index:150;}
+    .sticky-mobile-cta a{width:100%;box-shadow:0 14px 40px rgba(27,33,23,.35);}
+    footer{padding-bottom:90px;}
+  }
+
 </style>
 </head>
 <body>
@@ -420,6 +456,50 @@
     </div>
   </div>
  
+  <div class="proof-strip">
+    <div class="wrap proof-grid">
+      <div class="proof-item"><strong>100% online</strong><span>Acesse de qualquer lugar</span></div>
+      <div class="proof-item"><strong>Sem instalação</strong><span>Funciona direto no navegador</span></div>
+      <div class="proof-item"><strong>Plano único</strong><span>Todos os módulos incluídos</span></div>
+      <div class="proof-item"><strong>Sem fidelidade</strong><span>Cancele quando quiser</span></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Antes e depois</div>
+        <h2>Chega de administrar o seu negócio em lugares diferentes.</h2>
+        <p>O ORIKO centraliza a operação para que você tenha clareza da agenda ao resultado financeiro.</p>
+      </div>
+      <div class="problem-grid reveal">
+        <div class="problem-card bad">
+          <h3>Sem o ORIKO</h3>
+          <ul>
+            <li>Agenda espalhada entre papel e WhatsApp</li>
+            <li>Pacotes controlados manualmente</li>
+            <li>Estoque sem atualização automática</li>
+            <li>Financeiro em planilhas separadas</li>
+            <li>Dificuldade para saber o lucro real</li>
+          </ul>
+        </div>
+        <div class="problem-card good">
+          <h3>Com o ORIKO</h3>
+          <ul>
+            <li>Agenda centralizada e organizada</li>
+            <li>Sessões descontadas automaticamente</li>
+            <li>Alertas de estoque e custo por procedimento</li>
+            <li>Clientes, histórico e evolução em um só lugar</li>
+            <li>Receita, despesas e margem sempre visíveis</li>
+          </ul>
+          <div class="cta-mini">
+            <a href="https://app.oriko.com.br/cadastro" class="btn btn-clay">Começar teste grátis</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- FEATURES -->
   <section id="recursos" class="features">
     <div class="wrap">
@@ -577,21 +657,21 @@
   <section>
     <div class="wrap">
       <div class="section-head reveal">
-        <div class="eyebrow">Quem usa</div>
-        <h2>Negócios que trocaram a planilha pelo ORIKO.</h2>
+        <div class="eyebrow">Na prática</div>
+        <h2>O que o ORIKO foi criado para resolver.</h2>
       </div>
       <div class="testi-grid reveal">
         <div class="testi-card">
-          <p class="testi-quote">"Parei de perder horário de cliente. Hoje eu sei, na hora, se o dia fechou no azul ou no vermelho."</p>
-          <div class="testi-person"><div class="testi-avatar"></div><div><strong>Mayara S.</strong><span>Clínica de estética</span></div></div>
+          <p class="testi-quote">"Uma agenda organizada reduz esquecimentos e deixa o dia mais previsível."</p>
+          <div class="testi-person"><div class="testi-avatar"></div><div><strong>Agenda organizada</strong><span>Menos faltas e retrabalho</span></div></div>
         </div>
         <div class="testi-card">
-          <p class="testi-quote">"O controle de pacotes sozinho já pagaria a mensalidade. Ninguém mais usa sessão de graça sem eu perceber."</p>
-          <div class="testi-person"><div class="testi-avatar"></div><div><strong>Arthur B.</strong><span>Estúdio de depilação</span></div></div>
+          <p class="testi-quote">"O controle automático de sessões evita perdas e elimina conferências manuais."</p>
+          <div class="testi-person"><div class="testi-avatar"></div><div><strong>Pacotes sob controle</strong><span>Sessões e validade acompanhadas</span></div></div>
         </div>
         <div class="testi-card">
-          <p class="testi-quote">"Migrei de três planilhas diferentes para uma tela só. Foi a primeira vez que entendi minha margem de verdade."</p>
-          <div class="testi-person"><div class="testi-avatar"></div><div><strong>Camila R.</strong><span>Salão de beleza</span></div></div>
+          <p class="testi-quote">"Financeiro, estoque e atendimento conectados tornam a gestão mais clara."</p>
+          <div class="testi-person"><div class="testi-avatar"></div><div><strong>Resultado visível</strong><span>Receita, custos e margem</span></div></div>
         </div>
       </div>
     </div>
@@ -668,6 +748,9 @@
     </div>
   </div>
 </footer>
+<div class="sticky-mobile-cta">
+  <a href="https://app.oriko.com.br/cadastro" class="btn btn-clay">Testar grátis por 7 dias</a>
+</div>
  
 <script>
   // Endereços oficiais do ORIKO
@@ -678,12 +761,16 @@
 
   // reveal on scroll
   const revealEls = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-    });
-  },{threshold:.15});
-  revealEls.forEach(el=>io.observe(el));
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    },{threshold:.15});
+    revealEls.forEach(el=>io.observe(el));
+  } else {
+    revealEls.forEach(el=>el.classList.add('in'));
+  }
  
   // header shadow on scroll
   const header = document.getElementById('siteHeader');
@@ -719,7 +806,6 @@
       }
     });
   });
-});
 </script>
  
 </body>
