@@ -1,0 +1,4246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudioFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#F8F7F4;
+  --panel:#FFFFFF;
+  --sidebar:#1E2820;
+  --sidebar-hover:#2C3A2A;
+  --sidebar-active:#3D5438;
+  --sidebar-text:#C8D4C0;
+  --sidebar-text-muted:#7A9070;
+  --ink:#1A1A18;
+  --ink-soft:#6B6B60;
+  --ink-muted:#9A9A8E;
+  --sage:#4A6741;
+  --sage-deep:#2D4028;
+  --sage-pale:#E4EDE0;
+  --sage-light:#F0F5EE;
+  --gold:#B8922A;
+  --gold-pale:#F5EDD8;
+  --gold-light:#FBF6EA;
+  --terra:#B84A2A;
+  --terra-pale:#F5E4DC;
+  --line:#E8E6E0;
+  --line-strong:#D4D1C8;
+  --shadow:0 1px 4px rgba(26,26,24,.06),0 4px 16px rgba(26,26,24,.04);
+  --shadow-md:0 2px 8px rgba(26,26,24,.08),0 8px 24px rgba(26,26,24,.06);
+  --radius:12px;
+  --radius-sm:8px;
+}
+[data-theme="rosegold"]{
+  --bg:#FDF5F7;--panel:#FFFFFF;
+  --sidebar:#3D1F2D;--sidebar-hover:#5C2F43;--sidebar-active:#7A3D58;
+  --sidebar-text:#F0C8D4;--sidebar-text-muted:#C08090;
+  --ink:#2A1018;--ink-soft:#7A4858;--ink-muted:#B08090;
+  --sage:#C4748A;--sage-deep:#8B3A50;--sage-pale:#FAEAEE;--sage-light:#FDF2F5;
+  --gold:#D4A96A;--gold-pale:#FBF0E0;--gold-light:#FDF8F0;
+  --terra:#C0392B;--terra-pale:#FDE8E6;
+  --line:#F0DDE2;--line-strong:#E0C8CE;
+}
+[data-theme="oceano"]{
+  --bg:#F0F6FB;--panel:#FFFFFF;
+  --sidebar:#0F2942;--sidebar-hover:#1A4470;--sidebar-active:#1E5A94;
+  --sidebar-text:#A8C8E8;--sidebar-text-muted:#5888B8;
+  --ink:#0A1928;--ink-soft:#3A5878;--ink-muted:#6888A8;
+  --sage:#1E6FA8;--sage-deep:#0F4878;--sage-pale:#E0EEF8;--sage-light:#EEF6FC;
+  --gold:#27AE8A;--gold-pale:#DFF5EE;--gold-light:#EEF9F5;
+  --terra:#D44B3C;--terra-pale:#FDECEA;
+  --line:#D8E8F4;--line-strong:#C0D8EE;
+}
+[data-theme="carbono"]{
+  --bg:#FAFAFA;--panel:#FFFFFF;
+  --sidebar:#18181B;--sidebar-hover:#3F3F46;--sidebar-active:#52525B;
+  --sidebar-text:#D4D4D8;--sidebar-text-muted:#A1A1AA;
+  --ink:#18181B;--ink-soft:#52525B;--ink-muted:#A1A1AA;
+  --sage:#52525B;--sage-deep:#3F3F46;--sage-pale:#F4F4F5;--sage-light:#FAFAFA;
+  --gold:#E4B84D;--gold-pale:#FDF6E3;--gold-light:#FEFBF0;
+  --terra:#EF4444;--terra-pale:#FEF2F2;
+  --line:#E4E4E7;--line-strong:#D4D4D8;
+}
+[data-theme="lavanda"]{
+  --bg:#F7F5FF;--panel:#FFFFFF;
+  --sidebar:#2D1B69;--sidebar-hover:#4527A0;--sidebar-active:#5E35B1;
+  --sidebar-text:#C5B8F0;--sidebar-text-muted:#8878C8;
+  --ink:#1A1040;--ink-soft:#4A3888;--ink-muted:#8878C8;
+  --sage:#6D4AE8;--sage-deep:#4527A0;--sage-pale:#EDE9FF;--sage-light:#F4F2FF;
+  --gold:#3CC8A0;--gold-pale:#DFF8F1;--gold-light:#EEF9F5;
+  --terra:#E53E3E;--terra-pale:#FFF5F5;
+  --line:#E0DAFF;--line-strong:#C8C0F0;
+}
+/* ── THEME PICKER ── */
+.theme-toggle-btn{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--radius-sm);padding:5px 11px;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:5px;transition:.15s;}
+.theme-toggle-btn:hover{border-color:var(--sage-pale);color:var(--sage-deep);background:var(--sage-light);}
+.theme-toggle-btn svg{width:13px;height:13px;flex-shrink:0;}
+.theme-panel{display:none;position:fixed;top:58px;right:24px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;z-index:400;box-shadow:var(--shadow-md);width:290px;}
+.theme-panel.open{display:block;}
+.theme-panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);margin-bottom:12px;}
+.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.theme-option{border:2px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;transition:.15s;background:var(--bg);}
+.theme-option:hover{border-color:var(--sage);transform:translateY(-1px);}
+.theme-option.active{border-color:var(--sage);background:var(--sage-pale);}
+.theme-swatches{display:flex;gap:3px;margin-bottom:6px;}
+.theme-swatch-dot{width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.08);}
+.theme-option-name{font-size:12px;font-weight:600;color:var(--ink);}
+.theme-option-desc{font-size:10.5px;color:var(--ink-muted);margin-top:1px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);}
+.login-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:40px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-md);}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:32px;}
+.login-mark{width:42px;height:42px;border-radius:10px;background:var(--sidebar);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.login-name{font-family:'DM Serif Display',serif;font-size:24px;color:var(--ink);}
+.login-tagline{font-size:13px;color:var(--ink-soft);margin-bottom:28px;line-height:1.5;}
+.login-error{background:var(--terra-pale);color:var(--terra);font-size:12.5px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;display:none;line-height:1.4;}
+
+/* ── APP SHELL ── */
+.app{display:none;min-height:100vh;}
+.layout{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR RECOLHÍVEL ── */
+.sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;transition:width .22s cubic-bezier(.4,0,.2,1);}
+.sidebar.collapsed{width:60px;}
+.sidebar-brand{padding:18px 14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;overflow:hidden;min-height:64px;position:relative;}
+.sidebar-mark{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.sidebar-name{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;transition:opacity .15s,max-width .22s;max-width:160px;}
+.sidebar.collapsed .sidebar-name{opacity:0;max-width:0;}
+.sidebar-toggle{position:absolute;top:21px;right:-11px;width:22px;height:22px;background:var(--sidebar);border:1.5px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:60;color:var(--sidebar-text);transition:.2s;flex-shrink:0;}
+.sidebar-toggle:hover{background:var(--sidebar-hover);border-color:rgba(255,255,255,.4);}
+.sidebar-toggle svg{transition:transform .22s;display:block;}
+.sidebar.collapsed .sidebar-toggle svg{transform:rotate(180deg);}
+.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto;overflow-x:hidden;}
+.nav-section{font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--sidebar-text-muted);font-weight:600;padding:16px 10px 6px;white-space:nowrap;overflow:hidden;transition:opacity .15s;}
+.sidebar.collapsed .nav-section{opacity:0;pointer-events:none;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--sidebar-text);font-size:13px;font-weight:500;margin-bottom:2px;transition:.15s;border:none;background:none;width:100%;text-align:left;font-family:'Inter',sans-serif;white-space:nowrap;overflow:hidden;}
+.nav-item:hover{background:var(--sidebar-hover);color:#fff;}
+.nav-item.active{background:var(--sidebar-active);color:#fff;}
+.nav-label{overflow:hidden;transition:opacity .15s,max-width .22s;max-width:160px;display:inline-block;}
+.sidebar.collapsed .nav-label{opacity:0;max-width:0;}
+.nav-icon{width:16px;height:16px;opacity:.7;flex-shrink:0;}
+.nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1;}
+.sidebar-footer{padding:12px 8px;border-top:1px solid rgba(255,255,255,.06);overflow:hidden;}
+.sidebar-user{padding:6px 10px;}
+.sidebar-user-email{font-size:11px;color:var(--sidebar-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s;}
+.sidebar.collapsed .sidebar-user-email{opacity:0;}
+.btn-logout-sidebar{width:100%;margin-top:4px;background:rgba(255,255,255,.06);border:none;color:var(--sidebar-text);padding:7px 10px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;transition:.15s;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;}
+.btn-logout-sidebar:hover{background:rgba(255,255,255,.1);color:#fff;}
+
+/* ── MAIN CONTENT ── */
+.main{margin-left:220px;flex:1;min-width:0;transition:margin-left .22s cubic-bezier(.4,0,.2,1);}
+.main.expanded{margin-left:60px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 28px 0;margin-bottom:24px;}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);font-weight:400;}
+.topbar-sub{font-size:13px;color:var(--ink-soft);margin-top:2px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.db-badge{font-size:10.5px;padding:4px 10px;border-radius:20px;font-weight:600;background:var(--sage-pale);color:var(--sage-deep);display:flex;align-items:center;gap:5px;}
+.db-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage);}
+.content{padding:0 28px 60px;}
+
+/* ── VIEWS ── */
+.view{display:none;}.view.active{display:block;}
+
+/* ── DASHBOARD INTERATIVO ── */
+.kpi-link{cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.kpi-link:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,26,24,.12);}
+.dash-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.dash-quick-btn{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:8px;transition:.15s;}
+.dash-quick-btn:hover{border-color:var(--sage-pale);background:var(--sage-light);color:var(--sage-deep);transform:translateY(-1px);}
+.dash-quick-btn svg{width:15px;height:15px;flex-shrink:0;}
+
+/* ── CARDS ── */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.card-head h2{font-family:'DM Serif Display',serif;font-size:16px;font-weight:400;color:var(--ink);}
+.card-head .card-label{font-size:11px;color:var(--ink-muted);}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;gap:14px;margin-bottom:20px;}
+.kpi-grid-4{grid-template-columns:repeat(4,1fr);}
+.kpi-grid-3{grid-template-columns:repeat(3,1fr);}
+.kpi-grid-2{grid-template-columns:repeat(2,1fr);}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line-strong);border-radius:3px 0 0 3px;}
+.kpi.kpi-hero{background:var(--sidebar);border:none;}
+.kpi.kpi-hero::before{background:var(--gold);}
+.kpi.kpi-warn::before{background:var(--terra);}
+.kpi.kpi-ok::before{background:var(--sage);}
+.kpi.kpi-gold::before{background:var(--gold);}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:600;color:var(--ink-muted);margin-bottom:8px;}
+.kpi.kpi-hero .kpi-label{color:var(--sidebar-text-muted);}
+.kpi-value{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--ink);line-height:1;}
+.kpi.kpi-hero .kpi-value{color:#fff;font-size:30px;}
+.kpi-sub{font-size:11px;color:var(--ink-muted);margin-top:6px;}
+.kpi.kpi-hero .kpi-sub{color:var(--sidebar-text-muted);}
+.kpi-warn-val{color:var(--terra)!important;}
+.kpi-ok-val{color:var(--sage)!important;}
+.kpi-gold-val{color:var(--gold)!important;}
+
+/* ── BUTTONS ── */
+.btn{border:none;padding:8px 16px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--sidebar);color:#fff;}
+.btn-primary:hover{background:var(--sidebar-active);}
+.btn-outline{background:transparent;color:var(--sage-deep);border:1.5px solid var(--sage-pale);}
+.btn-outline:hover{background:var(--sage-light);}
+.btn-danger{background:var(--terra-pale);color:var(--terra);border:none;}
+.btn-danger:hover{background:#EDCFC6;}
+.btn-gold{background:var(--gold-pale);color:var(--gold);border:none;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+
+/* ── PILLS ── */
+.pill{font-family:'JetBrains Mono',monospace;font-weight:500;padding:3px 8px;border-radius:5px;font-size:11px;display:inline-block;}
+.pill-green{background:var(--sage-pale);color:var(--sage-deep);}
+.pill-red{background:var(--terra-pale);color:var(--terra);}
+.pill-gold{background:var(--gold-pale);color:var(--gold);}
+.pill-blue{background:#E0EAFA;color:#2E5A9C;}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+.form-control{width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:var(--radius-sm);font-size:13.5px;font-family:'Inter',sans-serif;background:#fff;color:var(--ink);outline:none;transition:.15s;}
+.form-control:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,103,65,.1);}
+.form-control::placeholder{color:var(--ink-muted);}
+select.form-control{cursor:pointer;}
+textarea.form-control{resize:vertical;min-height:72px;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+
+/* ── AGENDAMENTO COM PACOTES ── */
+.ag-type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.ag-type-card{border:1.5px solid var(--line);background:#fff;border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:.15s;min-height:82px;display:flex;gap:10px;align-items:flex-start;}
+.ag-type-card:hover{border-color:var(--sage);background:var(--sage-light);}
+.ag-type-card.active{border-color:var(--sage);background:var(--sage-light);box-shadow:0 0 0 3px rgba(74,103,65,.08);}
+.ag-radio-dot{width:18px;height:18px;border:1.5px solid var(--line-strong);border-radius:50%;flex-shrink:0;margin-top:2px;position:relative;background:#fff;}
+.ag-type-card.active .ag-radio-dot{border-color:var(--sage);}
+.ag-type-card.active .ag-radio-dot::after{content:'';position:absolute;inset:4px;background:var(--sage);border-radius:50%;}
+.ag-type-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.ag-type-desc{font-size:11.2px;color:var(--ink-soft);line-height:1.4;}
+.ag-package-box{display:none;background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:var(--radius-sm);padding:14px;margin:10px 0 14px;}
+.ag-package-box.open{display:block;}
+.ag-package-box.gold{background:var(--gold-light);border-color:var(--gold-pale);}
+.ag-summary{font-size:12px;color:var(--sage-deep);background:#fff;border:1px dashed var(--sage-pale);border-radius:var(--radius-sm);padding:10px;margin-top:8px;line-height:1.5;}
+.ag-summary strong{font-weight:700;}
+@media(max-width:660px){.ag-type-grid{grid-template-columns:1fr;}}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(26,26,24,.5);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px);}
+.overlay.open{display:flex;}
+.modal{background:var(--panel);border-radius:16px;padding:28px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-md);}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:20px;color:var(--ink);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);}
+.divider{border:none;border-top:1px solid var(--line);margin:14px 0;}
+
+/* ── LISTS ── */
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-top:1px solid var(--line);flex-wrap:wrap;gap:8px;}
+.list-item:first-child{border-top:none;}
+.li-name{font-size:13.5px;font-weight:600;color:var(--ink);}
+.li-sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+.li-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* ── PROCEDIMENTOS ── */
+.proc-item{border-top:1px solid var(--line);padding:14px 0;}
+.proc-item:first-child{border-top:none;padding-top:0;}
+.proc-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;}
+.proc-name{font-size:14px;font-weight:600;}
+.proc-dur{font-size:11px;color:var(--ink-muted);margin-top:2px;}
+.proc-price{text-align:right;}
+.proc-price .price{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;}
+.proc-price .cost{font-size:11px;color:var(--ink-muted);margin-top:2px;}
+.margin-row{display:flex;align-items:center;gap:10px;margin-top:10px;}
+.margin-bar{flex:1;height:5px;background:var(--sage-pale);border-radius:3px;overflow:hidden;display:flex;}
+.margin-bar-cost{background:var(--terra);height:100%;}
+.margin-bar-profit{background:var(--sage);height:100%;}
+.margin-info{font-size:11px;color:var(--ink-muted);}
+.ins-tags{margin-top:8px;}
+.ins-tag{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:3px 8px;font-size:11px;margin:2px 2px 2px 0;color:var(--ink-soft);}
+
+/* ── ESTOQUE ── */
+.est-bar{width:64px;height:5px;background:var(--sage-pale);border-radius:3px;overflow:hidden;}
+.est-bar-fill{height:100%;border-radius:3px;}
+
+/* ── AGENDA ── */
+.ag-item{display:flex;gap:12px;padding:13px 0;border-top:1px solid var(--line);align-items:flex-start;}
+.ag-item:first-child{border-top:none;}
+.ag-time{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-muted);width:42px;flex-shrink:0;padding-top:3px;}
+.ag-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.ag-body{flex:1;}
+.ag-client{font-size:13.5px;font-weight:600;}
+.ag-proc{font-size:11.5px;color:var(--ink-soft);margin-top:1px;}
+.ag-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+.status-btn{border:none;padding:4px 10px;border-radius:5px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.03em;transition:.15s;}
+.s-conf{background:var(--sage-pale);color:var(--sage-deep);}
+.s-conf:hover{background:#D4E8CC;}
+.s-falt{background:var(--terra-pale);color:var(--terra);}
+.s-canc{background:var(--gold-pale);color:var(--gold);}
+.s-del{background:var(--line);color:var(--ink-muted);}
+
+
+/* ── AGENDA INTELIGENTE ── */
+.agenda-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start;}
+.agenda-main-card{min-height:520px;}
+.agenda-side{display:flex;flex-direction:column;gap:14px;}
+.agenda-side-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.agenda-side-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:12px;color:var(--ink);}
+.agenda-side-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:12.5px;gap:10px;}
+.agenda-side-row:first-of-type{border-top:none;}
+.agenda-side-row strong{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);}
+.agenda-card{display:grid;grid-template-columns:70px 1fr auto;gap:14px;align-items:stretch;padding:15px 0;border-top:1px solid var(--line);}
+.agenda-card:first-child{border-top:none;}
+.agenda-time{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--ink-soft);padding-top:4px;}
+.agenda-card-body{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px;position:relative;box-shadow:0 1px 5px rgba(26,26,24,.04);}
+.agenda-card-body::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:14px 0 0 14px;background:var(--ink-muted);}
+.agenda-card-body.confirmado::before{background:var(--sage);}
+.agenda-card-body.faltou::before{background:var(--terra);}
+.agenda-card-body.cancelou::before{background:var(--gold);}
+.agenda-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px;}
+.agenda-client{font-size:15px;font-weight:700;color:var(--ink);}
+.agenda-proc{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.agenda-status-pill{text-transform:uppercase;letter-spacing:.05em;font-size:10px;font-weight:800;border-radius:999px;padding:5px 9px;background:var(--sage-pale);color:var(--sage-deep);white-space:nowrap;}
+.agenda-status-pill.pendente{background:var(--line);color:var(--ink-soft);}
+.agenda-status-pill.faltou{background:var(--terra-pale);color:var(--terra);}
+.agenda-status-pill.cancelou{background:var(--gold-pale);color:var(--gold);}
+.agenda-package{background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:12px;color:var(--sage-deep);}
+.agenda-package.warn{background:var(--gold-light);border-color:var(--gold-pale);color:var(--gold);}
+.agenda-progress{height:7px;background:#fff;border:1px solid var(--sage-pale);border-radius:999px;overflow:hidden;margin:8px 0 4px;}
+.agenda-progress-fill{height:100%;background:var(--sage);border-radius:999px;}
+.agenda-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.agenda-meta .pill{font-size:10.5px;}
+.agenda-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.agenda-actions .status-btn{padding:6px 10px;}
+.agenda-card-actions{display:flex;align-items:center;}
+.agenda-filter-wrap{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.agenda-quick-btn{width:100%;justify-content:center;padding:10px 12px;}
+.agenda-next-item{background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:10px;padding:12px;font-size:12.5px;color:var(--sage-deep);line-height:1.5;}
+.agenda-viewbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 16px;flex-wrap:wrap;}
+.agenda-view-left,.agenda-view-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.agenda-seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px;}
+.agenda-seg button{border:none;background:transparent;color:var(--ink-soft);font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
+.agenda-seg button.active{background:var(--sidebar);color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.agenda-period-label{font-size:12.5px;color:var(--ink-soft);font-weight:700;}
+.agenda-nav-btn{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;font-weight:800;}
+.agenda-nav-btn:hover{border-color:var(--sage-pale);background:var(--sage-light);color:var(--sage-deep);}
+.agenda-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+.agenda-week-day{border:1px solid var(--line);border-radius:13px;background:#fff;min-height:190px;padding:10px;}
+.agenda-week-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px;}
+.agenda-week-name{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-muted);font-weight:800;}
+.agenda-week-date{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink);line-height:1;}
+.agenda-mini-event{border:1px solid var(--line);border-left:3px solid var(--ink-muted);border-radius:9px;padding:7px 8px;margin-bottom:7px;background:var(--bg);font-size:11.5px;cursor:pointer;}
+.agenda-mini-event.confirmado{border-left-color:var(--sage);background:var(--sage-light);}
+.agenda-mini-event.faltou{border-left-color:var(--terra);background:var(--terra-pale);}
+.agenda-mini-event.cancelou{border-left-color:var(--gold);background:var(--gold-light);}
+.agenda-mini-time{font-family:'JetBrains Mono',monospace;color:var(--ink-muted);font-size:10.5px;margin-bottom:2px;}
+.agenda-mini-client{font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.agenda-mini-proc{color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10.5px;margin-top:1px;}
+.agenda-more{font-size:11px;color:var(--sage-deep);font-weight:700;margin-top:6px;}
+.agenda-month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.agenda-month-dow{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:800;text-align:center;padding:4px;}
+.agenda-month-day{border:1px solid var(--line);border-radius:12px;background:#fff;min-height:115px;padding:9px;display:flex;flex-direction:column;gap:7px;}
+.agenda-month-day.out{opacity:.35;background:var(--bg);}
+.agenda-month-day.today{border-color:var(--sage);box-shadow:0 0 0 2px var(--sage-pale);}
+.agenda-month-number{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);font-weight:800;}
+.agenda-month-count{background:var(--sage-light);border:1px solid var(--sage-pale);color:var(--sage-deep);border-radius:999px;padding:4px 7px;font-size:10.5px;font-weight:800;width:max-content;}
+.agenda-month-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:auto;}
+.agenda-dot{width:7px;height:7px;border-radius:50%;background:var(--ink-muted);}
+.agenda-dot.confirmado{background:var(--sage);}.agenda-dot.faltou{background:var(--terra);}.agenda-dot.cancelou{background:var(--gold);}
+@media(max-width:900px){.agenda-week-grid{grid-template-columns:1fr 1fr}.agenda-month-grid{grid-template-columns:repeat(2,1fr)}.agenda-month-dow{display:none}}
+@media(max-width:560px){.agenda-week-grid,.agenda-month-grid{grid-template-columns:1fr}.agenda-viewbar{align-items:stretch}.agenda-view-left,.agenda-view-right{width:100%}.agenda-seg{width:100%;}.agenda-seg button{flex:1}.agenda-period-label{width:100%;text-align:center}}
+
+@media(max-width:1100px){.agenda-layout{grid-template-columns:1fr}.agenda-side{display:grid;grid-template-columns:1fr 1fr}.agenda-card{grid-template-columns:58px 1fr}.agenda-card-actions{display:none}}
+@media(max-width:700px){.agenda-side{display:block}.agenda-side-card{margin-bottom:12px}.agenda-card{grid-template-columns:1fr}.agenda-time{font-size:12px}.agenda-filter-wrap{width:100%}.agenda-filter-wrap input{width:100%!important}}
+
+/* ── FINANCEIRO ── */
+.fin-row{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr .8fr;align-items:center;gap:8px;padding:13px 0;border-top:1px solid var(--line);font-size:13px;cursor:pointer;transition:.1s;}
+.fin-row:hover{background:var(--sage-light);margin:0 -6px;padding-left:6px;padding-right:6px;border-radius:var(--radius-sm);}
+.fin-row:first-child{border-top:none;}
+.fin-head{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:600;padding-bottom:10px;cursor:default;}
+.fin-head:hover{background:none!important;}
+.fin-name{font-weight:600;}
+.fin-sub{font-size:10.5px;color:var(--ink-muted);margin-top:1px;}
+.fin-bar{background:var(--sage-pale);border-radius:3px;height:5px;width:100%;overflow:hidden;display:flex;}
+.fin-bar-cost{background:var(--terra);height:100%;}
+.fin-bar-profit{background:var(--sage);height:100%;}
+.fin-detail{display:none;margin-top:12px;padding:14px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--line);}
+.fin-detail.open{display:block;}
+.fin-detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:8px;}
+.fin-dl{font-size:10.5px;color:var(--ink-muted);}
+.fin-dv{font-family:'DM Serif Display',serif;font-size:18px;margin-top:2px;}
+.dre-row{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;}
+.dre-row:first-child{border-top:none;}
+
+/* ── MOVIMENTAÇÕES ── */
+.mov-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr .7fr;gap:8px;padding:11px 0;border-top:1px solid var(--line);font-size:12.5px;align-items:center;}
+.mov-grid:first-child{border-top:none;}
+.mov-head{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:600;padding-bottom:8px;}
+.mov-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px;}
+.seg-btn{border:none;background:none;padding:6px 11px;font-size:11.5px;font-weight:600;color:var(--ink-soft);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;white-space:nowrap;}
+.seg-btn.active{background:var(--sidebar);color:#fff;}
+.seg-btn:hover:not(.active){background:var(--line);}
+
+/* ── RESERVA ── */
+.res-goal{background:var(--sage-light);border:1px solid var(--sage-pale);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;}
+.res-label{font-size:11px;color:var(--sage-deep);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.res-bar-wrap{background:#fff;border:1px solid var(--sage-pale);border-radius:5px;height:10px;overflow:hidden;margin:8px 0;}
+.res-bar-fill{background:var(--sage);height:100%;border-radius:5px;transition:.4s;}
+.res-bar-info{display:flex;justify-content:space-between;font-size:11px;color:var(--sage-deep);}
+.res-tip{font-size:12.5px;color:var(--ink-soft);line-height:1.7;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border-left:3px solid var(--sage-pale);}
+
+/* ── ALERTAS ── */
+.alert-box{display:flex;gap:10px;padding:11px 14px;border-radius:var(--radius-sm);margin-bottom:8px;align-items:flex-start;}
+.alert-box.warn{background:var(--terra-pale);border:1px solid #ECC8BC;}
+.alert-box.ok{background:var(--sage-pale);border:1px solid #C8DABE;}
+.alert-box.gold{background:var(--gold-pale);border:1px solid #E0CFA0;}
+.alert-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
+.alert-text{font-size:12.5px;line-height:1.5;}
+.alert-text strong{font-weight:700;}
+
+/* ── INSUMO ROWS ── */
+.ins-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px;}
+.ins-row .form-group{margin-bottom:0;}
+.ins-rm{padding:10px 11px;background:var(--terra-pale);color:var(--terra);border:none;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;line-height:1;}
+
+/* ── CLIENTES ── */
+.cli-item{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-top:1px solid var(--line);flex-wrap:wrap;gap:8px;}
+.cli-item:first-child{border-top:none;}
+.cli-name{font-size:14px;font-weight:600;}
+.cli-meta{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+
+/* ── MISC ── */
+.mono{font-family:'JetBrains Mono',monospace;}
+.empty-state{color:var(--ink-muted);font-size:13px;padding:16px 0;line-height:1.5;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--sage);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+.loading-box{display:flex;align-items:center;gap:8px;color:var(--ink-muted);font-size:13px;padding:16px 0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(8px);transition:.3s;pointer-events:none;box-shadow:var(--shadow-md);}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.ok{background:var(--sage-deep);}
+.toast.err{background:var(--terra);}
+.section-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:2px;}
+.section-sub{font-size:12.5px;color:var(--ink-soft);margin-bottom:20px;}
+
+/* ── DASHBOARD GRID ── */
+.dash-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:start;}
+@media(max-width:860px){.dash-grid{grid-template-columns:1fr;}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar:not(.collapsed){width:180px;}
+  .main:not(.expanded){margin-left:180px;}
+  .kpi-grid-4{grid-template-columns:1fr 1fr;}
+  .dash-quick{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:660px){
+  .sidebar{transform:translateX(-100%);width:220px;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0!important;}
+  .topbar{padding:16px 16px 0;}
+  .content{padding:0 16px 60px;}
+  .fr2,.fr3{grid-template-columns:1fr;}
+  .kpi-grid-3,.kpi-grid-4{grid-template-columns:1fr 1fr;}
+  .fin-row{grid-template-columns:1fr;gap:3px;}
+  .fin-head{display:none;}
+  .mov-grid{grid-template-columns:1fr 1fr;}
+  .ins-row{grid-template-columns:1fr 1fr;}
+  .dash-quick{grid-template-columns:1fr 1fr;}
+}
+
+
+/* ── CLIENTE 360 ── */
+.client360-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px;align-items:start;}
+.client360-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
+.client360-hero{grid-column:span 2;display:flex;gap:18px;align-items:flex-start;min-height:190px;}
+.client-avatar{width:112px;height:112px;border-radius:26px;background:linear-gradient(135deg,var(--sage-pale),var(--gold-pale));display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:36px;color:var(--sage-deep);flex-shrink:0;}
+.client360-name{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;}
+.client360-meta{display:grid;gap:7px;font-size:13px;color:var(--ink-soft);}
+.client360-tabs{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;}
+.client360-tab{border:none;background:var(--bg);padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;color:var(--ink-soft);cursor:pointer;}
+.client360-tab.active{background:var(--sage-pale);color:var(--sage-deep);}
+.client360-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.client360-mini{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);}
+.client360-mini-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:700;margin-bottom:7px;}
+.client360-mini-value{font-family:'DM Serif Display',serif;font-size:24px;line-height:1;color:var(--ink);}
+.client-progress{height:8px;background:var(--sage-pale);border-radius:99px;overflow:hidden;margin:10px 0 7px;}
+.client-progress-fill{height:100%;background:var(--sage);border-radius:99px;}
+.timeline{position:relative;padding-left:24px;}
+.timeline::before{content:'';position:absolute;left:7px;top:10px;bottom:10px;width:2px;background:var(--sage-pale);}
+.timeline-item{position:relative;padding:10px 0 14px;border-bottom:1px solid var(--line);}
+.timeline-item:last-child{border-bottom:none;}
+.timeline-dot{position:absolute;left:-23px;top:14px;width:16px;height:16px;border-radius:50%;background:var(--sage);border:3px solid var(--panel);box-shadow:0 0 0 1px var(--sage-pale);}
+.timeline-date{font-size:11px;color:var(--ink-muted);margin-bottom:3px;}
+.timeline-title{font-weight:700;font-size:13.5px;}
+.timeline-sub{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ba-photo{height:170px;border-radius:12px;background:linear-gradient(135deg,#e9d1bd,#cfa989);position:relative;overflow:hidden;}
+.ba-photo.after{background:linear-gradient(135deg,#f3d8c8,#ddb390);}
+.ba-tag{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.72);color:#fff;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+.client360-side-list{display:grid;gap:10px;}
+.client360-alert{padding:12px 14px;border-radius:12px;border:1px solid var(--line);font-size:12.5px;line-height:1.45;}
+.client360-alert.warn{background:var(--terra-pale);color:var(--terra);border-color:#ECC8BC;}
+.client360-alert.gold{background:var(--gold-light);color:#8A6500;border-color:#E6D6A8;}
+.client360-alert.ok{background:var(--sage-light);color:var(--sage-deep);border-color:var(--sage-pale);}
+.client360-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+@media(max-width:1100px){.client360-grid{grid-template-columns:1fr 1fr}.client360-hero{grid-column:span 2;}.client360-kpis{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:720px){.client360-grid{grid-template-columns:1fr}.client360-hero{grid-column:span 1;flex-direction:column}.client360-kpis{grid-template-columns:1fr}.before-after{grid-template-columns:1fr;}}
+
+
+
+/* ─────────────────────────────────────────────
+   STUDIOFLOW 1.0 RC · POLISH COMERCIAL
+   ───────────────────────────────────────────── */
+.login-wrap.sf-login-v1{padding:0;background:linear-gradient(135deg,var(--sidebar) 0%,var(--sage-deep) 48%,#F8F7F4 48%,#F8F7F4 100%);}
+.sf-login-shell{width:100%;min-height:100vh;display:grid;grid-template-columns:1.08fr .92fr;align-items:stretch;}
+.sf-login-hero{color:#fff;padding:58px 54px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}
+.sf-login-hero:before{content:'';position:absolute;inset:auto -120px -180px auto;width:420px;height:420px;border-radius:50%;background:rgba(184,146,42,.18);}
+.sf-login-hero:after{content:'';position:absolute;inset:90px auto auto -130px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.06);}
+.sf-login-logo{display:flex;align-items:center;gap:14px;position:relative;z-index:1;}
+.sf-login-mark{width:48px;height:48px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px rgba(0,0,0,.16);}
+.sf-login-title{font-family:'DM Serif Display',serif;font-size:32px;letter-spacing:-.4px;}
+.sf-login-copy{max-width:560px;position:relative;z-index:1;}
+.sf-login-copy h1{font-family:'DM Serif Display',serif;font-size:48px;line-height:1.02;font-weight:400;margin-bottom:18px;letter-spacing:-.8px;}
+.sf-login-copy p{font-size:16px;line-height:1.8;color:rgba(255,255,255,.78);max-width:500px;}
+.sf-login-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;max-width:520px;}
+.sf-login-feature{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:14px 16px;backdrop-filter:blur(10px);font-size:13px;font-weight:600;}
+.sf-login-feature span{display:block;color:rgba(255,255,255,.62);font-size:11px;font-weight:500;margin-top:3px;}
+.sf-login-proof{position:relative;z-index:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px 18px;font-size:13px;color:rgba(255,255,255,.78);max-width:520px;}
+.sf-login-panel{display:flex;align-items:center;justify-content:center;padding:36px;}
+.sf-login-card{width:100%;max-width:430px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:24px;padding:34px;box-shadow:0 22px 70px rgba(26,26,24,.12);}
+.sf-login-card .login-name{font-size:28px;margin-bottom:4px;}
+.sf-login-card .login-tagline{margin-bottom:24px;}
+.sf-login-actions{display:flex;justify-content:space-between;align-items:center;margin:4px 0 16px;font-size:12px;color:var(--ink-soft);}
+.sf-login-actions label{display:flex;align-items:center;gap:6px;}
+.sf-login-link{color:var(--sage-deep);font-weight:600;text-decoration:none;cursor:pointer;}
+.sf-login-version{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-muted);display:flex;justify-content:space-between;gap:10px;}
+.release-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--gold-pale);color:var(--gold);border-radius:999px;padding:4px 8px;}
+.sf-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--ink-muted);font-size:11px;padding:12px 28px 22px;}
+.sf-status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sage);margin-right:6px;}
+.help-fab{position:fixed;right:24px;bottom:24px;width:54px;height:54px;border-radius:18px;background:var(--sidebar);color:#fff;border:none;z-index:300;box-shadow:0 12px 30px rgba(26,26,24,.22);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;}
+.help-panel{position:fixed;right:24px;bottom:88px;width:360px;max-width:calc(100vw - 48px);background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-md);z-index:300;display:none;overflow:hidden;}
+.help-panel.open{display:block;}
+.help-head{background:var(--sidebar);color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;}
+.help-head strong{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;}
+.help-body{padding:16px;}
+.help-item{padding:12px 0;border-top:1px solid var(--line);font-size:13px;cursor:pointer;}
+.help-item:first-child{border-top:none;}
+.help-item strong{display:block;color:var(--ink);font-size:13px;margin-bottom:2px;}
+.help-item span{color:var(--ink-soft);font-size:11.5px;line-height:1.5;}
+.sf-settings-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start;}
+.sf-logo-preview{height:132px;border:1.5px dashed var(--line-strong);border-radius:16px;display:flex;align-items:center;justify-content:center;background:var(--sage-light);color:var(--sage-deep);font-family:'DM Serif Display',serif;font-size:22px;}
+.sf-check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.sf-check-card{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:12px 14px;font-size:12px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;}
+.sf-check-card input{accent-color:var(--sage);}
+.backup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.backup-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.backup-card strong{display:block;font-size:14px;color:var(--ink);margin-bottom:6px;}
+.backup-card p{font-size:12px;color:var(--ink-soft);line-height:1.5;margin-bottom:14px;}
+.help-page-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.help-page-card{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.help-page-card h3{font-size:14px;margin-bottom:8px;color:var(--ink);}
+.help-page-card p{font-size:12.5px;color:var(--ink-soft);line-height:1.6;}
+.sf-rc-note{background:var(--gold-light);border:1px solid var(--gold-pale);border-radius:var(--radius);padding:14px 16px;color:var(--ink-soft);font-size:12.5px;line-height:1.6;margin-bottom:16px;}
+@media(max-width:900px){.sf-login-shell{grid-template-columns:1fr}.sf-login-hero{display:none}.backup-grid{grid-template-columns:1fr 1fr}.sf-settings-grid,.help-page-grid{grid-template-columns:1fr}}
+@media(max-width:660px){.backup-grid{grid-template-columns:1fr}.sf-footer{padding-left:16px;padding-right:16px;flex-direction:column;align-items:flex-start}.help-panel{right:16px;bottom:82px}.help-fab{right:16px;bottom:16px}}
+
+
+/* ── STUDIOFLOW 1.0.1 · AJUSTES COMERCIAIS ── */
+/* Menu lateral enxuto: os módulos complementares ficam dentro de Clientes, Financeiro e Configurações */
+.sidebar-nav .nav-item[data-tab="movimentacoes"],
+.sidebar-nav .nav-item[data-tab="despesas"],
+.sidebar-nav .nav-item[data-tab="reserva"],
+.sidebar-nav .nav-item[data-tab="backup"],
+.sidebar-nav .nav-item[data-tab="ajuda"]{display:none!important;}
+
+.sf-logo-img,.clinic-logo-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:inherit;display:block;}
+.sidebar-mark img{width:32px;height:32px;object-fit:cover;border-radius:8px;background:#fff;}
+.sf-login-mark img{width:42px;height:42px;object-fit:cover;border-radius:12px;}
+
+.client-photo-mini{width:44px;height:44px;border-radius:14px;object-fit:cover;background:var(--sage-pale);flex-shrink:0;}
+.cli-item-main{display:flex;align-items:center;gap:12px;min-width:0;}
+.client-avatar.has-photo{background:none;overflow:hidden;}
+.client-avatar.has-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+
+.upload-card{border:1.5px dashed var(--line-strong);border-radius:14px;background:var(--bg);padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.upload-preview{width:72px;height:72px;border-radius:16px;background:var(--sage-light);border:1px solid var(--sage-pale);display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--sage-deep);font-family:'DM Serif Display',serif;font-size:20px;flex-shrink:0;}
+.upload-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+.upload-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.upload-actions input[type="file"]{font-size:12px;max-width:220px;}
+
+.sf-config-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.sf-config-tab{border:none;background:var(--bg);padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;color:var(--ink-soft);cursor:pointer;}
+.sf-config-tab.active{background:var(--sidebar);color:#fff;}
+.sf-config-section{display:none;}
+.sf-config-section.active{display:block;}
+
+.evolucao-form{display:grid;gap:12px;}
+.evolucao-photos{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.evolucao-preview{height:160px;border:1.5px dashed var(--line-strong);border-radius:14px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);overflow:hidden;font-size:12px;text-align:center;padding:12px;}
+.evolucao-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+.evolucao-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff;margin-top:10px;}
+.evolucao-card .before-after{margin-top:10px;}
+.ba-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+
+@media(max-width:660px){.evolucao-photos{grid-template-columns:1fr}.upload-card{align-items:flex-start;flex-direction:column}}
+
+
+/* ── PERFIL DO CLIENTE · ABAS FUNCIONAIS ── */
+.client360-section{display:none;grid-column:1 / -1;}
+.client360-section.active{display:block;}
+.client360-section-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px;align-items:start;}
+.client360-section-grid .client360-card{margin:0;}
+.client360-file-empty{border:1.5px dashed var(--line-strong);border-radius:14px;background:var(--bg);padding:22px;text-align:center;color:var(--ink-soft);line-height:1.6;}
+.client360-file-empty strong{display:block;color:var(--ink);margin-bottom:4px;}
+@media(max-width:1100px){.client360-section-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:720px){.client360-section-grid{grid-template-columns:1fr;}}
+
+
+/* ── PERFIL DO CLIENTE APRIMORADO ── */
+.client360-hero-full{grid-column:1 / -1}
+.client360-overview{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+.client360-stat{
+  padding:13px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--bg);
+}
+.client360-stat-label{
+  font-size:9.5px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:800;
+  color:var(--ink-muted);
+  margin-bottom:6px;
+}
+.client360-stat-value{
+  font-family:'DM Serif Display',serif;
+  font-size:20px;
+  color:var(--ink);
+  line-height:1.05;
+}
+.client360-package-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.client360-package-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  padding:15px;
+}
+.client360-package-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+.client360-package-name{
+  font-size:14px;
+  font-weight:800;
+  color:var(--ink);
+}
+.client360-package-meta{
+  font-size:11.5px;
+  color:var(--ink-soft);
+  margin-top:4px;
+  line-height:1.5;
+}
+.client360-package-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:11px;
+}
+.client360-gallery{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.client360-gallery-item{
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.client360-gallery-photo{
+  height:180px;
+  background:var(--sage-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--ink-muted);
+  font-size:12px;
+  overflow:hidden;
+}
+.client360-gallery-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  cursor:pointer;
+  transition:.2s;
+}
+.client360-gallery-photo img:hover{transform:scale(1.03)}
+.client360-gallery-info{
+  padding:10px 12px;
+  font-size:11.5px;
+  color:var(--ink-soft);
+}
+.client360-timeline-type{
+  display:inline-block;
+  margin-bottom:5px;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:var(--sage-deep);
+}
+@media(max-width:1050px){
+  .client360-overview{grid-template-columns:repeat(3,1fr)}
+  .client360-package-grid{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .client360-overview{grid-template-columns:1fr 1fr}
+  .client360-gallery{grid-template-columns:1fr}
+}
+
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div class="login-wrap sf-login-v1" id="login-wrap">
+  <div class="sf-login-shell">
+    <section class="sf-login-hero">
+      <div class="sf-login-logo">
+        <div class="sf-login-mark">
+          <svg width="34" height="34" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="#F0F5EE"/><path d="M 52 130 C 52 78, 100 78, 100 130 C 100 158, 130 158, 130 110" fill="none" stroke="#2D4028" stroke-width="20" stroke-linecap="round"/><circle cx="130" cy="68" r="12" fill="#2D4028"/></svg>
+        </div>
+        <div>
+          <div class="sf-login-title">StudioFlow</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.62);font-weight:600;letter-spacing:.08em;text-transform:uppercase;">Gestão inteligente</div>
+        </div>
+      </div>
+      <div class="sf-login-copy">
+        <h1>Gestão inteligente para o seu negócio.</h1>
+        <p>Organize sua agenda, acompanhe seus clientes e controle seu negócio em um único lugar.</p>
+        <div class="sf-login-features">
+          <div class="sf-login-feature">Agenda Inteligente<span>Dia, semana e mês</span></div>
+          <div class="sf-login-feature">Perfil do Cliente<span>Histórico em um só lugar</span></div>
+          <div class="sf-login-feature">Pacotes e Sessões<span>Baixa automática</span></div>
+          <div class="sf-login-feature">Financeiro<span>Receita, custos e lucro</span></div>
+        </div>
+      </div>
+      <div class="sf-login-proof sf-login-proof-clean">Organize sua agenda, acompanhe seus clientes e controle seu negócio em um único lugar.</div>
+    </section>
+    <section class="sf-login-panel">
+      <div class="sf-login-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
+          <div>
+            <div class="login-name">Bem-vindo!</div>
+            <p class="login-tagline">Entre para acessar seu negócio.</p>
+          </div>
+          
+        </div>
+        <div class="login-error" id="login-error"></div>
+        <div class="form-group"><label class="form-label">E-mail</label><input type="email" id="login-email" class="form-control" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+        <div class="form-group"><label class="form-label">Senha</label><input type="password" id="login-senha" class="form-control" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+        <div class="sf-login-actions"><label><input type="checkbox" checked> Lembrar acesso</label><span class="sf-login-link" onclick="toast('Recuperação de senha entrará na próxima atualização.','ok')">Esqueci minha senha</span></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;justify-content:center;font-size:13.5px;" onclick="fazerLogin()" id="btn-login">Entrar</button>
+        <div class="sf-login-version"><span>© 2026 StudioFlow</span><span>Plataforma para negócios baseados em agendamentos.</span></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-mark">
+        <svg width="32" height="32" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="#F0F5EE"/><path d="M 52 130 C 52 78, 100 78, 100 130 C 100 158, 130 158, 130 110" fill="none" stroke="#2D4028" stroke-width="20" stroke-linecap="round"/><circle cx="130" cy="68" r="12" fill="#2D4028"/></svg>
+      </div>
+      <div class="sidebar-name">StudioFlow</div>
+      <div class="sidebar-toggle" onclick="toggleSidebar()" title="Recolher menu">
+        <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M7 1L3 5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Visão Geral</div>
+      <button class="nav-item active" onclick="showTab('dashboard',this)" data-tab="dashboard">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.4"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </button>
+      <div class="nav-section">Cadastros</div>
+      <button class="nav-item" onclick="showTab('clientes',this)" data-tab="clientes">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Clientes</span>
+      </button>
+      <button class="nav-item" onclick="showTab('procedimentos',this)" data-tab="procedimentos">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Procedimentos</span>
+      </button>
+      <button class="nav-item" onclick="showTab('estoque',this)" data-tab="estoque">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="5" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 5V3.5A2.5 2.5 0 0 1 7.5 1h1A2.5 2.5 0 0 1 11 3.5V5" stroke="currentColor" stroke-width="1.4"/></svg>
+        <span class="nav-label">Estoque</span>
+      </button>
+      <div class="nav-section">Operações</div>
+      <button class="nav-item" onclick="showTab('agenda',this)" data-tab="agenda">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h14M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Agenda</span>
+      </button>
+      <button class="nav-item" onclick="showTab('sessoes',this)" data-tab="sessoes">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Pacotes</span>
+      </button>
+      <button class="nav-item" onclick="showTab('movimentacoes',this)" data-tab="movimentacoes">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M1 8h14M11 4l4 4-4 4M5 4L1 8l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Movimentações</span>
+      </button>
+      <div class="nav-section">Financeiro</div>
+      <button class="nav-item" onclick="showTab('financeiro',this)" data-tab="financeiro">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1v2M8 13v2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M1 8h2M13 8h2M3.5 12.5l1.4-1.4M11.1 4.9l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/></svg>
+        <span class="nav-label">Financeiro</span>
+      </button>
+      <button class="nav-item" onclick="showTab('despesas',this)" data-tab="despesas">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M2 4h12M2 8h8M2 12h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Despesas</span>
+      </button>
+      <button class="nav-item" onclick="showTab('reserva',this)" data-tab="reserva">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1l1.8 3.6L14 5.3l-3 2.9.7 4.1L8 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Reserva</span>
+      </button>
+      <div class="nav-section">Sistema</div>
+      <button class="nav-item" onclick="showTab('configuracoes',this);preencherConfigClinica();" data-tab="configuracoes">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M12.8 3.2l-1.4 1.4M4.6 11.4l-1.4 1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span class="nav-label">Configurações</span>
+      </button>
+      <button class="nav-item" onclick="showTab('backup',this)" data-tab="backup">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M3 12h10M4 9l4 4 4-4M8 1v11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Backup</span>
+      </button>
+      <button class="nav-item" onclick="showTab('ajuda',this)" data-tab="ajuda">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M6.2 6a2 2 0 1 1 3.3 1.5c-.8.6-1.5 1-1.5 2M8 12.2h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="nav-label">Ajuda</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-email" id="user-email"></div>
+      </div>
+      <button class="btn-logout-sidebar" onclick="fazerLogout()">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-sub" id="page-sub">Visão geral do seu negócio hoje</div>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle-btn" onclick="toggleThemePanel()" id="theme-btn-toggle" title="Trocar tema">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1z" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v14M1 8h14M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" opacity=".5"/></svg>
+          Tema
+        </button>
+        <span class="db-badge" id="db-badge">conectado</span>
+      </div>
+    </div>
+    <div class="theme-panel" id="theme-panel">
+      <div class="theme-panel-title">Escolher tema</div>
+      <div class="theme-options" id="theme-options"></div>
+    </div>
+    <div class="content">
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <h1 class="section-title" id="dash-greeting">Bom dia! 👋</h1>
+    <p class="section-sub">Vamos organizar seu dia?</p>
+    <div class="dash-quick">
+      <button class="dash-quick-btn" onclick="openModal('modal-ag')">
+        <svg fill="none" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h14M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Novo agendamento
+      </button>
+      <button class="dash-quick-btn" onclick="openModal('modal-cli')">
+        <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Novo cliente
+      </button>
+      <button class="dash-quick-btn" onclick="showTab('financeiro',document.querySelector('[data-tab=financeiro]'))">
+        <svg fill="none" viewBox="0 0 16 16"><path d="M8 1v2M8 13v2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/></svg>
+        Ver financeiro
+      </button>
+      <button class="dash-quick-btn" onclick="showTab('estoque',document.querySelector('[data-tab=estoque]'))">
+        <svg fill="none" viewBox="0 0 16 16"><rect x="1" y="5" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 5V3.5A2.5 2.5 0 0 1 7.5 1h1A2.5 2.5 0 0 1 11 3.5V5" stroke="currentColor" stroke-width="1.4"/></svg>
+        Verificar estoque
+      </button>
+    </div>
+    <div class="kpi-grid kpi-grid-4" id="dash-stats"></div>
+    <div class="dash-grid">
+      <div>
+        <div class="card">
+          <div class="card-head"><h2>Agenda de hoje</h2><button class="btn btn-outline btn-sm" onclick="showTab('agenda',document.querySelector('[data-tab=agenda]'))">Ver tudo →</button></div>
+          <div id="dash-agenda"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Resultado do mês</h2><button class="btn btn-outline btn-sm" onclick="showTab('financeiro',document.querySelector('[data-tab=financeiro]'))">Detalhes →</button></div>
+          <div id="dash-fin"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-head"><h2>Alertas de estoque</h2><button class="btn btn-outline btn-sm" onclick="showTab('estoque',document.querySelector('[data-tab=estoque]'))">Ver estoque →</button></div>
+          <div id="dash-alertas"></div>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <div class="card-head"><h2>Últimas movimentações</h2><button class="btn btn-outline btn-sm" onclick="showTab('movimentacoes',document.querySelector('[data-tab=movimentacoes]'))">Ver todas →</button></div>
+          <div id="dash-movs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="view" id="view-clientes">
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi kpi-hero"><div class="kpi-label">Total de clientes</div><div class="kpi-value" id="cli-total">—</div></div>
+      <div class="kpi kpi-gold"><div class="kpi-label">Novos este mês</div><div class="kpi-value kpi-gold-val" id="cli-novos">—</div></div>
+      <div class="kpi kpi-ok"><div class="kpi-label">Atendidas hoje</div><div class="kpi-value kpi-ok-val" id="cli-hoje">—</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h2>Lista de clientes</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" id="cli-busca" class="form-control" placeholder="Buscar..." style="padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:var(--bg);outline:none;width:160px;" oninput="renderClientes()">
+          <button class="btn btn-primary" onclick="openModal('modal-cli')">+ Novo cliente</button>
+        </div>
+      </div>
+      <div id="cli-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+  </div>
+
+  <!-- CLIENTE 360 -->
+  <div class="view" id="view-cliente360">
+    <div id="cliente360-wrap"><div class="loading-box"><div class="spinner"></div>Carregando cliente...</div></div>
+  </div>
+
+  <!-- PROCEDIMENTOS -->
+  <div class="view" id="view-procedimentos">
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi kpi-hero"><div class="kpi-label">Procedimentos</div><div class="kpi-value" id="proc-total">—</div></div>
+      <div class="kpi kpi-ok"><div class="kpi-label">Melhor margem</div><div class="kpi-value kpi-ok-val" id="proc-best">—</div><div class="kpi-sub" id="proc-best-name"></div></div>
+      <div class="kpi kpi-warn"><div class="kpi-label">Abaixo de 50%</div><div class="kpi-value kpi-warn-val" id="proc-warn">—</div><div class="kpi-sub">precisam de atenção</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Lista</h2><button class="btn btn-primary" onclick="abrirModalProc()">+ Novo</button></div>
+      <div id="proc-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+  </div>
+
+  <!-- ESTOQUE -->
+  <div class="view" id="view-estoque">
+    <div class="kpi-grid kpi-grid-4" id="est-stats"></div>
+    <div id="est-alertas"></div>
+    <div class="card">
+      <div class="card-head"><h2>Produtos</h2><button class="btn btn-primary" onclick="openModal('modal-est')">+ Novo produto</button></div>
+      <div id="est-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="view" id="view-agenda">
+    <div class="kpi-grid kpi-grid-4">
+      <div class="kpi kpi-hero"><div class="kpi-label">Agendamentos hoje</div><div class="kpi-value" id="ag-total">—</div><div class="kpi-sub">atendimentos no dia</div></div>
+      <div class="kpi kpi-ok"><div class="kpi-label">Confirmados</div><div class="kpi-value kpi-ok-val" id="ag-confirmados">—</div><div class="kpi-sub">presenças registradas</div></div>
+      <div class="kpi kpi-warn"><div class="kpi-label">Faltas no dia</div><div class="kpi-value kpi-warn-val" id="ag-faltas">—</div><div class="kpi-sub">acompanhe ausências</div></div>
+      <div class="kpi"><div class="kpi-label">Taxa de presença</div><div class="kpi-value" id="ag-taxa">—</div><div class="kpi-sub">confirmados / total</div></div>
+    </div>
+    <div class="agenda-layout">
+      <div class="card agenda-main-card">
+        <div class="card-head">
+          <h2>Agenda inteligente · <span id="ag-data-label" style="font-weight:400;font-size:13px;color:var(--ink-soft)"></span></h2>
+          <div class="agenda-filter-wrap">
+            <input type="date" id="ag-filtro-data" class="form-control" style="padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:var(--bg);outline:none;width:170px;" onchange="carregarAgenda()">
+            <button class="btn btn-primary" onclick="abrirNovoAgendamento()">+ Agendar</button>
+          </div>
+        </div>
+        <div class="agenda-viewbar">
+          <div class="agenda-view-left">
+            <div class="agenda-seg" id="agenda-view-seg">
+              <button type="button" class="active" data-view="dia" onclick="setAgendaView('dia')">Dia</button>
+              <button type="button" data-view="semana" onclick="setAgendaView('semana')">Semana</button>
+              <button type="button" data-view="mes" onclick="setAgendaView('mes')">Mês</button>
+            </div>
+            <span class="agenda-period-label" id="agenda-period-label">—</span>
+          </div>
+          <div class="agenda-view-right">
+            <button class="agenda-nav-btn" type="button" onclick="mudarPeriodoAgenda(-1)">‹</button>
+            <button class="btn btn-outline btn-sm" type="button" onclick="irParaHojeAgenda()">Hoje</button>
+            <button class="agenda-nav-btn" type="button" onclick="mudarPeriodoAgenda(1)">›</button>
+          </div>
+        </div>
+        <div id="ag-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+      </div>
+      <aside class="agenda-side">
+        <div class="agenda-side-card">
+          <div class="agenda-side-title">Resumo do dia</div>
+          <div class="agenda-side-row"><span>Pacotes ativos na agenda</span><strong id="ag-pacotes-dia">—</strong></div>
+          <div class="agenda-side-row"><span>Sessões a consumir</span><strong id="ag-sessoes-dia">—</strong></div>
+          <div class="agenda-side-row"><span>Clientes sem pacote</span><strong id="ag-sem-pacote-dia">—</strong></div>
+          <div class="agenda-side-row"><span>Receita potencial</span><strong id="ag-receita-dia">—</strong></div>
+        </div>
+        <div class="agenda-side-card">
+          <div class="agenda-side-title">Próximo atendimento</div>
+          <div id="ag-proximo" class="agenda-next-item">Nenhum próximo atendimento.</div>
+        </div>
+        <div class="agenda-side-card">
+          <div class="agenda-side-title">Ações rápidas</div>
+          <button class="btn btn-outline agenda-quick-btn" onclick="showTab('clientes',document.querySelector('[data-tab=clientes]'))">Ver clientes</button>
+          <button class="btn btn-outline agenda-quick-btn" style="margin-top:8px;" onclick="showTab('sessoes',document.querySelector('[data-tab=sessoes]'))">Ver sessões</button>
+          <button class="btn btn-outline agenda-quick-btn" style="margin-top:8px;" onclick="showTab('financeiro',document.querySelector('[data-tab=financeiro]'))">Ver financeiro</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- FINANCEIRO -->
+  <div class="view" id="view-financeiro">
+    <div class="kpi-grid kpi-grid-4">
+      <div class="kpi kpi-hero"><div class="kpi-label">Receita bruta</div><div class="kpi-value" id="fin-rec">—</div><div class="kpi-sub" id="fin-atend"></div></div>
+      <div class="kpi"><div class="kpi-label">Custo insumos</div><div class="kpi-value" id="fin-custo">—</div></div>
+      <div class="kpi"><div class="kpi-label">Despesas</div><div class="kpi-value" id="fin-desp" style="color:var(--terra)">—</div></div>
+      <div class="kpi" id="fin-lucro-kpi"><div class="kpi-label">Lucro líquido</div><div class="kpi-value" id="fin-lucro">—</div><div class="kpi-sub" id="fin-mg"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Resultado por procedimento</h2><span class="card-label">clique para expandir</span></div>
+      <div class="fin-row fin-head"><div>Procedimento</div><div>Preço</div><div>Custo</div><div>Proporção</div><div>Margem</div></div>
+      <div id="fin-list"></div>
+    </div>
+    <div class="card"><div class="card-head"><h2>DRE do mês</h2></div><div id="fin-dre"></div></div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>Despesas</h2>
+          <span class="card-label">fixas e esporádicas em um só lugar</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="openDesp('fixa')">+ Despesa fixa</button>
+          <button class="btn btn-outline btn-sm" onclick="openDesp('variavel')">+ Despesa esporádica</button>
+        </div>
+      </div>
+      <div id="fin-despesas-resumo"></div>
+    </div>
+  </div>
+
+  <!-- DESPESAS -->
+  <div class="view" id="view-despesas">
+    <div id="desp-alertas"></div>
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi kpi-warn"><div class="kpi-label">Fixas / mês</div><div class="kpi-value kpi-warn-val" id="desp-fix-total">—</div></div>
+      <div class="kpi kpi-warn"><div class="kpi-label">Variáveis</div><div class="kpi-value kpi-warn-val" id="desp-var-total">—</div></div>
+      <div class="kpi"><div class="kpi-label">Total despesas</div><div class="kpi-value" id="desp-total">—</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Despesas fixas</h2><button class="btn btn-primary" onclick="openDesp('fixa')">+ Nova fixa</button></div>
+      <div id="desp-fix-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Despesas variáveis</h2><button class="btn btn-primary" onclick="openDesp('variavel')">+ Nova variável</button></div>
+      <div id="desp-var-list"></div>
+    </div>
+  </div>
+
+  <!-- MOVIMENTAÇÕES -->
+  <div class="view" id="view-movimentacoes">
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi kpi-warn"><div class="kpi-label">Saídas no período</div><div class="kpi-value kpi-warn-val" id="mov-saidas">—</div></div>
+      <div class="kpi kpi-ok"><div class="kpi-label">Entradas no período</div><div class="kpi-value kpi-ok-val" id="mov-entradas">—</div></div>
+      <div class="kpi"><div class="kpi-label">Movimentos no período</div><div class="kpi-value" id="mov-total">—</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h2>Histórico</h2>
+        <div class="mov-filters">
+          <div class="seg" id="mov-tipo-seg">
+            <button class="seg-btn active" data-tipo="todos" onclick="setMovTipo('todos')">Todos</button>
+            <button class="seg-btn" data-tipo="entrada" onclick="setMovTipo('entrada')">Entrada</button>
+            <button class="seg-btn" data-tipo="saida" onclick="setMovTipo('saida')">Saída</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <label style="font-size:11px;color:var(--ink-muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">De</label>
+            <input type="date" id="mov-data-inicio" class="form-control" style="width:145px;padding:7px 10px;" onchange="setMovPeriodoManual()">
+            <label style="font-size:11px;color:var(--ink-muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Até</label>
+            <input type="date" id="mov-data-fim" class="form-control" style="width:145px;padding:7px 10px;" onchange="setMovPeriodoManual()">
+          </div>
+          <div class="seg" id="mov-atalhos-seg">
+            <button class="seg-btn active" data-periodo="hoje" onclick="setMovAtalho('hoje')">Hoje</button>
+            <button class="seg-btn" data-periodo="semana" onclick="setMovAtalho('semana')">7 dias</button>
+            <button class="seg-btn" data-periodo="mes" onclick="setMovAtalho('mes')">Mês</button>
+            <button class="seg-btn" data-periodo="ano" onclick="setMovAtalho('ano')">Ano</button>
+          </div>
+        </div>
+      </div>
+      <div class="mov-grid mov-head"><div>Data / Hora</div><div>Produto</div><div>Tipo / Cliente</div><div>Qtd</div></div>
+      <div id="mov-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+  </div>
+
+  <!-- SESSÕES -->
+  <div class="view" id="view-sessoes">
+    <div class="kpi-grid kpi-grid-4" id="ses-stats"></div>
+    <div id="ses-alertas"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-head">
+          <h2>Pacotes disponíveis</h2>
+          <button class="btn btn-primary" onclick="openModal('modal-pacote')">+ Novo pacote</button>
+        </div>
+        <div id="pac-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2>Pacotes dos clientes</h2>
+          <button class="btn btn-primary" onclick="openModal('modal-cli-pacote')">+ Vincular cliente</button>
+        </div>
+        <input type="text" id="ses-busca" class="form-control" placeholder="Buscar cliente..." style="margin-bottom:12px;font-size:12.5px;" oninput="renderClientePacotes()">
+        <div id="clipac-list"><div class="loading-box"><div class="spinner"></div>Carregando...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESERVA -->
+  <div class="view" id="view-reserva">
+    <div id="reserva-content"></div>
+  </div>
+
+  <!-- CONFIGURAÇÕES -->
+  <div class="view" id="view-configuracoes">
+    <div class="sf-rc-note"><strong>StudioFlow</strong> · Configure a identidade do seu negócio, módulos, backup e ajuda em um único lugar.</div>
+    <div class="sf-config-tabs">
+      <button class="sf-config-tab active" onclick="abrirConfigAba('clinica',this)">Meu Negócio</button>
+      <button class="sf-config-tab" onclick="abrirConfigAba('aparencia',this)">Aparência</button>
+      <button class="sf-config-tab" onclick="abrirConfigAba('backup',this)">Backup</button>
+      <button class="sf-config-tab" onclick="abrirConfigAba('ajuda',this)">Ajuda</button>
+    </div>
+
+    <div class="sf-config-section active" id="cfg-section-clinica">
+      <div class="sf-settings-grid">
+        <div class="card">
+          <div class="card-head"><h2>Meu negócio</h2><span class="card-label">dados principais</span></div>
+          <div class="form-group"><label class="form-label">Nome do negócio</label><input id="cfg-nome" class="form-control" placeholder="Ex: Studio Graziele"></div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">Telefone</label><input id="cfg-tel" class="form-control" placeholder="(11) 99999-9999"></div>
+            <div class="form-group"><label class="form-label">WhatsApp</label><input id="cfg-whats" class="form-control" placeholder="(11) 99999-9999"></div>
+          </div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">E-mail</label><input id="cfg-email" class="form-control" placeholder="contato@clinica.com"></div>
+            <div class="form-group"><label class="form-label">E-mail financeiro</label><input id="cfg-email-fin" class="form-control" placeholder="financeiro@clinica.com"></div>
+          </div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">Instagram</label><input id="cfg-insta" class="form-control" placeholder="@sua_clinica"></div>
+            <div class="form-group"><label class="form-label">Responsável</label><input id="cfg-resp" class="form-control" placeholder="Nome do responsável"></div>
+          </div>
+          <div class="fr2">
+            <div class="form-group"><label class="form-label">CNPJ</label><input id="cfg-cnpj" class="form-control" placeholder="00.000.000/0000-00"></div>
+            <div class="form-group"><label class="form-label">Site</label><input id="cfg-site" class="form-control" placeholder="www.suaclinica.com.br"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Endereço</label><input id="cfg-end" class="form-control" placeholder="Rua, número, cidade"></div>
+          <div class="form-group"><label class="form-label">Horário de funcionamento</label><input id="cfg-horario" class="form-control" placeholder="Segunda a sexta, 08h às 18h"></div>
+          <div class="form-group"><label class="form-label">Slogan</label><input id="cfg-slogan" class="form-control" placeholder="Ex: Realçando sua beleza natural"></div>
+          <button class="btn btn-primary" onclick="salvarConfigClinica()">Salvar configurações</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Logo do negócio</h2><span class="card-label">aparece no sistema</span></div>
+          <div class="upload-card">
+            <div class="upload-preview" id="cfg-logo-preview">SF</div>
+            <div style="flex:1;min-width:0;">
+              <div class="li-name">Identidade visual</div>
+              <div class="li-sub" style="margin-bottom:10px;">Use PNG ou JPG. A logo será exibida no login e no menu lateral.</div>
+              <div class="upload-actions"><input type="file" id="cfg-logo-file" accept="image/*" onchange="previewImagemInput(this,'cfg-logo-preview')"></div>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Cor principal</label><input id="cfg-cor" class="form-control" type="color" value="#4A6741"></div>
+          <p class="empty-state">O StudioFlow mantém sua marca de forma discreta, enquanto o negócio aparece como protagonista para a equipe.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sf-config-section" id="cfg-section-aparencia">
+      <div class="card">
+        <div class="card-head"><h2>Módulos e experiência</h2><span class="card-label">visão da versão comercial</span></div>
+        <div class="sf-check-grid">
+          <label class="sf-check-card"><input type="checkbox" checked> Agenda</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Perfil do Cliente</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Financeiro</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Pacotes</label>
+          <label class="sf-check-card"><input type="checkbox" checked> Estoque</label>
+          <label class="sf-check-card"><input type="checkbox"> WhatsApp Pro</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="sf-config-section" id="cfg-section-backup">
+      <div class="sf-rc-note"><strong>Backup básico</strong> · Exporte seus dados em CSV para segurança e conferência.</div>
+      <div class="backup-grid">
+        <div class="backup-card"><strong>Clientes</strong><p>Exporta nome, telefone, e-mail e observações.</p><button class="btn btn-outline" onclick="exportarCSV('clientes')">Exportar CSV</button></div>
+        <div class="backup-card"><strong>Agenda</strong><p>Exporta data, hora, cliente, procedimento e status.</p><button class="btn btn-outline" onclick="exportarCSV('agenda')">Exportar CSV</button></div>
+        <div class="backup-card"><strong>Financeiro</strong><p>Exporta despesas e movimentações financeiras disponíveis.</p><button class="btn btn-outline" onclick="exportarCSV('financeiro')">Exportar CSV</button></div>
+        <div class="backup-card"><strong>Estoque</strong><p>Exporta produtos, quantidades, mínimos e custos.</p><button class="btn btn-outline" onclick="exportarCSV('estoque')">Exportar CSV</button></div>
+      </div>
+    </div>
+
+    <div class="sf-config-section" id="cfg-section-ajuda">
+      <div class="card">
+        <div class="card-head"><h2>Central de Ajuda StudioFlow</h2><span class="card-label">guia rápido da versão 1.0</span></div>
+        <input id="ajuda-busca" class="form-control" placeholder="Pesquisar ajuda..." oninput="filtrarAjudaPagina()" style="margin-bottom:14px;">
+        <div class="help-page-grid" id="ajuda-page-grid">
+          <div class="help-page-card" data-ajuda="cliente cadastro"><h3>Como cadastrar cliente</h3><p>Vá em Clientes, clique em Novo cliente, preencha os dados principais e salve. Depois use o botão Ver 360º para acessar a ficha completa.</p></div>
+          <div class="help-page-card" data-ajuda="agenda pacote venda"><h3>Como vender pacote pela agenda</h3><p>Na Agenda, clique em Agendar, escolha o cliente e o procedimento. Em tipo de atendimento selecione Primeira venda de pacote.</p></div>
+          <div class="help-page-card" data-ajuda="sessão pacote baixa"><h3>Como baixar sessão</h3><p>Ao confirmar um atendimento vinculado a pacote, o StudioFlow atualiza as sessões automaticamente. Também é possível usar sessão manual na tela Pacotes.</p></div>
+          <div class="help-page-card" data-ajuda="financeiro despesa receita"><h3>Como acompanhar financeiro</h3><p>Acesse Financeiro para ver receita bruta, custos, despesas e lucro líquido. Em Despesas, cadastre contas fixas e variáveis.</p></div>
+          <div class="help-page-card" data-ajuda="estoque produto mínimo"><h3>Como controlar estoque</h3><p>Cadastre os produtos, configure quantidade mínima e custo. O sistema mostra alerta quando o item está abaixo do mínimo.</p></div>
+          <div class="help-page-card" data-ajuda="backup exportar csv"><h3>Como fazer backup</h3><p>Use Configurações → Backup e exporte os dados principais em CSV. Guarde os arquivos em local seguro.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP -->
+  <div class="view" id="view-backup">
+    <div class="sf-rc-note"><strong>Backup básico</strong> · Exporte seus dados em CSV para segurança e conferência. Esse recurso passa confiança para os primeiros clientes.</div>
+    <div class="backup-grid">
+      <div class="backup-card"><strong>Clientes</strong><p>Exporta nome, telefone, e-mail e observações.</p><button class="btn btn-outline" onclick="exportarCSV('clientes')">Exportar CSV</button></div>
+      <div class="backup-card"><strong>Agenda</strong><p>Exporta data, hora, cliente, procedimento e status.</p><button class="btn btn-outline" onclick="exportarCSV('agenda')">Exportar CSV</button></div>
+      <div class="backup-card"><strong>Financeiro</strong><p>Exporta despesas e movimentações financeiras disponíveis.</p><button class="btn btn-outline" onclick="exportarCSV('financeiro')">Exportar CSV</button></div>
+      <div class="backup-card"><strong>Estoque</strong><p>Exporta produtos, quantidades, mínimos e custos.</p><button class="btn btn-outline" onclick="exportarCSV('estoque')">Exportar CSV</button></div>
+    </div>
+  </div>
+
+  <!-- AJUDA -->
+  <div class="view" id="view-ajuda">
+    <div class="card">
+      <div class="card-head"><h2>Central de Ajuda StudioFlow</h2><span class="card-label">guia rápido da versão 1.0</span></div>
+      <input id="ajuda-busca" class="form-control" placeholder="Pesquisar ajuda..." oninput="filtrarAjudaPagina()" style="margin-bottom:14px;">
+      <div class="help-page-grid" id="ajuda-page-grid">
+        <div class="help-page-card" data-ajuda="cliente cadastro"><h3>Como cadastrar cliente</h3><p>Vá em Clientes, clique em Novo cliente, preencha os dados principais e salve. Depois use o botão Ver 360º para acessar a ficha completa.</p></div>
+        <div class="help-page-card" data-ajuda="agenda pacote venda"><h3>Como vender pacote pela agenda</h3><p>Na Agenda, clique em Agendar, escolha o cliente e o procedimento. Em tipo de atendimento selecione Primeira venda de pacote.</p></div>
+        <div class="help-page-card" data-ajuda="sessão pacote baixa"><h3>Como baixar sessão</h3><p>Ao confirmar um atendimento vinculado a pacote, o StudioFlow atualiza as sessões automaticamente. Também é possível usar sessão manual na tela Sessões.</p></div>
+        <div class="help-page-card" data-ajuda="financeiro despesa receita"><h3>Como acompanhar financeiro</h3><p>Acesse Financeiro para ver receita bruta, custos, despesas e lucro líquido. Em Despesas, cadastre contas fixas e variáveis.</p></div>
+        <div class="help-page-card" data-ajuda="estoque produto mínimo"><h3>Como controlar estoque</h3><p>Cadastre os produtos, configure quantidade mínima e custo. O sistema mostra alerta quando o item está abaixo do mínimo.</p></div>
+        <div class="help-page-card" data-ajuda="backup exportar csv"><h3>Como fazer backup</h3><p>Use o menu Backup e exporte os dados principais em CSV. Guarde os arquivos em local seguro.</p></div>
+      </div>
+    </div>
+  </div>
+
+    </div><!-- /content -->
+    <div class="sf-footer"><span><span class="sf-status-dot"></span>StudioFlow</span><span>©2026 StudioFlow</span></div>
+  </main><!-- /main -->
+</div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- ===== MODAIS ===== -->
+
+<!-- MODAL: CLIENTE -->
+<div class="overlay" id="modal-cli">
+  <div class="modal">
+    <h3 class="modal-title" id="modal-cli-title">Novo cliente</h3>
+    <input type="hidden" id="cli-id-edit">
+    <div class="upload-card"><div class="upload-preview" id="cli-foto-preview">CL</div><div style="flex:1"><div class="li-name">Foto do cliente</div><div class="li-sub" style="margin-bottom:10px;">Aparece no Perfil do Cliente e nas listas.</div><input type="file" id="cli-foto-file" accept="image/*" onchange="previewImagemInput(this,'cli-foto-preview')"></div></div>
+    <div class="form-group"><label class="form-label">Nome completo</label><input type="text" id="cli-nome" class="form-control" placeholder="Nome da cliente"></div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Telefone</label><input type="tel" id="cli-tel" class="form-control" placeholder="(11) 99999-9999"></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input type="email" id="cli-email" class="form-control" placeholder="email@exemplo.com"></div>
+    </div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Data de nascimento</label><input type="date" id="cli-nasc"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Observações</label><textarea id="cli-obs" class="form-control" placeholder="Alergias, preferências, histórico..."></textarea></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-cli')">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: PROCEDIMENTO -->
+<div class="overlay" id="modal-proc">
+  <div class="modal">
+    <h3 class="modal-title" id="modal-proc-title">Novo procedimento</h3>
+    <input type="hidden" id="proc-id-edit">
+    <div class="form-group"><label class="form-label">Nome</label><input type="text" id="proc-nome" class="form-control" placeholder="Ex: Botox, Limpeza de pele..."></div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Preço de venda (R$)</label><input type="number" id="proc-preco" class="form-control" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Duração (min)</label><input type="number" id="proc-dur" class="form-control" value="60"></div>
+    </div>
+    <hr class="divider">
+    <div class="form-group">
+      <label class="form-label">Insumos do estoque consumidos</label>
+      <div id="ins-wrap"></div>
+      <button class="btn btn-outline btn-sm" onclick="addInsRow()" style="margin-top:6px;">+ Adicionar insumo</button>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-proc')">Cancelar</button><button class="btn btn-primary" onclick="salvarProc()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: ESTOQUE -->
+<div class="overlay" id="modal-est">
+  <div class="modal">
+    <h3 class="modal-title" id="modal-est-title">Novo produto</h3>
+    <input type="hidden" id="est-id-edit">
+    <div class="form-group"><label class="form-label">Nome do produto</label><input type="text" id="est-nome" class="form-control" placeholder="Ex: Toxina botulínica, Ácido hialurônico..."></div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Quantidade atual</label><input type="number" id="est-qtd" class="form-control" value="0" min="0"></div>
+      <div class="form-group"><label class="form-label">Mínimo (alerta)</label><input type="number" id="est-min" class="form-control" value="0" min="0"></div>
+    </div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Unidade</label><select id="est-unidade" class="form-control"><option>unidades</option><option>ampolas</option><option>kits</option><option>ml</option><option>g</option><option>frascos</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Custo unitário (R$)</label><input type="number" id="est-custo" class="form-control" value="0" min="0"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-est')">Cancelar</button><button class="btn btn-primary" onclick="salvarEstoque()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: REPOR ESTOQUE -->
+<div class="overlay" id="modal-repor">
+  <div class="modal">
+    <h3 class="modal-title">Repor estoque</h3>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;" id="repor-label"></p>
+    <div class="form-group"><label class="form-label">Quantidade a adicionar</label><input type="number" id="repor-qtd" class="form-control" value="1" min="1"></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-repor')">Cancelar</button><button class="btn btn-primary" onclick="confirmarRepor()">Confirmar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: AGENDAMENTO -->
+<div class="overlay" id="modal-ag">
+  <div class="modal" style="max-width:720px;">
+    <h3 class="modal-title">Novo agendamento</h3>
+    <div class="fr2">
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <input type="text" id="ag-cli-busca" class="form-control" list="ag-clientes-lista" placeholder="Digite o nome da cliente..." autocomplete="off" oninput="sincronizarClienteAgenda()" onchange="sincronizarClienteAgenda()">
+        <datalist id="ag-clientes-lista"></datalist>
+        <input type="hidden" id="ag-cli-sel">
+      </div>
+      <div class="form-group"><label class="form-label">Procedimento</label><select id="ag-proc-sel" class="form-control" onchange="atualizarCamposPacoteAgendamento()"><option value="">Selecionar procedimento...</option></select></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tipo de atendimento</label>
+      <div class="ag-type-grid">
+        <div class="ag-type-card active" id="ag-tipo-avulso-card" onclick="setTipoAtendimentoAg('avulso')">
+          <span class="ag-radio-dot"></span>
+          <div><div class="ag-type-title">Avulso</div><div class="ag-type-desc">Apenas agenda o atendimento, sem controlar pacote.</div></div>
+        </div>
+        <div class="ag-type-card" id="ag-tipo-novo-card" onclick="setTipoAtendimentoAg('novo')">
+          <span class="ag-radio-dot"></span>
+          <div><div class="ag-type-title">Primeira venda</div><div class="ag-type-desc">Cria o pacote do cliente junto com o agendamento.</div></div>
+        </div>
+        <div class="ag-type-card" id="ag-tipo-existente-card" onclick="setTipoAtendimentoAg('existente')">
+          <span class="ag-radio-dot"></span>
+          <div><div class="ag-type-title">Usar pacote</div><div class="ag-type-desc">Desconta sessões de um pacote ativo do cliente.</div></div>
+        </div>
+      </div>
+      <input type="hidden" id="ag-tipo-atendimento" value="avulso">
+    </div>
+
+    <div class="ag-package-box" id="ag-pacote-novo-box">
+      <div style="font-size:13px;font-weight:700;color:var(--sage-deep);margin-bottom:10px;">Dados do pacote que será criado automaticamente</div>
+      <div class="fr3">
+        <div class="form-group"><label class="form-label">Total de sessões</label><input type="number" id="ag-pac-total" class="form-control" value="10" min="1" oninput="atualizarResumoPacoteAgendamento()"></div>
+        <div class="form-group"><label class="form-label">Valor pago (R$)</label><input type="number" id="ag-pac-preco" class="form-control" value="0" min="0" oninput="atualizarResumoPacoteAgendamento()"></div>
+        <div class="form-group"><label class="form-label">Sessões usadas hoje</label><input type="number" id="ag-pac-usadas" class="form-control" value="1" min="0" oninput="atualizarResumoPacoteAgendamento()"></div>
+      </div>
+      <div class="fr2">
+        <div class="form-group"><label class="form-label">Data de início</label><input type="date" id="ag-pac-data-venda" class="form-control" onchange="atualizarResumoPacoteAgendamento()"></div>
+        <div class="form-group"><label class="form-label">Pode utilizar até</label><input type="date" id="ag-pac-validade" class="form-control" onchange="atualizarResumoPacoteAgendamento()"></div>
+      </div>
+      <div class="ag-summary" id="ag-pac-novo-resumo">Ao salvar, o pacote será criado para este cliente.</div>
+    </div>
+
+    <div class="ag-package-box gold" id="ag-pacote-existente-box">
+      <div class="form-group"><label class="form-label">Pacote ativo do cliente</label><select id="ag-pac-existente-sel" class="form-control" onchange="atualizarResumoPacoteAgendamento()"><option value="">Selecione cliente e procedimento...</option></select></div>
+      <div class="fr2">
+        <div class="form-group"><label class="form-label">Sessões usadas hoje</label><input type="number" id="ag-pac-existente-usadas" class="form-control" value="1" min="1" oninput="atualizarResumoPacoteAgendamento()"></div>
+        <div class="form-group"><label class="form-label">Saldo após atendimento</label><input type="text" id="ag-pac-existente-saldo" class="form-control" value="—" readonly></div>
+      </div>
+      <div class="ag-summary" id="ag-pac-existente-resumo">O sistema buscará pacotes ativos deste cliente para o procedimento escolhido.</div>
+    </div>
+
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Data</label><input type="date" id="ag-data-input" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Horário</label><input type="time" id="ag-hora-input" class="form-control" value="09:00"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Observações</label><textarea id="ag-obs-input" class="form-control" placeholder="Opcional: preferências, cuidados, observações do atendimento..."></textarea></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-ag')">Cancelar</button><button class="btn btn-primary" onclick="salvarAgendamento()">Salvar agendamento</button></div>
+  </div>
+</div>
+
+<!-- MODAL: DESPESA -->
+<div class="overlay" id="modal-desp">
+  <div class="modal">
+    <h3 class="modal-title">Nova despesa</h3>
+    <input type="hidden" id="desp-tipo-hidden">
+    <input type="hidden" id="desp-id-edit">
+    <div class="form-group"><label class="form-label">Descrição</label><input type="text" id="desp-nome" class="form-control" placeholder="Ex: Aluguel, Internet, Material..."></div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="number" id="desp-valor"></div>
+      <div class="form-group"><label class="form-label">Categoria</label><select id="desp-cat" class="form-control"><option>Infraestrutura</option><option>Serviços</option><option>Marketing</option><option>Equipamento</option><option>Pessoal</option><option>Outros</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Data de vencimento</label><input type="date" id="desp-venc" class="form-control"></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-desp')">Cancelar</button><button class="btn btn-primary" onclick="salvarDesp()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: PACOTE -->
+<div class="overlay" id="modal-pacote">
+  <div class="modal">
+    <h3 class="modal-title" id="modal-pacote-title">Novo pacote</h3>
+    <input type="hidden" id="pac-id-edit">
+    <div class="form-group"><label class="form-label">Nome do pacote</label><input type="text" id="pac-nome" class="form-control" placeholder="Ex: Depilação Laser 10 sessões"></div>
+    <div class="form-group"><label class="form-label">Procedimento vinculado</label><select id="pac-proc-sel" class="form-control"><option value="">Selecionar procedimento...</option></select></div>
+    <div class="fr3">
+      <div class="form-group"><label class="form-label">Total de sessões</label><input type="number" id="pac-sessoes" class="form-control" value="10" min="1"></div>
+      <div class="form-group"><label class="form-label">Preço do pacote (R$)</label><input type="number" id="pac-preco" class="form-control" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Validade padrão (dias)</label><input type="number" id="pac-validade-dias" class="form-control" value="90" min="1"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-pacote')">Cancelar</button><button class="btn btn-primary" onclick="salvarPacote()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: VINCULAR PACOTE AO CLIENTE -->
+<div class="overlay" id="modal-cli-pacote">
+  <div class="modal">
+    <h3 class="modal-title">Vincular pacote ao cliente</h3>
+    <div class="form-group"><label class="form-label">Cliente</label><select id="clipac-cli-sel" class="form-control"><option value="">Selecionar cliente...</option></select></div>
+    <div class="form-group"><label class="form-label">Pacote</label><select id="clipac-pac-sel" class="form-control" onchange="preencherPrecoPacote()"><option value="">Selecionar pacote...</option></select></div>
+    <div class="form-group"><label class="form-label">Valor pago (R$)</label><input type="number" id="clipac-preco" class="form-control" placeholder="0"></div>
+    <div class="fr2">
+      <div class="form-group"><label class="form-label">Data de início</label><input type="date" id="clipac-data-venda" class="form-control" onchange="recalcularValidadeClientePacote()"></div>
+      <div class="form-group"><label class="form-label">Pode utilizar até</label><input type="date" id="clipac-validade" class="form-control"></div>
+    </div>
+    <div class="ag-summary" id="clipac-validade-resumo">A validade será calculada conforme o pacote selecionado.</div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-cli-pacote')">Cancelar</button><button class="btn btn-primary" onclick="salvarClientePacote()">Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL: USAR SESSÃO MANUAL -->
+<div class="overlay" id="modal-usar-sessao">
+  <div class="modal">
+    <h3 class="modal-title">Registrar sessão</h3>
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;" id="usar-sessao-label"></p>
+    <div class="form-group"><label class="form-label">Observação (opcional)</label><input type="text" id="usar-sessao-obs" class="form-control" placeholder="Ex: sessão realizada sem intercorrências"></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-usar-sessao')">Cancelar</button><button class="btn btn-primary" onclick="confirmarUsarSessao()">Confirmar sessão</button></div>
+  </div>
+</div>
+<div class="overlay" id="modal-res">
+  <div class="modal">
+    <h3 class="modal-title">Configurar reserva</h3>
+    <div class="form-group"><label class="form-label">Meta em meses de despesa</label><select id="res-meses" class="form-control"><option value="3">3 meses</option><option value="6" selected>6 meses (recomendado)</option><option value="12">12 meses</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">% do lucro a guardar/mês</label><input type="number" id="res-pct" class="form-control" value="20" min="1" max="100"></div>
+    <div class="form-group"><label class="form-label">Valor já acumulado (R$)</label><input type="number" id="res-acum" class="form-control" value="0" min="0"></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-res')">Cancelar</button><button class="btn btn-primary" onclick="salvarReserva()">Salvar</button></div>
+  </div>
+</div>
+
+
+
+<!-- MODAL: EVOLUÇÃO / ANTES E DEPOIS -->
+<div class="overlay" id="modal-evolucao">
+  <div class="modal">
+    <h3 class="modal-title">Adicionar evolução</h3>
+    <input type="hidden" id="evo-cliente-id">
+    <div class="evolucao-form">
+      <div class="fr2">
+        <div class="form-group"><label class="form-label">Título</label><input id="evo-titulo" class="form-control" placeholder="Ex: Evolução corporal"></div>
+        <div class="form-group"><label class="form-label">Procedimento</label><select id="evo-proc-sel" class="form-control"><option value="">Selecionar...</option></select></div>
+      </div>
+      <div class="evolucao-photos">
+        <div>
+          <label class="form-label">Foto Antes</label>
+          <div class="evolucao-preview" id="evo-antes-preview">Selecionar foto antes</div>
+          <input type="file" id="evo-antes-file" accept="image/*" class="form-control" onchange="previewImagemInput(this,'evo-antes-preview')">
+        </div>
+        <div>
+          <label class="form-label">Foto Depois</label>
+          <div class="evolucao-preview" id="evo-depois-preview">Selecionar foto depois</div>
+          <input type="file" id="evo-depois-file" accept="image/*" class="form-control" onchange="previewImagemInput(this,'evo-depois-preview')">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Observações</label><textarea id="evo-obs" class="form-control" placeholder="Observações da evolução, retorno recomendado, medidas..."></textarea></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('modal-evolucao')">Cancelar</button><button class="btn btn-primary" onclick="salvarEvolucao()">Salvar evolução</button></div>
+  </div>
+</div>
+
+<!-- AJUDA FLUTUANTE -->
+<button class="help-fab" onclick="toggleHelpWidget()" title="Ajuda StudioFlow">?</button>
+<div class="help-panel" id="help-panel">
+  <div class="help-head"><strong>Ajuda StudioFlow</strong><button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;" onclick="toggleHelpWidget()">×</button></div>
+  <div class="help-body">
+    <input id="help-search" class="form-control" placeholder="Pesquisar ajuda..." oninput="filtrarHelpWidget()" style="margin-bottom:10px;">
+    <div id="help-list">
+      <div class="help-item" data-help="cliente cadastro"><strong>Cadastrar cliente</strong><span>Clientes → Novo cliente → Salvar.</span></div>
+      <div class="help-item" data-help="agenda pacote venda"><strong>Vender pacote na agenda</strong><span>Agenda → Agendar → Primeira venda de pacote.</span></div>
+      <div class="help-item" data-help="sessão baixa"><strong>Baixar sessão</strong><span>Confirme o atendimento ou use sessão manual.</span></div>
+      <div class="help-item" data-help="financeiro"><strong>Ver financeiro</strong><span>Acompanhe receita, despesas e lucro.</span></div>
+      <div class="help-item" data-help="backup"><strong>Exportar backup</strong><span>Configurações → Backup → Exportar CSV.</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====================================================
+// SUBSTITUA COM SUAS CREDENCIAIS DO SUPABASE
+// Supabase → Settings → API → Legacy anon
+// ====================================================
+var SUPA_URL = 'https://twjdcutypnhybyvdnvam.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR3amRjdXR5cG5oeWJ5dmRudmFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2ODYyNTAsImV4cCI6MjA5ODI2MjI1MH0.NZ5CXNZsTWPA58N8mATjiv7qbjPPvBM2XvMca76NSm4';
+var SB = null;
+try {
+  if(SUPA_URL.indexOf('supabase.co') > -1 && SUPA_KEY.length > 30) {
+    SB = supabase.createClient(SUPA_URL, SUPA_KEY);
+  }
+} catch(e) { console.warn('Supabase config error', e); }
+
+// ====================================================
+// CONTEXTO GLOBAL DA APLICAÇÃO
+// O cadastro de usuários será feito somente pelo StudioFlow Admin.
+// ====================================================
+var APP = {
+  usuario: {
+    id: null,
+    nome: '',
+    email: '',
+    perfil: ''
+  },
+  empresa: {
+    id: null,
+    nome: '',
+    nome_exibicao: '',
+    logo: '',
+    status: '',
+    assinatura_id: null,
+    assinatura_status: '',
+    plano_id: null,
+    plano: '',
+    valor_contratado: 0,
+    proximo_vencimento: null
+  }
+};
+
+// ====================================================
+// ESTADO GLOBAL
+// ====================================================
+var _clientes=[], _procs=[], _estoque=[], _agenda=[], _despesas=[], _movs=[];
+var _pacotes=[], _clientePacotes=[];
+var _reserva={meses_meta:6,percentual:20,acumulado:0,id:null};
+var _usarSessaoId=null;
+var _finExpanded=null, _reporId=null, _reporQtdAtual=0;
+var _movTipo='todos', _movPeriodo='hoje', _movInicio=null, _movFim=null;
+var _agendaView='dia';
+
+// ====================================================
+// UTILITÁRIOS
+// ====================================================
+function R(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0});}
+function hoje(){return new Date().toISOString().split('T')[0];}
+function agora(){return new Date().toISOString();}
+function fmtData(d){if(!d)return '—';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function fmtDt(ts){if(!ts)return '—';var d=new Date(ts);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function diasAte(data){if(!data)return null;var a=isoDateObj(hoje()),b=isoDateObj(data);return Math.ceil((b-a)/86400000);}
+function pacoteVencido(cp){return !!(cp&&cp.validade&&cp.validade<hoje());}
+function statusPacote(cp){
+  if(!cp)return 'sem pacote';
+  if(pacoteVencido(cp))return 'vencido';
+  if(Number(cp.sessoes_usadas||0)>=Number(cp.total_sessoes||0))return 'concluido';
+  return 'ativo';
+}
+
+function isoDateObj(iso){return new Date((iso||hoje())+'T00:00:00');}
+function toISODate(d){var x=new Date(d);x.setHours(0,0,0,0);return x.toISOString().split('T')[0];}
+function addDaysISO(iso,n){var d=isoDateObj(iso);d.setDate(d.getDate()+n);return toISODate(d);}
+function startOfWeekISO(iso){var d=isoDateObj(iso);var day=d.getDay();var diff=(day===0?-6:1-day);d.setDate(d.getDate()+diff);return toISODate(d);}
+function startOfMonthISO(iso){var d=isoDateObj(iso);d.setDate(1);return toISODate(d);}
+function endOfMonthISO(iso){var d=isoDateObj(iso);d.setMonth(d.getMonth()+1);d.setDate(0);return toISODate(d);}
+function monthNameISO(iso){return isoDateObj(iso).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});}
+
+// Retorna a data de início (ISO, 00:00) para cada período de filtro, a partir de hoje
+function inicioPeriodo(periodo){
+  var d=new Date();
+  d.setHours(0,0,0,0);
+  if(periodo==='semanal'){d.setDate(d.getDate()-7);}
+  else if(periodo==='mensal'){d.setMonth(d.getMonth()-1);}
+  else if(periodo==='trimestral'){d.setMonth(d.getMonth()-3);}
+  else if(periodo==='semestral'){d.setMonth(d.getMonth()-6);}
+  else if(periodo==='anual'){d.setFullYear(d.getFullYear()-1);}
+  return d;
+}
+
+function toast(msg,tipo){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast '+(tipo||'ok');
+  el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},3000);
+}
+
+function loading(id){document.getElementById(id).innerHTML='<div class="loading-box"><div class="spinner"></div>Carregando...</div>';}
+
+function calcM(p){
+  var ins=p.insumos||[];
+  var c=ins.reduce(function(s,i){return s+(i.custo||0)*(i.quantidade||1);},0);
+  return{custo:c,margem:p.preco?Math.round(((p.preco-c)/p.preco)*100):0,lucro:(p.preco||0)-c};
+}
+
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='modal-cli-pacote'){
+    var inicio=document.getElementById('clipac-data-venda');
+    var validade=document.getElementById('clipac-validade');
+    if(inicio)inicio.value=hoje();
+    if(validade)validade.value='';
+    preencherPrecoPacote();
+  }
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(function(el){
+  el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});
+});
+
+
+// ====================================================
+// UPLOAD DE IMAGENS · SUPABASE STORAGE
+// ====================================================
+var _configClinica={};
+var _evolucoes=[];
+var STORAGE_BUCKET='fotos';
+
+function extensaoArquivo(nome){
+  var p=(nome||'').split('.');
+  return (p.length>1?p.pop():'jpg').toLowerCase();
+}
+
+async function uploadImagem(file,pasta){
+  if(!file)return null;
+  if(!SB){toast('Supabase não configurado.','err');return null;}
+  var ext=extensaoArquivo(file.name);
+  var path=(pasta||'uploads')+'/'+Date.now()+'_'+Math.random().toString(36).slice(2)+'.'+ext;
+  var res=await SB.storage.from(STORAGE_BUCKET).upload(path,file,{cacheControl:'3600',upsert:true});
+  if(res.error){console.error('Erro no upload:',res.error);toast(res.error.message,'err');return null;}
+  var pub=SB.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+  return pub.data.publicUrl;
+}
+
+function previewImagemInput(input,previewId){
+  var prev=document.getElementById(previewId);if(!prev||!input.files||!input.files[0])return;
+  var url=URL.createObjectURL(input.files[0]);
+  prev.innerHTML='<img src="'+url+'" alt="Prévia">';
+}
+
+function imgOrInitial(url,txt,cls){
+  if(url)return '<img class="'+(cls||'')+'" src="'+url+'" alt="Foto">';
+  return txt||'';
+}
+
+function aplicarConfigVisual(){
+  var c=_configClinica||getConfigClinica();
+  var logo=c.logo_url||c.logoUrl||'';
+  var nome=c.nome_clinica||c.nome||'StudioFlow';
+  var prev=document.getElementById('cfg-logo-preview');
+  if(prev)prev.innerHTML=logo?'<img src="'+logo+'" alt="Logo do negócio">':(nome||'StudioFlow');
+  var loginMark=document.querySelector('.sf-login-mark');
+  if(loginMark&&logo)loginMark.innerHTML='<img src="'+logo+'" alt="Logo">';
+  var sideMark=document.querySelector('.sidebar-mark');
+  if(sideMark&&logo)sideMark.innerHTML='<img src="'+logo+'" alt="Logo">';
+  var sub=document.getElementById('page-sub');
+  if(sub&&c.nome_clinica)sub.textContent=c.nome_clinica+' · '+(PAGE_TITLES.dashboard?PAGE_TITLES.dashboard[1]:'');
+  if(c.cor_primaria){document.documentElement.style.setProperty('--sage',c.cor_primaria);}
+}
+
+function abrirConfigAba(aba,btn){
+  document.querySelectorAll('.sf-config-section').forEach(function(x){x.classList.remove('active');});
+  var sec=document.getElementById('cfg-section-'+aba);if(sec)sec.classList.add('active');
+  document.querySelectorAll('.sf-config-tab').forEach(function(x){x.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+}
+
+var PAGE_TITLES={
+  dashboard:['Dashboard','Visão geral do seu negócio hoje'],
+  clientes:['Clientes','Cadastro e histórico de atendimentos'],
+  cliente360:['Perfil do Cliente','Ficha completa, pacotes, financeiro e histórico do cliente'],
+  procedimentos:['Procedimentos','Margem real por procedimento'],
+  estoque:['Estoque','Controle de produtos com baixa automática'],
+  agenda:['Agenda','Painel operacional de atendimentos, pacotes e presença'],
+  financeiro:['Financeiro','Resultado real do mês'],
+  despesas:['Despesas','Fixas e variáveis'],
+  movimentacoes:['Movimentações','Histórico de entradas e saídas'],
+  sessoes:['Pacotes','Pacotes e controle de sessões por cliente'],
+  configuracoes:['Configurações','Identidade da clínica e preferências do StudioFlow'],
+  backup:['Backup','Exportação simples dos dados principais'],
+  ajuda:['Ajuda','Central de suporte e primeiros passos'],
+};
+function toggleSidebar(){
+  var s=document.getElementById('sidebar');
+  var m=document.getElementById('main-content');
+  s.classList.toggle('collapsed');
+  m.classList.toggle('expanded');
+  localStorage.setItem('sf_sidebar',s.classList.contains('collapsed')?'1':'0');
+}
+
+function showTab(t,b){
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  document.getElementById('view-'+t).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(x){x.classList.remove('active');});
+  if(b) b.classList.add('active');
+  else{var nb=document.querySelector('.nav-item[data-tab="'+t+'"]');if(nb)nb.classList.add('active');}
+  if(PAGE_TITLES[t]){
+    var pt=document.getElementById('page-title');
+    var ps=document.getElementById('page-sub');
+    if(pt)pt.textContent=PAGE_TITLES[t][0];
+    if(ps)ps.textContent=PAGE_TITLES[t][1];
+  }
+}
+
+// ====================================================
+// AUTH
+// ====================================================
+async function fazerLogin(){
+  var email=document.getElementById('login-email').value.trim();
+  var senha=document.getElementById('login-senha').value;
+  var btn=document.getElementById('btn-login');
+  var errEl=document.getElementById('login-error');
+
+  errEl.style.display='none';
+  errEl.textContent='';
+
+  if(!SB){
+    errEl.textContent='Não foi possível conectar ao StudioFlow.';
+    errEl.style.display='block';
+    return;
+  }
+
+  if(!email||!senha){
+    errEl.textContent='Preencha e-mail e senha.';
+    errEl.style.display='block';
+    return;
+  }
+
+  btn.innerHTML='<span class="spinner"></span>Entrando...';
+  btn.disabled=true;
+
+  var {data,error}=await SB.auth.signInWithPassword({email:email,password:senha});
+
+  if(error){
+    errEl.textContent='E-mail ou senha incorretos.';
+    errEl.style.display='block';
+    btn.innerHTML='Entrar';
+    btn.disabled=false;
+    return;
+  }
+
+  var abriu=await mostrarApp(data.user);
+
+  btn.innerHTML='Entrar';
+  btn.disabled=false;
+
+  if(!abriu){
+    await SB.auth.signOut();
+  }
+}
+
+async function carregarEmpresaAtual(user){
+  if(!user||!user.id)throw new Error('Usuário autenticado não encontrado.');
+
+  var usuarioRes=await SB
+    .from('usuarios')
+    .select('id,nome,email,empresa_id,perfil,ativo')
+    .eq('id',user.id)
+    .maybeSingle();
+
+  if(usuarioRes.error)throw usuarioRes.error;
+  if(!usuarioRes.data)throw new Error('Seu acesso ainda não foi liberado no StudioFlow Admin.');
+  if(usuarioRes.data.ativo===false)throw new Error('Este usuário está inativo. Entre em contato com o suporte.');
+  if(!usuarioRes.data.empresa_id)throw new Error('Este usuário não está vinculado a uma empresa.');
+
+  var empresaRes=await SB
+    .from('empresas')
+    .select('*')
+    .eq('id',usuarioRes.data.empresa_id)
+    .single();
+
+  if(empresaRes.error)throw empresaRes.error;
+  if(!empresaRes.data)throw new Error('Empresa não encontrada.');
+  if(empresaRes.data.ativo===false)throw new Error('O acesso desta empresa está suspenso.');
+
+  var assinaturaRes=await SB
+    .from('assinaturas')
+    .select('id,empresa_id,plano_id,status,valor_contratado,proximo_vencimento')
+    .eq('empresa_id',empresaRes.data.id)
+    .order('criado_em',{ascending:false})
+    .limit(1)
+    .maybeSingle();
+
+  if(assinaturaRes.error)throw assinaturaRes.error;
+  if(!assinaturaRes.data)throw new Error('Nenhuma assinatura foi encontrada para esta empresa.');
+
+  if(assinaturaRes.data.status==='Suspensa'||assinaturaRes.data.status==='Cancelada'){
+    throw new Error('A assinatura desta empresa está '+assinaturaRes.data.status.toLowerCase()+'.');
+  }
+
+  var plano=null;
+  if(assinaturaRes.data.plano_id){
+    var planoRes=await SB
+      .from('planos')
+      .select('*')
+      .eq('id',assinaturaRes.data.plano_id)
+      .maybeSingle();
+
+    if(planoRes.error)throw planoRes.error;
+    plano=planoRes.data||null;
+  }
+
+  APP.usuario={
+    id:usuarioRes.data.id,
+    nome:usuarioRes.data.nome||'',
+    email:usuarioRes.data.email||user.email||'',
+    perfil:usuarioRes.data.perfil||''
+  };
+
+  APP.empresa={
+    id:empresaRes.data.id,
+    nome:empresaRes.data.nome||'',
+    nome_exibicao:empresaRes.data.nome_exibicao||empresaRes.data.nome||'',
+    logo:empresaRes.data.logo_url||'',
+    status:empresaRes.data.status||empresaRes.data.plano_status||'',
+    assinatura_id:assinaturaRes.data.id,
+    assinatura_status:assinaturaRes.data.status||'',
+    plano_id:assinaturaRes.data.plano_id||null,
+    plano:plano?plano.nome:'',
+    valor_contratado:Number(assinaturaRes.data.valor_contratado||0),
+    proximo_vencimento:assinaturaRes.data.proximo_vencimento||null
+  };
+
+  return APP.empresa;
+}
+
+async function mostrarApp(user){
+  var errEl=document.getElementById('login-error');
+
+  try{
+    await carregarEmpresaAtual(user);
+
+    document.getElementById('login-wrap').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('user-email').textContent=APP.usuario.email||user.email;
+
+    var h=new Date().getHours();
+    var saud=h<12?'Bom dia! 👋':h<18?'Boa tarde! 👋':'Boa noite! 👋';
+    var greetEl=document.getElementById('dash-greeting');
+    if(greetEl)greetEl.textContent=saud;
+
+    carregarConfigClinica();
+    await carregarTudo();
+    return true;
+  }catch(e){
+    console.error('Erro ao carregar empresa atual:',e);
+    document.getElementById('app').style.display='none';
+    document.getElementById('login-wrap').style.display='flex';
+    errEl.textContent=e.message||'Não foi possível liberar o acesso à empresa.';
+    errEl.style.display='block';
+    return false;
+  }
+}
+
+async function fazerLogout(){
+  await SB.auth.signOut();
+  document.getElementById('login-wrap').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+
+// ====================================================
+// CARREGAR TUDO
+// ====================================================
+async function carregarTudo(){
+  // Carrega tudo em paralelo, estoque incluído
+  await Promise.all([carregarClientes(),carregarProcs(),carregarEstoque(),carregarDespesas(),carregarReserva(),carregarSessoes(),carregarEvolucoes()]);
+  await Promise.all([carregarAgenda(),carregarMovs()]);
+  // Recarrega estoque após movimentações para garantir qtd atualizada no dashboard
+  await carregarEstoqueSilencioso();
+  renderDashboard();
+  renderFin();
+}
+
+// Recarrega estoque sem re-renderizar a aba (usado para atualizar dashboard)
+async function carregarEstoqueSilencioso(){
+  var {data}=await SB.from('estoque').select('*').order('nome');
+  _estoque=data||[];
+}
+
+// ====================================================
+// CLIENTES
+// ====================================================
+async function carregarClientes(){
+  if(!APP.empresa.id){
+    _clientes=[];
+    renderClientes();
+    atualizarSelectClientes();
+    return;
+  }
+
+  var {data,error}=await SB
+    .from('clientes')
+    .select('*')
+    .eq('empresa_id',APP.empresa.id)
+    .order('nome');
+
+  if(error){
+    console.error('Erro ao carregar clientes:',error);
+    toast('Não foi possível carregar os clientes.','err');
+    _clientes=[];
+  }else{
+    _clientes=data||[];
+  }
+
+  renderClientes();
+  atualizarSelectClientes();
+}
+
+function renderClientes(){
+  var busca=(document.getElementById('cli-busca')||{}).value||'';
+  var lista=busca?_clientes.filter(function(c){return (c.nome||'').toLowerCase().includes(busca.toLowerCase());}) : _clientes;
+  var now=new Date();var mes=now.getMonth()+1;var ano=now.getFullYear();
+  var novos=_clientes.filter(function(c){var d=new Date(c.criado_em);return d.getMonth()+1===mes&&d.getFullYear()===ano;}).length;
+  var hojeAtend=_agenda.filter(function(a){return a.data===hoje()&&a.status==='confirmado';});
+  var clisHoje=[...new Set(hojeAtend.map(function(a){return a.cliente_id;}))].length;
+  document.getElementById('cli-total').textContent=_clientes.length;
+  document.getElementById('cli-novos').textContent=novos;
+  document.getElementById('cli-hoje').textContent=clisHoje;
+  var el=document.getElementById('cli-list');
+  if(!lista.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">'+(busca?'Nenhum resultado.':'Nenhum cliente cadastrado.')+'</p>';return;}
+  el.innerHTML=lista.map(function(c){
+    var ag=_agenda.filter(function(a){return a.cliente_id===c.id;}).length;
+    var pacs=_clientePacotes.filter(function(p){return p.cliente_id===c.id && Number(p.sessoes_usadas||0)<Number(p.total_sessoes||0);}).length;
+    var meta=[]; if(c.telefone)meta.push(c.telefone); if(c.email)meta.push(c.email); if(ag)meta.push(ag+' atendimento'+(ag>1?'s':'')); if(pacs)meta.push(pacs+' pacote'+(pacs>1?'s':'')+' ativo'+(pacs>1?'s':''));
+    return '<div class="cli-item">'+
+      '<div class="cli-item-main">'+(c.foto_url?'<img class="client-photo-mini" src="'+c.foto_url+'" alt="Foto">':'<div class="client-photo-mini" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--sage-deep);">'+iniciaisNome(c.nome)+'</div>')+'<div><div class="cli-name">'+(c.nome||'Cliente')+'</div><div class="cli-meta">'+(meta.join(' · ')||'Sem informações adicionais')+'</div></div></div>'+ 
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;">'+
+        '<button class="btn btn-primary btn-sm" onclick="abrirCliente360(\''+c.id+'\')">Ver 360º</button>'+ 
+        '<button class="btn btn-outline btn-sm" onclick="editarCliente(\''+c.id+'\')">Editar</button>'+ 
+        '<button class="btn btn-danger btn-sm" onclick="deletarCliente(\''+c.id+'\')">Remover</button>'+ 
+      '</div></div>';
+  }).join('');
+}
+function atualizarSelectClientes(){
+  var lista=document.getElementById('ag-clientes-lista');
+  if(!lista)return;
+  lista.innerHTML=_clientes.map(function(c){
+    return '<option value="'+String(c.nome||'').replace(/"/g,'&quot;')+'"></option>';
+  }).join('');
+}
+
+function sincronizarClienteAgenda(){
+  var busca=document.getElementById('ag-cli-busca');
+  var hidden=document.getElementById('ag-cli-sel');
+  if(!busca||!hidden)return;
+
+  var termo=(busca.value||'').trim().toLowerCase();
+  var cliente=_clientes.find(function(c){
+    return String(c.nome||'').trim().toLowerCase()===termo;
+  });
+
+  hidden.value=cliente?cliente.id:'';
+  atualizarCamposPacoteAgendamento();
+}
+
+function definirClienteAgenda(clienteId){
+  var cliente=_clientes.find(function(c){return c.id===clienteId;});
+  var busca=document.getElementById('ag-cli-busca');
+  var hidden=document.getElementById('ag-cli-sel');
+
+  if(busca)busca.value=cliente?cliente.nome:'';
+  if(hidden)hidden.value=cliente?cliente.id:'';
+}
+
+async function salvarCliente(){
+  var id=document.getElementById('cli-id-edit').value;
+  var nome=document.getElementById('cli-nome').value.trim();
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  if(!nome){
+    toast('Preencha o nome.','err');
+    return;
+  }
+
+  var obj={
+    nome:nome,
+    telefone:document.getElementById('cli-tel').value.trim(),
+    email:document.getElementById('cli-email').value.trim(),
+    data_nascimento:document.getElementById('cli-nasc').value||null,
+    observacoes:document.getElementById('cli-obs').value.trim(),
+    empresa_id:APP.empresa.id
+  };
+
+  var fotoFile=(document.getElementById('cli-foto-file')||{}).files;
+  if(fotoFile&&fotoFile[0]){
+    var fotoUrl=await uploadImagem(fotoFile[0],'clientes');
+    if(fotoUrl)obj.foto_url=fotoUrl;
+  }
+
+  var res;
+
+  if(id){
+    res=await SB
+      .from('clientes')
+      .update(obj)
+      .eq('id',id)
+      .eq('empresa_id',APP.empresa.id);
+  }else{
+    res=await SB
+      .from('clientes')
+      .insert(obj);
+  }
+
+  if(res.error){
+    console.error('Erro ao salvar cliente:',res.error);
+    toast(res.error.message,'err');
+    return;
+  }
+
+  closeModal('modal-cli');
+  limparFormCli();
+  await carregarClientes();
+  toast('Cliente salvo!');
+}
+
+function limparFormCli(){
+  ['cli-id-edit','cli-nome','cli-tel','cli-email','cli-nasc','cli-obs'].forEach(function(id){document.getElementById(id).value='';});
+  var f=document.getElementById('cli-foto-file');if(f)f.value='';
+  var prev=document.getElementById('cli-foto-preview');if(prev)prev.innerHTML='CL';
+  document.getElementById('modal-cli-title').textContent='Novo cliente';
+}
+
+function editarCliente(id){
+  var c=_clientes.find(function(x){return x.id===id;});if(!c)return;
+  document.getElementById('cli-id-edit').value=c.id;
+  document.getElementById('cli-nome').value=c.nome||'';
+  document.getElementById('cli-tel').value=c.telefone||'';
+  document.getElementById('cli-email').value=c.email||'';
+  document.getElementById('cli-nasc').value=c.data_nascimento||'';
+  document.getElementById('cli-obs').value=c.observacoes||'';
+  var prev=document.getElementById('cli-foto-preview');if(prev)prev.innerHTML=c.foto_url?'<img src="'+c.foto_url+'" alt="Foto">':iniciaisNome(c.nome);
+  var f=document.getElementById('cli-foto-file');if(f)f.value='';
+  document.getElementById('modal-cli-title').textContent='Editar cliente';
+  openModal('modal-cli');
+}
+
+async function deletarCliente(id){
+  if(!confirm('Remover este cliente?'))return;
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('clientes')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover cliente:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarClientes();
+  toast('Cliente removido.');
+}
+
+
+function iniciaisNome(nome){
+  return (nome||'CL').split(' ').filter(Boolean).slice(0,2).map(function(p){return p[0].toUpperCase();}).join('')||'CL';
+}
+
+
+async function abrirCliente360(id){
+  showTab('cliente360',null);
+  var wrap=document.getElementById('cliente360-wrap');
+  if(wrap)wrap.innerHTML='<div class="loading-box"><div class="spinner"></div>Carregando perfil...</div>';
+  await renderCliente360(id);
+}
+
+async function renderCliente360(id){
+  var c=_clientes.find(function(x){return x.id===id;});
+  var wrap=document.getElementById('cliente360-wrap');
+  if(!wrap||!c)return;
+
+  var resultados=await Promise.all([
+    SB.from('agenda')
+      .select('*')
+      .eq('empresa_id',APP.empresa.id)
+      .eq('cliente_id',id)
+      .order('data',{ascending:false})
+      .order('hora',{ascending:false}),
+    SB.from('cliente_pacotes')
+      .select('*')
+      .eq('empresa_id',APP.empresa.id)
+      .eq('cliente_id',id)
+      .order('criado_em',{ascending:false}),
+    SB.from('evolucoes')
+      .select('*')
+      .eq('empresa_id',APP.empresa.id)
+      .eq('cliente_id',id)
+      .order('criado_em',{ascending:false})
+  ]);
+
+  var ags=resultados[0].data||[];
+  var pacs=resultados[1].data||[];
+  var evos=resultados[2].data||[];
+
+  var futuros=ags.filter(function(a){
+    return a.data>=hoje()&&a.status!=='cancelou';
+  }).sort(function(a,b){
+    return (a.data+(a.hora||'')).localeCompare(b.data+(b.hora||''));
+  });
+
+  var realizados=ags.filter(function(a){return a.status==='confirmado';});
+  var ativos=pacs.filter(function(p){
+    return p.status==='ativo' &&
+      Number(p.sessoes_usadas||0)<Number(p.total_sessoes||0) &&
+      !pacoteVencido(p);
+  });
+
+  var pago=pacs.reduce(function(s,p){return s+Number(p.preco_pago||0);},0);
+  var totalRestante=ativos.reduce(function(s,p){
+    return s+Math.max(0,Number(p.total_sessoes||0)-Number(p.sessoes_usadas||0));
+  },0);
+
+  var prox=futuros[0]||null;
+  var ultima=realizados.slice().sort(function(a,b){
+    return (b.data+(b.hora||'')).localeCompare(a.data+(a.hora||''));
+  })[0]||null;
+
+  var timeline=[];
+
+  ags.forEach(function(a){
+    timeline.push({
+      data:a.data,
+      hora:a.hora||'',
+      tipo:a.status==='confirmado'?'Atendimento':'Agendamento',
+      titulo:a.procedimento_nome||'Procedimento',
+      sub:statusLabelAg(a.status),
+      cor:a.status==='confirmado'?'var(--sage)':a.status==='faltou'?'var(--terra)':a.status==='cancelou'?'var(--gold)':'#6EA8D8'
+    });
+  });
+
+  pacs.forEach(function(p){
+    timeline.push({
+      data:p.data_venda||(p.criado_em||hoje()).split('T')[0],
+      hora:'',
+      tipo:'Pacote',
+      titulo:p.pacote_nome||p.procedimento_nome||'Pacote',
+      sub:'Aquisição · '+R(p.preco_pago||0),
+      cor:'var(--gold)'
+    });
+  });
+
+  evos.forEach(function(e){
+    timeline.push({
+      data:(e.criado_em||hoje()).split('T')[0],
+      hora:(e.criado_em||'').split('T')[1]?(e.criado_em.split('T')[1].substring(0,5)):'',
+      tipo:'Evolução',
+      titulo:e.titulo||e.procedimento_nome||'Registro de evolução',
+      sub:e.observacoes||'Evolução adicionada',
+      cor:'#8D6CC7'
+    });
+  });
+
+  timeline.sort(function(a,b){
+    return (b.data+(b.hora||'')).localeCompare(a.data+(a.hora||''));
+  });
+
+  var telefone=c.telefone?'<div>☎ '+c.telefone+'</div>':'<div>☎ Telefone não informado</div>';
+  var email=c.email?'<div>✉ '+c.email+'</div>':'<div>✉ E-mail não informado</div>';
+  var nasc=c.data_nascimento?'<div>🎂 '+fmtData(c.data_nascimento)+'</div>':'<div>🎂 Nascimento não informado</div>';
+  var obs=c.observacoes||'Nenhuma observação cadastrada.';
+
+  var resumoTopo=
+    '<div class="client360-overview">'+
+      '<div class="client360-stat"><div class="client360-stat-label">Última visita</div><div class="client360-stat-value">'+(ultima?fmtData(ultima.data):'—')+'</div></div>'+
+      '<div class="client360-stat"><div class="client360-stat-label">Próximo horário</div><div class="client360-stat-value">'+(prox?fmtData(prox.data):'—')+'</div></div>'+
+      '<div class="client360-stat"><div class="client360-stat-label">Total gasto</div><div class="client360-stat-value" style="color:var(--sage);">'+R(pago)+'</div></div>'+
+      '<div class="client360-stat"><div class="client360-stat-label">Sessões restantes</div><div class="client360-stat-value">'+totalRestante+'</div></div>'+
+      '<div class="client360-stat"><div class="client360-stat-label">Pacotes ativos</div><div class="client360-stat-value">'+ativos.length+'</div></div>'+
+    '</div>';
+
+  var cardProximo=
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Próximo agendamento</h2></div>'+
+      (prox?
+        '<div class="client360-mini">'+
+          '<div class="client360-mini-label">'+fmtData(prox.data)+' às '+(prox.hora||'')+'</div>'+
+          '<div style="font-weight:800;font-size:16px;">'+(prox.procedimento_nome||'Procedimento')+'</div>'+
+          '<div class="li-sub">Status: '+statusLabelAg(prox.status)+'</div>'+
+        '</div>'
+        :'<p class="empty-state">Nenhum agendamento futuro.</p>')+
+    '</div>';
+
+  var cardResumo=
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Resumo de relacionamento</h2></div>'+
+      '<div class="client360-kpis">'+
+        '<div class="client360-mini"><div class="client360-mini-label">Atendimentos</div><div class="client360-mini-value">'+realizados.length+'</div></div>'+
+        '<div class="client360-mini"><div class="client360-mini-label">Pacotes comprados</div><div class="client360-mini-value">'+pacs.length+'</div></div>'+
+        '<div class="client360-mini"><div class="client360-mini-label">Evoluções</div><div class="client360-mini-value">'+evos.length+'</div></div>'+
+      '</div>'+
+    '</div>';
+
+  var cardsPacotes=ativos.length?ativos.map(function(p){
+    var total=Number(p.total_sessoes||0);
+    var usadas=Number(p.sessoes_usadas||0);
+    var restantes=Math.max(0,total-usadas);
+    var pct=total?Math.min(100,Math.round((usadas/total)*100)):0;
+    return '<div class="client360-package-card">'+
+      '<div class="client360-package-head">'+
+        '<div><div class="client360-package-name">'+(p.pacote_nome||p.procedimento_nome||'Pacote')+'</div>'+
+        '<div class="client360-package-meta">Início: '+fmtData(p.data_venda||(p.criado_em||'').split('T')[0])+'<br>Validade: '+fmtData(p.validade)+'</div></div>'+
+        '<span class="pill pill-green">Ativo</span>'+
+      '</div>'+
+      '<div class="client-progress"><div class="client-progress-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="client360-package-footer">'+
+        '<strong style="color:var(--sage-deep);">'+usadas+' de '+total+' utilizadas · '+restantes+' restantes</strong>'+
+        '<button class="btn btn-primary btn-sm" onclick="abrirUsarSessao(\''+p.id+'\')">Registrar sessão</button>'+
+      '</div>'+
+    '</div>';
+  }).join(''):'<p class="empty-state">Nenhum pacote ativo.</p>';
+
+  var cardPacotes=
+    '<div class="client360-card" style="grid-column:1 / -1;">'+
+      '<div class="card-head"><h2>Pacotes ativos</h2><button class="btn btn-outline btn-sm" onclick="abrirPacoteCliente360(\''+c.id+'\')">+ Adicionar pacote</button></div>'+
+      '<div class="client360-package-grid">'+cardsPacotes+'</div>'+
+    '</div>';
+
+  var cardAlertas=
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Alertas e observações</h2></div>'+
+      '<div class="client360-side-list">'+
+        (totalRestante>0&&totalRestante<=2?
+          '<div class="client360-alert warn"><strong>Atenção:</strong> restam apenas '+totalRestante+' sessões.</div>'
+          :ativos.length?
+          '<div class="client360-alert ok"><strong>Pacotes:</strong> saldo sob controle.</div>'
+          :'<div class="client360-alert gold"><strong>Pacotes:</strong> cliente sem pacote ativo.</div>')+
+        '<div class="client360-alert ok"><strong>Observações:</strong> '+obs+'</div>'+
+      '</div>'+
+    '</div>';
+
+  var cardFinanceiro=
+    '<div class="client360-card">'+
+      '<div class="card-head"><h2>Financeiro do cliente</h2></div>'+
+      '<div class="client360-kpis">'+
+        '<div class="client360-mini"><div class="client360-mini-label">Total gasto</div><div class="client360-mini-value" style="color:var(--sage);">'+R(pago)+'</div></div>'+
+        '<div class="client360-mini"><div class="client360-mini-label">Última compra</div><div class="client360-mini-value" style="font-size:16px;">'+(pacs[0]?fmtData(pacs[0].data_venda||(pacs[0].criado_em||'').split('T')[0]):'—')+'</div></div>'+
+        '<div class="client360-mini"><div class="client360-mini-label">Forma de pagamento</div><div class="client360-mini-value" style="font-size:15px;">'+(pacs.find(function(p){return p.forma_pagamento;})?.forma_pagamento||'—')+'</div></div>'+
+      '</div>'+
+    '</div>';
+
+  var cardHistorico=
+    '<div class="client360-card" style="grid-column:1 / -1;">'+
+      '<div class="card-head"><h2>Linha do tempo</h2></div>'+
+      '<div class="timeline">'+
+        (timeline.length?timeline.slice(0,30).map(function(t){
+          return '<div class="timeline-item">'+
+            '<div class="timeline-dot" style="background:'+t.cor+'"></div>'+
+            '<div class="client360-timeline-type">'+t.tipo+'</div>'+
+            '<div class="timeline-date">'+fmtData(t.data)+(t.hora?' · '+t.hora:'')+'</div>'+
+            '<div class="timeline-title">'+t.titulo+'</div>'+
+            '<div class="timeline-sub">'+t.sub+'</div>'+
+          '</div>';
+        }).join(''):'<p class="empty-state">Nenhum histórico encontrado.</p>')+
+      '</div>'+
+    '</div>';
+
+  var cardEvolucao=
+    '<div class="client360-card" style="grid-column:1 / -1;">'+
+      '<div class="card-head"><h2>Evoluções</h2><button class="btn btn-outline btn-sm" onclick="abrirModalEvolucao(\''+c.id+'\')">+ Nova evolução</button></div>'+
+      (evos.length?evos.map(function(e){
+        return '<div class="evolucao-card">'+
+          '<div class="li-name">'+(e.titulo||e.procedimento_nome||'Evolução')+'</div>'+
+          '<div class="li-sub">'+fmtDt(e.criado_em)+'</div>'+
+          '<div class="before-after">'+
+            '<div class="ba-photo">'+(e.foto_antes_url?'<img src="'+e.foto_antes_url+'" alt="Antes" onclick="window.open(this.src,\'_blank\')">':'<span class="ba-tag">Antes</span>')+'</div>'+
+            '<div class="ba-photo after">'+(e.foto_depois_url?'<img src="'+e.foto_depois_url+'" alt="Depois" onclick="window.open(this.src,\'_blank\')">':'<span class="ba-tag">Depois</span>')+'</div>'+
+          '</div>'+
+          '<div class="li-sub" style="margin-top:8px;">'+(e.observacoes||'Sem observações.')+'</div>'+
+        '</div>';
+      }).join(''):'<div class="client360-alert ok"><strong>Evolução:</strong> nenhuma evolução cadastrada.</div>')+
+    '</div>';
+
+  var fotos=[];
+  evos.forEach(function(e){
+    if(e.foto_antes_url)fotos.push({url:e.foto_antes_url,tipo:'Antes',data:e.criado_em,titulo:e.titulo||e.procedimento_nome||'Evolução'});
+    if(e.foto_depois_url)fotos.push({url:e.foto_depois_url,tipo:'Depois',data:e.criado_em,titulo:e.titulo||e.procedimento_nome||'Evolução'});
+  });
+
+  var cardFotos=
+    '<div class="client360-card" style="grid-column:1 / -1;">'+
+      '<div class="card-head"><h2>Galeria de fotos</h2><button class="btn btn-outline btn-sm" onclick="abrirModalEvolucao(\''+c.id+'\')">+ Adicionar fotos</button></div>'+
+      (fotos.length?
+        '<div class="client360-gallery">'+fotos.map(function(f){
+          return '<div class="client360-gallery-item">'+
+            '<div class="client360-gallery-photo"><img src="'+f.url+'" alt="'+f.tipo+'" onclick="window.open(this.src,\'_blank\')"></div>'+
+            '<div class="client360-gallery-info"><strong>'+f.tipo+'</strong> · '+f.titulo+'<br>'+fmtDt(f.data)+'</div>'+
+          '</div>';
+        }).join('')+'</div>'
+        :'<div class="client360-file-empty"><strong>Nenhuma foto cadastrada.</strong><span>Adicione uma evolução com fotos de antes e depois.</span></div>')+
+    '</div>';
+
+  var cardArquivos=
+    '<div class="client360-card" style="grid-column:1 / -1;">'+
+      '<div class="card-head"><h2>Documentos</h2></div>'+
+      '<div class="client360-file-empty"><strong>Nenhum documento cadastrado.</strong><span>O módulo de documentos será ativado quando a estrutura de armazenamento estiver concluída.</span></div>'+
+    '</div>';
+
+  wrap.innerHTML=
+    '<div class="client360-grid">'+
+      '<div class="client360-card client360-hero client360-hero-full">'+
+        '<div class="client-avatar '+(c.foto_url?'has-photo':'')+'">'+(c.foto_url?'<img src="'+c.foto_url+'" alt="Foto">':iniciaisNome(c.nome))+'</div>'+
+        '<div style="flex:1;min-width:0;">'+
+          '<button class="btn btn-outline btn-sm" onclick="showTab(\'clientes\',document.querySelector(\'[data-tab=clientes]\'))" style="margin-bottom:12px;">← Voltar para clientes</button>'+
+          '<div class="client360-name">'+(c.nome||'Cliente')+' <span class="pill pill-green">Cliente ativo</span></div>'+
+          '<div class="client360-meta">'+telefone+email+nasc+'<div>📝 '+obs+'</div></div>'+
+          resumoTopo+
+          '<div class="client360-tabs">'+
+            '<button class="client360-tab active" onclick="selecionarAbaCliente360(\'resumo\',this)">Resumo</button>'+
+            '<button class="client360-tab" onclick="selecionarAbaCliente360(\'historico\',this)">Histórico</button>'+
+            '<button class="client360-tab" onclick="selecionarAbaCliente360(\'evolucao\',this)">Evoluções</button>'+
+            '<button class="client360-tab" onclick="selecionarAbaCliente360(\'fotos\',this)">Fotos</button>'+
+            '<button class="client360-tab" onclick="selecionarAbaCliente360(\'arquivos\',this)">Documentos</button>'+
+          '</div>'+
+          '<div class="client360-actions">'+
+            '<button class="btn btn-primary" onclick="agendarCliente360(\''+c.id+'\')">+ Agendar</button>'+
+            '<button class="btn btn-outline" onclick="abrirPacoteCliente360(\''+c.id+'\')">+ Pacote</button>'+
+            '<button class="btn btn-outline" onclick="abrirModalEvolucao(\''+c.id+'\')">+ Evolução</button>'+
+            '<button class="btn btn-outline" onclick="editarCliente(\''+c.id+'\')">Editar cliente</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="client360-section active" data-client360-section="resumo"><div class="client360-section-grid">'+cardProximo+cardResumo+cardAlertas+cardFinanceiro+cardPacotes+'</div></div>'+
+      '<div class="client360-section" data-client360-section="historico"><div class="client360-section-grid">'+cardHistorico+'</div></div>'+
+      '<div class="client360-section" data-client360-section="evolucao"><div class="client360-section-grid">'+cardEvolucao+'</div></div>'+
+      '<div class="client360-section" data-client360-section="fotos"><div class="client360-section-grid">'+cardFotos+'</div></div>'+
+      '<div class="client360-section" data-client360-section="arquivos"><div class="client360-section-grid">'+cardArquivos+'</div></div>'+
+    '</div>';
+}
+
+function agendarCliente360(clienteId){
+  abrirNovoAgendamento();
+  definirClienteAgenda(clienteId);
+  atualizarCamposPacoteAgendamento();
+}
+
+function abrirPacoteCliente360(clienteId){
+  openModal('modal-cli-pacote');
+  var sel=document.getElementById('clipac-cli-sel');
+  if(sel)sel.value=clienteId;
+}
+
+function selecionarAbaCliente360(aba,btn){
+  var wrap=document.getElementById('cliente360-wrap');
+  if(!wrap)return;
+  wrap.querySelectorAll('.client360-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  wrap.querySelectorAll('.client360-section').forEach(function(sec){
+    sec.classList.toggle('active',sec.getAttribute('data-client360-section')===aba);
+  });
+}
+
+// ====================================================
+// PROCEDIMENTOS
+// ====================================================
+async function carregarProcs(){
+  // Busca procedimentos e insumos separadamente para evitar falha no join
+  var {data:procs, error:errProcs}=await SB.from('procedimentos').select('*').order('nome');
+  if(errProcs){console.error('Erro procedimentos:',errProcs);toast('Erro ao carregar procedimentos.','err');return;}
+  _procs=procs||[];
+  // Busca insumos e vincula manualmente
+  if(_procs.length){
+    var {data:ins}=await SB.from('insumos').select('*');
+    var insMap={};
+    (ins||[]).forEach(function(i){
+      if(!insMap[i.procedimento_id])insMap[i.procedimento_id]=[];
+      insMap[i.procedimento_id].push(i);
+    });
+    _procs=_procs.map(function(p){
+      return Object.assign({},p,{insumos:insMap[p.id]||[]});
+    });
+  }
+  renderProcs();atualizarSelectProcs();
+}
+
+function renderProcs(){
+  var el=document.getElementById('proc-list');
+  if(!_procs.length){el.innerHTML='<p class="empty-state">Nenhum procedimento cadastrado. Clique em + Novo para começar.</p>';atualizarSelectProcs();return;}
+  var warns=0,bestP=null,bestM=0;
+  el.innerHTML=_procs.map(function(p){
+    var m=calcM(p);if(m.margem<50)warns++;if(m.margem>bestM){bestM=m.margem;bestP=p;}
+    var cp=Math.max(0,100-m.margem);var good=m.margem>=50;
+    return '<div class="proc-item">'+
+      '<div class="proc-row">'+
+        '<div><div class="proc-name">'+p.nome+'</div><div style="font-size:11px;color:var(--ink-soft);">'+p.duracao+' min</div></div>'+
+        '<div style="text-align:right"><div class="mono" style="font-size:12.5px;">'+R(p.preco)+'</div><div style="font-size:10.5px;color:var(--ink-soft);">custo: '+R(m.custo)+'</div></div>'+
+      '</div>'+
+      '<div class="margin-row"><div class="margin-bar"><div class="margin-bar-cost" style="width:'+cp+'%"></div><div class="margin-bar-profit" style="width:'+m.margem+'%"></div></div>'+
+      '<span class="pill '+(good?'pill-green':'pill-red')+'">'+m.margem+'%</span><span class="margin-info">lucro: '+R(m.lucro)+'</span></div>'+
+      ((p.insumos&&p.insumos.length)?'<div style="font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;margin:7px 0 4px;">Insumos</div>'+p.insumos.map(function(i){return '<span class="ins-tag">'+i.nome+' × '+i.quantidade+' · '+R(i.custo)+'</span>';}).join(''):'')+
+      '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">'+
+        '<button class="btn btn-outline btn-sm" onclick="editarProc(\''+p.id+'\')">Editar</button>'+
+        '<button class="btn btn-danger btn-sm" onclick="deletarProc(\''+p.id+'\')">Remover</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('proc-total').textContent=_procs.length;
+  document.getElementById('proc-warn').textContent=warns;
+  if(bestP){document.getElementById('proc-best').textContent=bestM+'%';document.getElementById('proc-best-name').textContent=bestP.nome;}
+  atualizarSelectProcs();
+}
+
+function atualizarSelectProcs(){
+  var sel=document.getElementById('ag-proc-sel');
+  if(!sel)return;
+  sel.innerHTML='<option value="">Selecionar procedimento...</option>'+_procs.map(function(p){return '<option value="'+p.id+'">'+p.nome+' · '+R(p.preco)+'</option>';}).join('');
+}
+
+// Insumos dinâmicos no modal de procedimento
+function addInsRow(estoqueId,nome,qtd,custo){
+  var wrap=document.getElementById('ins-wrap');
+  var div=document.createElement('div');
+  div.className='ins-row';
+  var opts=_estoque.map(function(e){return '<option value="'+e.id+'"'+(estoqueId===e.id?' selected':'')+'>'+e.nome+' ('+e.unidade+')</option>';}).join('');
+  div.innerHTML=
+    '<div class="form-group"><label class="form-label">Produto do estoque</label><select class="ins-est-id">'+
+    '<option value="">Selecionar...</option>'+opts+'</select></div>'+
+    '<div class="form-group"><label class="form-label">Quantidade</label><input type="number" class="ins-qtd" value="'+(qtd||1)+'" min="1" step="1"></div>'+
+    '<div class="form-group"><label class="form-label">Custo (R$)</label><input type="number" class="ins-custo" value="'+(custo||0)+'" min="0"></div>'+
+    '<button class="ins-rm" onclick="this.parentElement.remove()">✕</button>';
+  // auto-preencher custo ao selecionar produto
+  div.querySelector('.ins-est-id').addEventListener('change',function(){
+    var est=_estoque.find(function(e){return e.id===this.value;}.bind(this));
+    if(est){div.querySelector('.ins-custo').value=est.custo_unitario||0;}
+  });
+  wrap.appendChild(div);
+}
+
+function abrirModalProc(){
+  document.getElementById('proc-id-edit').value='';
+  document.getElementById('modal-proc-title').textContent='Novo procedimento';
+  document.getElementById('ins-wrap').innerHTML='';
+  document.getElementById('proc-nome').value='';
+  document.getElementById('proc-preco').value='';
+  document.getElementById('proc-dur').value='60';
+  openModal('modal-proc');
+}
+
+function editarProc(id){
+  var proc=_procs.find(function(p){return p.id===id;});
+  if(!proc){toast('Procedimento não encontrado.','err');return;}
+
+  document.getElementById('proc-id-edit').value=proc.id;
+  document.getElementById('modal-proc-title').textContent='Editar procedimento';
+  document.getElementById('proc-nome').value=proc.nome||'';
+  document.getElementById('proc-preco').value=proc.preco||0;
+  document.getElementById('proc-dur').value=proc.duracao||60;
+  document.getElementById('ins-wrap').innerHTML='';
+
+  (proc.insumos||[]).forEach(function(i){
+    addInsRow(i.estoque_id,i.nome,i.quantidade,i.custo);
+  });
+
+  openModal('modal-proc');
+}
+
+async function salvarProc(){
+  var id=document.getElementById('proc-id-edit').value;
+  var nome=document.getElementById('proc-nome').value.trim();
+  var preco=parseFloat(document.getElementById('proc-preco').value);
+  var dur=parseInt(document.getElementById('proc-dur').value)||60;
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  if(!nome||!preco){
+    toast('Preencha nome e preço.','err');
+    return;
+  }
+
+  var rows=document.querySelectorAll('#ins-wrap .ins-row');
+  var ins=[];
+
+  rows.forEach(function(r){
+    var eid=r.querySelector('.ins-est-id').value;
+    var qtd=parseInt(r.querySelector('.ins-qtd').value,10);
+    var custo=parseFloat(r.querySelector('.ins-custo').value)||0;
+
+    if(eid&&!isNaN(qtd)){
+      var est=_estoque.find(function(e){return e.id===eid;});
+      ins.push({
+        estoque_id:eid,
+        nome:est?est.nome:'',
+        quantidade:qtd,
+        custo:custo,
+        empresa_id:APP.empresa.id
+      });
+    }
+  });
+
+  var procRes;
+
+  if(id){
+    procRes=await SB
+      .from('procedimentos')
+      .update({
+        nome:nome,
+        preco:preco,
+        duracao:dur,
+        empresa_id:APP.empresa.id
+      })
+      .eq('id',id)
+      .eq('empresa_id',APP.empresa.id)
+      .select()
+      .single();
+  }else{
+    procRes=await SB
+      .from('procedimentos')
+      .insert({
+        nome:nome,
+        preco:preco,
+        duracao:dur,
+        empresa_id:APP.empresa.id
+      })
+      .select()
+      .single();
+  }
+
+  if(procRes.error){
+    console.error('Erro ao salvar procedimento:',procRes.error);
+    toast(procRes.error.message,'err');
+    return;
+  }
+
+  var proc=procRes.data;
+
+  if(id){
+    var delIns=await SB
+      .from('insumos')
+      .delete()
+      .eq('procedimento_id',id)
+      .eq('empresa_id',APP.empresa.id);
+
+    if(delIns.error){
+      console.error('Erro ao atualizar insumos:',delIns.error);
+      toast(delIns.error.message,'err');
+      return;
+    }
+  }
+
+  if(proc&&ins.length){
+    var insRes=await SB.from('insumos').insert(
+      ins.map(function(i){
+        return Object.assign({},i,{procedimento_id:proc.id});
+      })
+    );
+
+    if(insRes.error){
+      console.error('Erro ao salvar insumos:',insRes.error);
+      toast(insRes.error.message,'err');
+      return;
+    }
+  }
+
+  closeModal('modal-proc');
+  await carregarProcs();
+  renderFin();
+  toast(id?'Procedimento atualizado!':'Procedimento salvo!');
+}
+
+async function deletarProc(id){
+  if(!confirm('Remover este procedimento?'))return;
+
+  await SB
+    .from('insumos')
+    .delete()
+    .eq('procedimento_id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  var {error}=await SB
+    .from('procedimentos')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover procedimento:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarProcs();
+  renderFin();
+  toast('Procedimento removido.');
+}
+
+// ====================================================
+// ESTOQUE
+// ====================================================
+async function carregarEstoque(){
+  var {data}=await SB.from('estoque').select('*').order('nome');
+  _estoque=data||[];renderEstoque();
+}
+
+function renderEstoque(){
+  // Alerta apenas quando minimo > 0 e qtd está abaixo ou igual ao mínimo
+  var alertas=_estoque.filter(function(e){return Number(e.minimo)>0 && Number(e.qtd)<=Number(e.minimo);});
+  var consumoMes=_movs.filter(function(m){var d=new Date(m.criado_em);var n=new Date();return m.tipo==='saida'&&d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();}).reduce(function(s,m){return s+Number(m.quantidade);},0);
+
+  document.getElementById('est-stats').innerHTML=
+    '<div class="kpi"><div class="kpi-label">Total produtos</div><div class="kpi-value">'+_estoque.length+'</div></div>'+
+    '<div class="kpi '+(alertas.length?'kpi-warn':'kpi-ok')+'"><div class="kpi-label">Em alerta</div><div class="kpi-value '+(alertas.length?'kpi-warn-val':'kpi-ok-val')+'">'+alertas.length+'</div><div class="kpi-sub">'+(alertas.length?'abaixo do mínimo':'todos OK')+'</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Consumo mês</div><div class="kpi-value">'+consumoMes.toFixed(1)+'</div><div class="kpi-sub">unidades</div></div>'+
+    '<div class="kpi kpi-gold"><div class="kpi-label">Valor em estoque</div><div class="kpi-value kpi-gold-val">'+R(_estoque.reduce(function(s,e){return s+e.qtd*(e.custo_unitario||0);},0))+'</div></div>';
+
+  var alertHtml=alertas.map(function(e){
+    return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+e.nome+'</strong> — estoque abaixo do mínimo. Atual: <strong>'+e.qtd+' '+e.unidade+'</strong> · Mínimo definido: '+e.minimo+' '+e.unidade+'</div></div>';
+  }).join('');
+  document.getElementById('est-alertas').innerHTML=alertHtml;
+
+  var el=document.getElementById('est-list');
+  if(!_estoque.length){el.innerHTML='<p class="empty-state">Nenhum produto cadastrado.</p>';return;}
+  el.innerHTML=_estoque.map(function(e){
+    var baixo=Number(e.minimo)>0 && Number(e.qtd)<=Number(e.minimo);
+    var pct=Math.min(100,Math.round((e.qtd/Math.max(e.minimo*2.5,1))*100));
+    return '<div class="list-item">'+
+      '<div><div class="li-name">'+e.nome+'</div><div class="li-sub">Mín: '+e.minimo+' '+e.unidade+' · Custo unit.: '+R(e.custo_unitario)+'</div></div>'+
+      '<div class="li-actions">'+
+        '<div class="est-bar"><div class="est-bar-fill" style="width:'+pct+'%;background:'+(baixo?'var(--terra)':'var(--sage)')+'"></div></div>'+
+        '<span class="mono" style="font-size:12px;">'+e.qtd+' '+e.unidade+'</span>'+
+        '<span class="pill '+(baixo?'pill-red':'pill-green')+'">'+(baixo?'Baixo':'OK')+'</span>'+
+        '<button class="btn btn-outline btn-sm" onclick="abrirRepor(\''+e.id+'\',\''+e.nome+'\','+e.qtd+',\''+e.unidade+'\')">+ Repor</button>'+
+        '<button class="btn btn-outline btn-sm" onclick="editarEstoque(\''+e.id+'\')">Editar</button>'+
+        '<button class="btn btn-danger btn-sm" onclick="deletarEstoque(\''+e.id+'\')">Remover</button>'+
+      '</div></div>';
+  }).join('');
+}
+
+function abrirRepor(id,nome,qtd,un){
+  _reporId=id;_reporQtdAtual=Number(qtd);
+  document.getElementById('repor-label').textContent=nome+' — atual: '+qtd+' '+un;
+  document.getElementById('repor-qtd').value='1';
+  openModal('modal-repor');
+}
+
+async function confirmarRepor(){
+  var q=parseFloat(document.getElementById('repor-qtd').value);
+  if(isNaN(q)||q<=0){toast('Informe uma quantidade válida.','err');return;}
+  var item=_estoque.find(function(e){return e.id===_reporId;});
+  var novaQtd=(item.qtd||0)+q;
+  await SB.from('estoque').update({qtd:novaQtd}).eq('id',_reporId);
+  // registrar movimentação de entrada
+  await SB.from('movimentacoes_estoque').insert({produto_id:_reporId,produto_nome:item.nome,tipo:'entrada',quantidade:q});
+  closeModal('modal-repor');
+  await Promise.all([carregarEstoque(),carregarMovs()]);
+  await carregarEstoqueSilencioso();
+  renderDashboard();
+  toast('Estoque reposto: +'+q+' '+item.unidade);
+}
+
+async function salvarEstoque(){
+  var id=document.getElementById('est-id-edit').value;
+  var nome=document.getElementById('est-nome').value.trim();
+  var qtd=parseFloat(document.getElementById('est-qtd').value)||0;
+  var min=parseFloat(document.getElementById('est-min').value)||0;
+  var un=document.getElementById('est-unidade').value;
+  var custo=parseFloat(document.getElementById('est-custo').value)||0;
+  if(!nome){toast('Preencha o nome do produto.','err');return;}
+  var obj={nome:nome,qtd:qtd,minimo:min,unidade:un,custo_unitario:custo};
+  if(id){await SB.from('estoque').update(obj).eq('id',id);}
+  else{await SB.from('estoque').insert(obj);}
+  closeModal('modal-est');limparFormEst();
+  await carregarEstoque();toast('Produto salvo!');
+}
+
+function limparFormEst(){
+  document.getElementById('est-id-edit').value='';
+  document.getElementById('est-nome').value='';
+  document.getElementById('est-qtd').value='0';
+  document.getElementById('est-min').value='0';
+  document.getElementById('est-custo').value='0';
+  document.getElementById('modal-est-title').textContent='Novo produto';
+}
+
+function editarEstoque(id){
+  var e=_estoque.find(function(x){return x.id===id;});if(!e)return;
+  document.getElementById('est-id-edit').value=e.id;
+  document.getElementById('est-nome').value=e.nome;
+  document.getElementById('est-qtd').value=e.qtd;
+  document.getElementById('est-min').value=e.minimo;
+  document.getElementById('est-unidade').value=e.unidade;
+  document.getElementById('est-custo').value=e.custo_unitario||0;
+  document.getElementById('modal-est-title').textContent='Editar produto';
+  openModal('modal-est');
+}
+
+async function deletarEstoque(id){
+  if(!confirm('Remover este produto?'))return;
+  await SB.from('estoque').delete().eq('id',id);
+  await carregarEstoque();toast('Produto removido.');
+}
+
+// ====================================================
+// AGENDA
+// ====================================================
+async function carregarAgenda(){
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var range=getAgendaRange(base);
+  document.getElementById('ag-data-label').textContent=range.header;
+  var period=document.getElementById('agenda-period-label');if(period)period.textContent=range.label;
+
+  if(!APP.empresa.id){
+    _agenda=[];
+    renderAgenda();
+    return;
+  }
+
+  var {data:rows,error}=await SB
+    .from('agenda')
+    .select('*')
+    .eq('empresa_id',APP.empresa.id)
+    .gte('data',range.start)
+    .lte('data',range.end)
+    .order('data')
+    .order('hora');
+
+  if(error){
+    console.error('Erro ao carregar agenda:',error);
+    toast('Não foi possível carregar a agenda.','err');
+    _agenda=[];
+  }else{
+    _agenda=rows||[];
+  }
+
+  renderAgenda();
+}
+
+function getAgendaRange(base){
+  base=base||hoje();
+  if(_agendaView==='semana'){
+    var ini=startOfWeekISO(base), fim=addDaysISO(ini,6);
+    return {start:ini,end:fim,header:fmtData(ini)+' a '+fmtData(fim),label:'Semana · '+fmtData(ini)+' a '+fmtData(fim)};
+  }
+  if(_agendaView==='mes'){
+    var mi=startOfMonthISO(base), mf=endOfMonthISO(base);
+    return {start:mi,end:mf,header:monthNameISO(base),label:'Mês · '+monthNameISO(base)};
+  }
+  return {start:base,end:base,header:fmtData(base),label:'Dia · '+fmtData(base)};
+}
+
+function setAgendaView(view){
+  _agendaView=view||'dia';
+  document.querySelectorAll('#agenda-view-seg button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-view')===_agendaView);});
+  carregarAgenda();
+}
+
+function mudarPeriodoAgenda(dir){
+  var inp=document.getElementById('ag-filtro-data');
+  var base=inp.value||hoje();
+  var d=isoDateObj(base);
+  if(_agendaView==='semana')d.setDate(d.getDate()+7*dir);
+  else if(_agendaView==='mes')d.setMonth(d.getMonth()+dir);
+  else d.setDate(d.getDate()+dir);
+  inp.value=toISODate(d);
+  carregarAgenda();
+}
+
+function irParaHojeAgenda(){
+  var inp=document.getElementById('ag-filtro-data');
+  if(inp)inp.value=hoje();
+  carregarAgenda();
+}
+
+function statusLabelAg(status){
+  if(status==='confirmado')return 'Confirmado';
+  if(status==='faltou')return 'Faltou';
+  if(status==='cancelou')return 'Cancelou';
+  return 'Aguardando';
+}
+
+function getPacoteAgenda(a){
+  return (_clientePacotes||[]).find(function(cp){
+    var total=Number(cp.total_sessoes||0), usadas=Number(cp.sessoes_usadas||0);
+    return cp.cliente_id===a.cliente_id && cp.procedimento_id===a.procedimento_id && usadas<total;
+  });
+}
+
+function abrirNovoAgendamento(){
+  var inicioPac=document.getElementById('ag-pac-data-venda');if(inicioPac)inicioPac.value=hoje();
+  var validadePac=document.getElementById('ag-pac-validade');if(validadePac)validadePac.value=addDaysISO(hoje(),90);
+  limparFormAgendamento();
+  openModal('modal-ag');
+}
+
+function abrirPacoteDoAgendamento(cliId,procId,data,hora){
+  limparFormAgendamento();
+  definirClienteAgenda(cliId||'');
+  var proc=document.getElementById('ag-proc-sel');if(proc)proc.value=procId||'';
+  var dt=document.getElementById('ag-data-input');if(dt)dt.value=data||hoje();
+  var hr=document.getElementById('ag-hora-input');if(hr)hr.value=(hora||'09:00').substring(0,5);
+  setTipoAtendimentoAg('novo');
+  atualizarCamposPacoteAgendamento();
+  openModal('modal-ag');
+}
+
+function renderAgenda(){
+  atualizarResumoAgenda();
+  if(_agendaView==='semana')return renderAgendaSemana();
+  if(_agendaView==='mes')return renderAgendaMes();
+  return renderAgendaDia();
+}
+
+function atualizarResumoAgenda(){
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var hojeRows=_agenda.filter(function(a){return _agendaView==='dia' ? true : a.data===base;});
+  var rowsResumo=(_agendaView==='dia')?_agenda:hojeRows;
+  var faltas=rowsResumo.filter(function(a){return a.status==='faltou';}).length;
+  var conf=rowsResumo.filter(function(a){return a.status==='confirmado';}).length;
+  var pacotesPeriodo=0, sessoesPeriodo=0, semPacote=0, receita=0;
+  (_agenda||[]).forEach(function(a){
+    var p=_procs.find(function(x){return x.id===a.procedimento_id;});
+    if(p)receita+=Number(p.preco||0);
+    var pac=getPacoteAgenda(a);
+    if(pac){pacotesPeriodo++;sessoesPeriodo++;}
+    else{semPacote++;}
+  });
+  document.getElementById('ag-faltas').textContent=faltas;
+  document.getElementById('ag-total').textContent=rowsResumo.length;
+  var agConf=document.getElementById('ag-confirmados');if(agConf)agConf.textContent=conf;
+  document.getElementById('ag-taxa').textContent=rowsResumo.length?Math.round((conf/rowsResumo.length)*100)+'%':'—';
+  var elPac=document.getElementById('ag-pacotes-dia');if(elPac)elPac.textContent=pacotesPeriodo;
+  var elSes=document.getElementById('ag-sessoes-dia');if(elSes)elSes.textContent=sessoesPeriodo;
+  var elSem=document.getElementById('ag-sem-pacote-dia');if(elSem)elSem.textContent=semPacote;
+  var elRec=document.getElementById('ag-receita-dia');if(elRec)elRec.textContent=R(receita);
+  var title=document.querySelector('.agenda-side-card .agenda-side-title');if(title)title.textContent=_agendaView==='dia'?'Resumo do dia':(_agendaView==='semana'?'Resumo da semana':'Resumo do mês');
+  var proximo=document.getElementById('ag-proximo');
+  if(proximo){
+    var hojeISO=hoje();
+    var prox=(_agenda||[]).filter(function(a){return a.data>=hojeISO&&a.status!=='cancelou'&&a.status!=='faltou';})[0];
+    proximo.innerHTML=prox?('<strong>'+fmtData(prox.data)+' · '+prox.hora.substring(0,5)+'</strong><br>'+prox.cliente_nome+'<br><span style="color:var(--ink-soft)">'+prox.procedimento_nome+'</span>'):'Nenhum próximo atendimento.';
+  }
+}
+
+function agendaCardHTML(a){
+  var status=a.status||'pendente';
+  var pac=getPacoteAgenda(a);
+  var proc=_procs.find(function(x){return x.id===a.procedimento_id;});
+  var statusClass=status==='confirmado'?'confirmado':status==='faltou'?'faltou':status==='cancelou'?'cancelou':'pendente';
+  var pacoteHtml='';
+  if(pac){
+    var total=Number(pac.total_sessoes||0), usadas=Number(pac.sessoes_usadas||0), restam=Math.max(0,total-usadas);
+    var pct=total?Math.min(100,Math.round((usadas/total)*100)):0;
+    pacoteHtml='<div class="agenda-package">'+
+      '<strong>Pacote ativo</strong> · '+(pac.pacote_nome||a.procedimento_nome)+
+      '<div class="agenda-progress"><div class="agenda-progress-fill" style="width:'+pct+'%"></div></div>'+ 
+      '<span>'+restam+' de '+total+' sessão(ões) restantes</span>'+ 
+    '</div>';
+  }else{
+    pacoteHtml='<div class="agenda-package warn"><strong>Cliente sem pacote ativo para este procedimento.</strong> <button class="btn btn-gold btn-sm" style="margin-left:8px;" onclick="abrirPacoteDoAgendamento(\''+a.cliente_id+'\',\''+a.procedimento_id+'\',\''+a.data+'\',\''+a.hora+'\')">Criar pacote</button></div>';
+  }
+  return '<div class="agenda-card">'+
+    '<div class="agenda-time">'+a.hora.substring(0,5)+'</div>'+ 
+    '<div class="agenda-card-body '+statusClass+'">'+
+      '<div class="agenda-card-top">'+
+        '<div><div class="agenda-client">'+a.cliente_nome+'</div><div class="agenda-proc">'+a.procedimento_nome+'</div></div>'+ 
+        '<span class="agenda-status-pill '+statusClass+'">'+statusLabelAg(status)+'</span>'+ 
+      '</div>'+pacoteHtml+
+      '<div class="agenda-meta">'+
+        '<span class="pill pill-blue">'+(proc?R(proc.preco):'Valor não informado')+'</span>'+ 
+        (pac?'<span class="pill pill-green">Sessão controlada</span>':'<span class="pill pill-gold">Venda possível</span>')+
+      '</div>'+ 
+      '<div class="agenda-actions">'+
+        (status!=='confirmado'?'<button class="status-btn s-conf" onclick="setStatus(\''+a.id+'\',\'confirmado\',\''+status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✓ Confirmar</button>':'')+
+        (status!=='faltou'?'<button class="status-btn s-falt" onclick="setStatus(\''+a.id+'\',\'faltou\',\''+status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">✕ Faltou</button>':'')+
+        (status!=='cancelou'?'<button class="status-btn s-canc" onclick="setStatus(\''+a.id+'\',\'cancelou\',\''+status+'\',\''+a.procedimento_id+'\',\''+a.cliente_nome+'\',\''+a.procedimento_nome+'\')">Cancelar</button>':'')+
+        '<button class="status-btn s-del" onclick="deletarAg(\''+a.id+'\')">Excluir</button>'+ 
+      '</div>'+ 
+    '</div>'+ 
+    '<div class="agenda-card-actions"><button class="btn btn-outline btn-sm" onclick="abrirPacoteDoAgendamento(\''+a.cliente_id+'\',\''+a.procedimento_id+'\',\''+a.data+'\',\''+a.hora+'\')">Pacote</button></div>'+ 
+  '</div>';
+}
+
+function renderAgendaDia(){
+  var el=document.getElementById('ag-list');
+  if(!_agenda.length){el.innerHTML='<p class="empty-state">Nenhum agendamento para este dia.</p>';return;}
+  el.innerHTML=_agenda.map(agendaCardHTML).join('');
+}
+
+function renderAgendaSemana(){
+  var el=document.getElementById('ag-list');
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var ini=startOfWeekISO(base);
+  var dias=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  var html='<div class="agenda-week-grid">';
+  for(var i=0;i<7;i++){
+    var dia=addDaysISO(ini,i);
+    var rows=_agenda.filter(function(a){return a.data===dia;});
+    html+='<div class="agenda-week-day">'+
+      '<div class="agenda-week-head"><div><div class="agenda-week-name">'+dias[i]+'</div><div class="agenda-week-date">'+fmtData(dia).slice(0,5)+'</div></div><span class="pill '+(rows.length?'pill-green':'pill-gold')+'">'+rows.length+'</span></div>';
+    if(rows.length){
+      html+=rows.slice(0,5).map(function(a){var st=a.status||'pendente';return '<div class="agenda-mini-event '+st+'" onclick="setAgendaView(\'dia\');document.getElementById(\'ag-filtro-data\').value=\''+a.data+'\';carregarAgenda();"><div class="agenda-mini-time">'+a.hora.substring(0,5)+'</div><div class="agenda-mini-client">'+a.cliente_nome+'</div><div class="agenda-mini-proc">'+a.procedimento_nome+'</div></div>';}).join('');
+      if(rows.length>5)html+='<div class="agenda-more">+'+(rows.length-5)+' atendimento(s)</div>';
+    }else html+='<p class="empty-state" style="font-size:11px;padding:8px 0;">Livre</p>';
+    html+='</div>';
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function renderAgendaMes(){
+  var el=document.getElementById('ag-list');
+  var base=document.getElementById('ag-filtro-data').value||hoje();
+  var first=isoDateObj(startOfMonthISO(base));
+  var gridStart=new Date(first);gridStart.setDate(first.getDate()-(first.getDay()===0?6:first.getDay()-1));
+  var dows=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  var html='<div class="agenda-month-grid">'+dows.map(function(d){return '<div class="agenda-month-dow">'+d+'</div>';}).join('');
+  var month=first.getMonth();
+  for(var i=0;i<42;i++){
+    var d=new Date(gridStart);d.setDate(gridStart.getDate()+i);
+    var iso=toISODate(d);
+    var rows=_agenda.filter(function(a){return a.data===iso;});
+    var cls=(d.getMonth()!==month?' out':'')+(iso===hoje()?' today':'');
+    html+='<div class="agenda-month-day'+cls+'" onclick="setAgendaView(\'dia\');document.getElementById(\'ag-filtro-data\').value=\''+iso+'\';carregarAgenda();">'+
+      '<div class="agenda-month-number">'+String(d.getDate()).padStart(2,'0')+'</div>'+
+      (rows.length?'<div class="agenda-month-count">'+rows.length+' agend.</div>':'')+
+      '<div class="agenda-month-tags">'+rows.slice(0,8).map(function(a){return '<span class="agenda-dot '+(a.status||'pendente')+'"></span>';}).join('')+'</div>'+ 
+    '</div>';
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+async function setStatus(agId, novoStatus, statusAnterior, procId, cliNome, procNome){
+  // BAIXA DE ESTOQUE: pendente/faltou/cancelou → confirmado
+  if(novoStatus==='confirmado' && statusAnterior!=='confirmado'){
+    var ok=await baixarEstoque(procId, agId, cliNome, procNome);
+    if(!ok)return;
+  }
+  // RESTITUIÇÃO: confirmado → cancelou/faltou
+  if(statusAnterior==='confirmado' && (novoStatus==='cancelou'||novoStatus==='faltou')){
+    await restituirEstoque(procId, agId, cliNome, procNome);
+  }
+  var {error}=await SB
+    .from('agenda')
+    .update({status:novoStatus,status_anterior:statusAnterior})
+    .eq('id',agId)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao atualizar status do agendamento:',error);
+    toast(error.message,'err');
+    return;
+  }
+  await Promise.all([carregarAgenda(),carregarEstoque(),carregarMovs()]);
+  await carregarEstoqueSilencioso();
+  renderFin();renderDashboard();
+}
+
+// Verifica disponibilidade e dá baixa no estoque
+async function baixarEstoque(procId, agId, cliNome, procNome){
+  var proc=_procs.find(function(p){return p.id===procId;});
+  if(!proc||!proc.insumos||!proc.insumos.length)return true; // sem insumos, ok
+
+  // verificar disponibilidade
+  for(var i=0;i<proc.insumos.length;i++){
+    var ins=proc.insumos[i];
+    if(!ins.estoque_id)continue;
+    var item=_estoque.find(function(e){return e.id===ins.estoque_id;});
+    if(!item){toast('Produto "'+ins.nome+'" não encontrado no estoque.','err');return false;}
+    if(Number(item.qtd)<Number(ins.quantidade)){
+      toast('⚠ Estoque insuficiente: '+item.nome+' (disponível: '+item.qtd+' '+item.unidade+', necessário: '+ins.quantidade+')','err');
+      return false;
+    }
+  }
+
+  // dar baixa
+  for(var j=0;j<proc.insumos.length;j++){
+    var ins2=proc.insumos[j];
+    if(!ins2.estoque_id)continue;
+    var item2=_estoque.find(function(e){return e.id===ins2.estoque_id;});
+    if(!item2)continue;
+    var novaQtd=Number(item2.qtd)-Number(ins2.quantidade);
+    await SB
+      .from('estoque')
+      .update({qtd:Math.max(0,novaQtd)})
+      .eq('id',ins2.estoque_id)
+      .eq('empresa_id',APP.empresa.id);
+
+    await SB.from('movimentacoes_estoque').insert({
+      produto_id:ins2.estoque_id,
+      produto_nome:item2.nome,
+      agendamento_id:agId,
+      cliente_nome:cliNome,
+      procedimento_nome:procNome,
+      tipo:'saida',
+      quantidade:ins2.quantidade,
+      empresa_id:APP.empresa.id
+    });
+  }
+  return true;
+}
+
+// Restituir estoque ao cancelar/dar falta em atendimento já confirmado
+async function restituirEstoque(procId, agId, cliNome, procNome){
+  var proc=_procs.find(function(p){return p.id===procId;});
+  if(!proc||!proc.insumos||!proc.insumos.length)return;
+  for(var i=0;i<proc.insumos.length;i++){
+    var ins=proc.insumos[i];
+    if(!ins.estoque_id)continue;
+    var item=_estoque.find(function(e){return e.id===ins.estoque_id;});
+    if(!item)continue;
+    await SB
+      .from('estoque')
+      .update({qtd:Number(item.qtd)+Number(ins.quantidade)})
+      .eq('id',ins.estoque_id)
+      .eq('empresa_id',APP.empresa.id);
+
+    await SB.from('movimentacoes_estoque').insert({
+      produto_id:ins.estoque_id,
+      produto_nome:item.nome,
+      agendamento_id:agId,
+      cliente_nome:cliNome,
+      procedimento_nome:procNome,
+      tipo:'entrada',
+      quantidade:ins.quantidade,
+      empresa_id:APP.empresa.id
+    });
+  }
+  toast('Estoque restituído automaticamente.');
+}
+
+async function deletarAg(id){
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('agenda')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao excluir agendamento:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarAgenda();
+}
+
+function limparFormAgendamento(){
+  var cli=document.getElementById('ag-cli-sel');if(cli)cli.value='';
+  var cliBusca=document.getElementById('ag-cli-busca');if(cliBusca)cliBusca.value='';
+  var proc=document.getElementById('ag-proc-sel');if(proc)proc.value='';
+  var data=document.getElementById('ag-data-input');if(data)data.value=hoje();
+  var hora=document.getElementById('ag-hora-input');if(hora)hora.value='09:00';
+  var obs=document.getElementById('ag-obs-input');if(obs)obs.value='';
+  var total=document.getElementById('ag-pac-total');if(total)total.value='10';
+  var preco=document.getElementById('ag-pac-preco');if(preco)preco.value='0';
+  var usadas=document.getElementById('ag-pac-usadas');if(usadas)usadas.value='1';
+  var usadasEx=document.getElementById('ag-pac-existente-usadas');if(usadasEx)usadasEx.value='1';
+  setTipoAtendimentoAg('avulso');
+  atualizarCamposPacoteAgendamento();
+}
+
+function setTipoAtendimentoAg(tipo){
+  var input=document.getElementById('ag-tipo-atendimento');if(input)input.value=tipo;
+  ['avulso','novo','existente'].forEach(function(t){
+    var card=document.getElementById('ag-tipo-'+t+'-card');
+    if(card)card.classList.toggle('active',t===tipo);
+  });
+  var novo=document.getElementById('ag-pacote-novo-box');
+  var ex=document.getElementById('ag-pacote-existente-box');
+  if(novo)novo.classList.toggle('open',tipo==='novo');
+  if(ex)ex.classList.toggle('open',tipo==='existente');
+  atualizarCamposPacoteAgendamento();
+}
+
+function getPacotesAtivosAgendamento(){
+  var cliId=(document.getElementById('ag-cli-sel')||{}).value;
+  var procId=(document.getElementById('ag-proc-sel')||{}).value;
+  return _clientePacotes.filter(function(cp){
+    var total=Number(cp.total_sessoes||0), usadas=Number(cp.sessoes_usadas||0);
+    return cp.cliente_id===cliId && cp.procedimento_id===procId && usadas<total && !pacoteVencido(cp);
+  });
+}
+
+function atualizarCamposPacoteAgendamento(){
+  var tipo=(document.getElementById('ag-tipo-atendimento')||{}).value||'avulso';
+  var sel=document.getElementById('ag-pac-existente-sel');
+  if(sel){
+    var pacs=getPacotesAtivosAgendamento();
+    if(!pacs.length){
+      sel.innerHTML='<option value="">Nenhum pacote ativo para este procedimento</option>';
+    }else{
+      sel.innerHTML=pacs.map(function(cp){
+        var restam=Number(cp.total_sessoes||0)-Number(cp.sessoes_usadas||0);
+        return '<option value="'+cp.id+'">'+cp.pacote_nome+' · '+restam+' restante'+(restam===1?'':'s')+(cp.validade?' · até '+fmtData(cp.validade):'')+'</option>';
+      }).join('');
+    }
+  }
+  if(tipo==='existente'){
+    var pacsAtivos=getPacotesAtivosAgendamento();
+    if(!pacsAtivos.length){
+      var resumo=document.getElementById('ag-pac-existente-resumo');
+      if(resumo)resumo.innerHTML='Nenhum pacote ativo encontrado. Use <strong>Primeira venda</strong> para criar um novo pacote.';
+    }
+  }
+  atualizarResumoPacoteAgendamento();
+}
+
+function atualizarResumoPacoteAgendamento(){
+  var tipo=(document.getElementById('ag-tipo-atendimento')||{}).value||'avulso';
+  var procId=(document.getElementById('ag-proc-sel')||{}).value;
+  var proc=_procs.find(function(p){return p.id===procId;});
+  if(tipo==='novo'){
+    var total=parseInt((document.getElementById('ag-pac-total')||{}).value)||0;
+    var usadas=parseInt((document.getElementById('ag-pac-usadas')||{}).value)||0;
+    var restam=Math.max(0,total-usadas);
+    var resumo=document.getElementById('ag-pac-novo-resumo');
+    var ini=(document.getElementById('ag-pac-data-venda')||{}).value||hoje();
+    var fim=(document.getElementById('ag-pac-validade')||{}).value||addDaysISO(ini,90);
+    if(resumo)resumo.innerHTML='Ao salvar, será criado um pacote de <strong>'+total+' sessão(ões)</strong>'+(proc?' para <strong>'+proc.nome+'</strong>':'')+'. Início em <strong>'+fmtData(ini)+'</strong>, utilização até <strong>'+fmtData(fim)+'</strong>. Após este atendimento, restarão <strong>'+restam+' sessão(ões)</strong>.';
+  }
+  if(tipo==='existente'){
+    var pacId=(document.getElementById('ag-pac-existente-sel')||{}).value;
+    var pac=_clientePacotes.find(function(cp){return cp.id===pacId;});
+    var usadasEx=parseInt((document.getElementById('ag-pac-existente-usadas')||{}).value)||0;
+    var saldoInput=document.getElementById('ag-pac-existente-saldo');
+    var resumoEx=document.getElementById('ag-pac-existente-resumo');
+    if(!pac){if(saldoInput)saldoInput.value='—';return;}
+    var saldo=Number(pac.total_sessoes||0)-Number(pac.sessoes_usadas||0);
+    var restam=Math.max(0,saldo-usadasEx);
+    if(saldoInput)saldoInput.value=restam+' sessão(ões)';
+    var valTxt=pac.validade?(' · válido até <strong>'+fmtData(pac.validade)+'</strong>'):'';
+    if(resumoEx)resumoEx.innerHTML='Pacote atual: <strong>'+saldo+' sessão(ões) disponíveis</strong>'+valTxt+'. Ao salvar, serão descontadas <strong>'+usadasEx+' sessão(ões)</strong>.';
+  }
+}
+
+async function salvarAgendamento(){
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var cliId=document.getElementById('ag-cli-sel').value;
+  var procId=document.getElementById('ag-proc-sel').value;
+  var data=document.getElementById('ag-data-input').value;
+  var hora=document.getElementById('ag-hora-input').value;
+  var tipo=(document.getElementById('ag-tipo-atendimento')||{}).value||'avulso';
+  var obs=(document.getElementById('ag-obs-input')||{}).value||'';
+  if(!cliId||!procId||!data||!hora){toast('Preencha cliente, procedimento, data e horário.','err');return;}
+
+  // Verifica conflito: mesmo dia + mesmo horário, com agendamento ainda ativo
+  var {data:existentes,error:erroConflito}=await SB
+    .from('agenda')
+    .select('id,status')
+    .eq('empresa_id',APP.empresa.id)
+    .eq('data',data)
+    .eq('hora',hora);
+
+  if(erroConflito){
+    console.error('Erro ao verificar conflito de horário:',erroConflito);
+    toast(erroConflito.message,'err');
+    return;
+  }
+  var conflito=(existentes||[]).some(function(a){return a.status!=='cancelou';});
+  if(conflito){toast('⚠ Já existe um agendamento neste dia e horário. Escolha outro horário.','err');return;}
+
+  var cli=_clientes.find(function(c){return c.id===cliId;});
+  var proc=_procs.find(function(p){return p.id===procId;});
+  if(!cli||!proc){toast('Cliente ou procedimento não encontrado.','err');return;}
+
+  var pacoteMsg='';
+  if(tipo==='novo'){
+    var total=parseInt(document.getElementById('ag-pac-total').value)||0;
+    var preco=parseFloat(document.getElementById('ag-pac-preco').value)||0;
+    var usadas=parseInt(document.getElementById('ag-pac-usadas').value)||0;
+    var dataVendaPac=(document.getElementById('ag-pac-data-venda')||{}).value||data;
+    var validadePac=(document.getElementById('ag-pac-validade')||{}).value||addDaysISO(dataVendaPac,90);
+    if(total<=0){toast('Informe o total de sessões do pacote.','err');return;}
+    if(usadas<0||usadas>total){toast('Sessões usadas hoje não pode ser maior que o total do pacote.','err');return;}
+
+    var pacoteDuplicado=_clientePacotes.find(function(cp){
+      var restante=Number(cp.total_sessoes||0)-Number(cp.sessoes_usadas||0);
+      return cp.cliente_id===cliId &&
+             cp.procedimento_id===procId &&
+             cp.status==='ativo' &&
+             restante>0 &&
+             !pacoteVencido(cp);
+    });
+
+    if(pacoteDuplicado){
+      toast('Este cliente já possui um pacote ativo para este procedimento.','err');
+      return;
+    }
+
+    var nomePacote=proc.nome+' - '+total+' sessões';
+    var resPac=await SB.from('cliente_pacotes').insert({
+      cliente_id:cliId,cliente_nome:cli.nome,
+      pacote_id:null,pacote_nome:nomePacote,
+      procedimento_id:procId,procedimento_nome:proc.nome,
+      total_sessoes:total,sessoes_usadas:usadas,preco_pago:preco,
+      data_venda:dataVendaPac,
+      validade:validadePac,
+      status:'ativo',
+      empresa_id:APP.empresa.id
+    });
+    if(resPac.error){console.error('Erro ao criar pacote pelo agendamento:',resPac.error);toast(resPac.error.message,'err');alert(resPac.error.message);return;}
+    pacoteMsg=' Pacote criado com '+total+' sessões.'+(usadas?(' '+usadas+' sessão(ões) já contabilizada(s).'):'');
+  }
+
+  if(tipo==='existente'){
+    var pacId=document.getElementById('ag-pac-existente-sel').value;
+    var usadasEx=parseInt(document.getElementById('ag-pac-existente-usadas').value)||0;
+    var pac=_clientePacotes.find(function(cp){return cp.id===pacId;});
+    if(!pac){toast('Selecione um pacote ativo do cliente.','err');return;}
+    var saldo=Number(pac.total_sessoes||0)-Number(pac.sessoes_usadas||0);
+    if(usadasEx<=0){toast('Informe quantas sessões serão usadas hoje.','err');return;}
+    if(usadasEx>saldo){toast('Sessões usadas hoje não pode ser maior que o saldo disponível.','err');return;}
+    var novas=Number(pac.sessoes_usadas||0)+usadasEx;
+    var resUpd=await SB
+      .from('cliente_pacotes')
+      .update({sessoes_usadas:novas})
+      .eq('id',pac.id)
+      .eq('empresa_id',APP.empresa.id);
+    if(resUpd.error){console.error('Erro ao baixar sessão pelo agendamento:',resUpd.error);toast(resUpd.error.message,'err');alert(resUpd.error.message);return;}
+    pacoteMsg=' '+usadasEx+' sessão(ões) descontada(s) do pacote.';
+  }
+
+  var agObj={
+    cliente_id:cliId,
+    cliente_nome:cli.nome,
+    procedimento_id:procId,
+    procedimento_nome:proc.nome,
+    data:data,
+    hora:hora,
+    status:'pendente',
+    empresa_id:APP.empresa.id
+  };
+  // Se a tabela agenda tiver coluna observacoes, o Supabase aceitará após ajuste de schema. Por compatibilidade, não enviamos por padrão.
+  var resAg=await SB.from('agenda').insert(agObj);
+  if(resAg.error){console.error('Erro ao criar agendamento:',resAg.error);toast(resAg.error.message,'err');alert(resAg.error.message);return;}
+
+  closeModal('modal-ag');
+  limparFormAgendamento();
+  await Promise.all([carregarAgenda(),carregarSessoes()]);
+  renderDashboard();
+  toast('Agendamento criado!'+pacoteMsg);
+}
+
+// ====================================================
+// FINANCEIRO
+// ====================================================
+function totalDesp(){return _despesas.reduce(function(s,d){return s+d.valor;},0);}
+
+function renderFin(){
+  var el=document.getElementById('fin-list');
+  if(!_procs.length){el.innerHTML='<p class="empty-state">Cadastre procedimentos para ver o financeiro.</p>';return;}
+  var tRec=0,tCusto=0,tAtend=0;
+  var mesAtend={};
+  _agenda.forEach(function(a){
+    if(a.status==='confirmado'){mesAtend[a.procedimento_nome]=(mesAtend[a.procedimento_nome]||0)+1;}
+  });
+  el.innerHTML=_procs.map(function(p){
+    var m=calcM(p);var qtd=mesAtend[p.nome]||0;
+    var rec=p.preco*qtd;tRec+=rec;tCusto+=m.custo*qtd;tAtend+=qtd;
+    var good=m.margem>=50;var cp=100-m.margem;var isO=_finExpanded===p.id;
+    return '<div class="fin-row" onclick="toggleFin(\''+p.id+'\')">'+
+      '<div><div class="fin-name">'+p.nome+'</div><div class="fin-sub">'+qtd+' atend. confirmados</div></div>'+
+      '<div class="mono" style="font-size:12px;">'+R(p.preco)+'</div>'+
+      '<div class="mono" style="font-size:12px;">'+R(m.custo)+'</div>'+
+      '<div><div class="fin-bar"><div class="fin-bar-cost" style="width:'+cp+'%"></div><div class="fin-bar-profit" style="width:'+m.margem+'%"></div></div></div>'+
+      '<div><span class="pill '+(good?'pill-green':'pill-red')+'">'+m.margem+'%</span></div></div>'+
+      '<div class="fin-detail'+(isO?' open':'')+'" id="fd-'+p.id+'">'+
+        '<div class="fin-detail-grid">'+
+          '<div><div class="fin-dl">Lucro/sessão</div><div class="fin-dv">'+R(m.lucro)+'</div></div>'+
+          '<div><div class="fin-dl">Receita</div><div class="fin-dv">'+R(rec)+'</div></div>'+
+          '<div><div class="fin-dl">Lucro total</div><div class="fin-dv">'+R(m.lucro*qtd)+'</div></div>'+
+        '</div>'+
+        (m.margem<50?'<div style="font-size:11px;color:var(--terra);">⚠ Margem abaixo de 50% — revise preço ou negocie insumos.</div>':'')+
+      '</div>';
+  }).join('');
+  var tDesp=totalDesp();var tLiq=tRec-tCusto-tDesp;var mg=tRec?Math.round((tLiq/tRec)*100):0;
+  document.getElementById('fin-rec').textContent=R(tRec);
+  document.getElementById('fin-custo').textContent=R(tCusto);
+  document.getElementById('fin-desp').textContent=R(tDesp);
+  document.getElementById('fin-lucro').textContent=R(tLiq);
+  document.getElementById('fin-lucro').style.color=tLiq>=0?'var(--sage)':'var(--terra)';
+  var lucroKpi=document.getElementById('fin-lucro-kpi');
+  if(lucroKpi){lucroKpi.className='kpi '+(tLiq>=0?'kpi-ok':'kpi-warn');}
+  document.getElementById('fin-atend').textContent=tAtend+' atendimentos confirmados';
+  document.getElementById('fin-mg').textContent='margem líquida: '+mg+'%';
+  var tf=_despesas.filter(function(d){return d.tipo==='fixa';}).reduce(function(s,d){return s+d.valor;},0);
+  var tv=_despesas.filter(function(d){return d.tipo==='variavel';}).reduce(function(s,d){return s+d.valor;},0);
+  document.getElementById('fin-dre').innerHTML=[
+    {l:'Receita bruta',v:tRec,c:''},
+    {l:'(-) Custo dos insumos',v:tCusto,neg:true},
+    {l:'(-) Despesas fixas',v:tf,neg:true},
+    {l:'(-) Despesas variáveis',v:tv,neg:true},
+    {l:'= Lucro líquido',v:tLiq,bold:true},
+  ].map(function(r){
+    var cor=r.bold?(tLiq>=0?'var(--sage-deep)':'var(--terra)'):r.neg?'var(--terra)':'var(--ink)';
+    return '<div class="dre-row" style="'+(r.bold?'font-weight:700;':'')+'">'+'<span>'+r.l+'</span><span class="mono" style="color:'+cor+'">'+R(Math.abs(r.v))+'</span></div>';
+  }).join('');
+}
+
+function toggleFin(id){_finExpanded=(_finExpanded===id)?null:id;renderFin();}
+
+// ====================================================
+// DESPESAS
+// ====================================================
+async function carregarDespesas(){
+  var {data}=await SB.from('despesas').select('*').order('vencimento',{ascending:true,nullsFirst:false});
+  _despesas=data||[];renderDespesas();
+}
+
+// Quantos dias faltam para o vencimento (negativo = já venceu)
+function diasParaVencer(venc){
+  if(!venc)return null;
+  var hojeD=new Date(hoje()+'T00:00:00');
+  var v=new Date(venc+'T00:00:00');
+  return Math.round((v-hojeD)/(1000*60*60*24));
+}
+
+function renderDespesas(){
+  var fixas=_despesas.filter(function(d){return d.tipo==='fixa';});
+  var vars=_despesas.filter(function(d){return d.tipo==='variavel';});
+  var tf=fixas.reduce(function(s,d){return s+d.valor;},0);
+  var tv=vars.reduce(function(s,d){return s+d.valor;},0);
+  document.getElementById('desp-fix-total').textContent=R(tf);
+  document.getElementById('desp-var-total').textContent=R(tv);
+  document.getElementById('desp-total').textContent=R(tf+tv);
+
+  // Banner de alertas de vencimento: vencidas e a vencer em até 5 dias
+  var vencidas=[],proximas=[];
+  _despesas.forEach(function(d){
+    var dias=diasParaVencer(d.vencimento);
+    if(dias===null)return;
+    if(dias<0)vencidas.push(d);
+    else if(dias<=5)proximas.push(d);
+  });
+  var alEl=document.getElementById('desp-alertas');
+  var html='';
+  if(vencidas.length){
+    html+='<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+vencidas.length+' conta'+(vencidas.length>1?'s':'')+' vencida'+(vencidas.length>1?'s':'')+':</strong> '+vencidas.map(function(d){return d.nome+' ('+fmtData(d.vencimento)+')';}).join(', ')+'</div></div>';
+  }
+  if(proximas.length){
+    html+='<div class="alert-box gold"><div class="alert-icon">⏰</div><div class="alert-text"><strong>'+proximas.length+' conta'+(proximas.length>1?'s':'')+' vencendo em breve:</strong> '+proximas.map(function(d){return d.nome+' ('+fmtData(d.vencimento)+')';}).join(', ')+'</div></div>';
+  }
+  alEl.innerHTML=html;
+
+  function rl(list,eid){
+    var el=document.getElementById(eid);
+    if(!list.length){el.innerHTML='<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Nenhuma despesa cadastrada.</p>';return;}
+    el.innerHTML=list.map(function(d){
+      var dias=diasParaVencer(d.vencimento);
+      var vencBadge='';
+      if(dias!==null){
+        if(dias<0)vencBadge='<span class="pill pill-red">Venceu há '+Math.abs(dias)+'d</span>';
+        else if(dias===0)vencBadge='<span class="pill pill-gold">Vence hoje</span>';
+        else if(dias<=5)vencBadge='<span class="pill pill-gold">Vence em '+dias+'d</span>';
+        else vencBadge='<span class="pill" style="background:var(--line);color:var(--ink-soft);">'+fmtData(d.vencimento)+'</span>';
+      }
+      return '<div class="list-item"><div><div class="li-name">'+d.nome+'</div><div class="li-sub">'+d.categoria+'</div></div>'+
+        '<div class="li-actions">'+vencBadge+'<span class="mono" style="font-size:13px;">'+R(d.valor)+'</span>'+
+        '<button class="btn btn-danger btn-sm" onclick="deletarDesp(\''+d.id+'\')">Remover</button></div></div>';
+    }).join('');
+  }
+  rl(fixas,'desp-fix-list');rl(vars,'desp-var-list');
+  renderDespesasFinanceiro(fixas,vars,tf,tv);
+  renderFin();renderReserva();renderDashboard();
+}
+
+function renderDespesasFinanceiro(fixas,vars,tf,tv){
+  var el=document.getElementById('fin-despesas-resumo');
+  if(!el)return;
+  function bloco(titulo,list,total,tipo){
+    var ult=list.slice(0,4).map(function(d){
+      var dias=diasParaVencer(d.vencimento);
+      var badge=dias===null?'':(dias<0?'<span class="pill pill-red">vencida</span>':dias<=5?'<span class="pill pill-gold">vence em '+dias+'d</span>':'<span class="pill" style="background:var(--line);color:var(--ink-soft);">'+fmtData(d.vencimento)+'</span>');
+      return '<div class="list-item"><div><div class="li-name">'+d.nome+'</div><div class="li-sub">'+(d.categoria||'Sem categoria')+'</div></div><div class="li-actions">'+badge+'<span class="mono" style="font-size:13px;">'+R(d.valor)+'</span></div></div>';
+    }).join('');
+    if(!ult)ult='<p class="empty-state">Nenhuma despesa '+(tipo==='fixa'?'fixa':'esporádica')+' cadastrada.</p>';
+    return '<div class="card" style="box-shadow:none;margin:0;border-radius:12px;"><div class="card-head"><h2>'+titulo+'</h2><span class="mono" style="font-size:13px;font-weight:700;">'+R(total)+'</span></div>'+ult+'</div>';
+  }
+  el.innerHTML='<div class="fr2">'+bloco('Fixas',fixas,tf,'fixa')+bloco('Esporádicas',vars,tv,'variavel')+'</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-outline btn-sm" onclick="showTab(\'despesas\',document.querySelector(\'[data-tab=despesas]\'))">Ver tela completa de despesas</button></div>';
+}
+
+function openDesp(tipo){
+  document.getElementById('desp-tipo-hidden').value=tipo;
+  document.getElementById('desp-id-edit').value='';
+  document.getElementById('desp-nome').value='';
+  document.getElementById('desp-valor').value='';
+  document.getElementById('desp-venc').value='';
+  openModal('modal-desp');
+}
+
+async function salvarDesp(){
+  var n=document.getElementById('desp-nome').value.trim(),v=parseFloat(document.getElementById('desp-valor').value),t=document.getElementById('desp-tipo-hidden').value,c=document.getElementById('desp-cat').value;
+  var venc=document.getElementById('desp-venc').value||null;
+  if(!n||isNaN(v)||v<=0){toast('Preencha nome e valor.','err');return;}
+  var now=new Date();
+  await SB.from('despesas').insert({nome:n,valor:v,tipo:t,categoria:c,vencimento:venc,mes:now.getMonth()+1,ano:now.getFullYear()});
+  closeModal('modal-desp');await carregarDespesas();toast('Despesa salva!');
+}
+
+async function deletarDesp(id){
+  if(!confirm('Remover esta despesa?'))return;
+  await SB.from('despesas').delete().eq('id',id);
+  await carregarDespesas();toast('Despesa removida.');
+}
+
+// ====================================================
+// MOVIMENTAÇÕES
+// ====================================================
+async function carregarMovs(){
+  var {data}=await SB.from('movimentacoes_estoque').select('*').order('criado_em',{ascending:false}).limit(500);
+  _movs=data||[];renderMovs();renderEstoque();
+}
+
+function setMovTipo(tipo){
+  _movTipo=tipo;
+  document.querySelectorAll('#mov-tipo-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.tipo===tipo);});
+  renderMovs();
+}
+function setMovAtalho(periodo){
+  _movPeriodo=periodo;
+  var hojeD=new Date(); hojeD.setHours(0,0,0,0);
+  var inicio=new Date(hojeD), fim=new Date(hojeD);
+  if(periodo==='semana'){inicio.setDate(inicio.getDate()-6);}
+  else if(periodo==='mes'){inicio=new Date(hojeD.getFullYear(),hojeD.getMonth(),1);}
+  else if(periodo==='ano'){inicio=new Date(hojeD.getFullYear(),0,1);}
+  fim.setHours(23,59,59,999);
+  _movInicio=toISODate(inicio);
+  _movFim=toISODate(fim);
+  var ini=document.getElementById('mov-data-inicio'), f=document.getElementById('mov-data-fim');
+  if(ini)ini.value=_movInicio; if(f)f.value=_movFim;
+  document.querySelectorAll('#mov-atalhos-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.periodo===periodo);});
+  renderMovs();
+}
+function setMovPeriodoManual(){
+  var ini=document.getElementById('mov-data-inicio'), fim=document.getElementById('mov-data-fim');
+  _movInicio=ini&&ini.value?ini.value:null;
+  _movFim=fim&&fim.value?fim.value:null;
+  _movPeriodo='manual';
+  document.querySelectorAll('#mov-atalhos-seg .seg-btn').forEach(function(b){b.classList.remove('active');});
+  renderMovs();
+}
+
+function renderMovs(){
+  if(!_movInicio||!_movFim){setMovAtalho(_movPeriodo||'hoje');return;}
+  var inicio=new Date(_movInicio+'T00:00:00');
+  var fim=new Date(_movFim+'T23:59:59');
+  var filtradas=_movs.filter(function(m){
+    if(!m.criado_em)return false;
+    var d=new Date(m.criado_em);
+    if(d<inicio||d>fim)return false;
+    if(_movTipo!=='todos'&&m.tipo!==_movTipo)return false;
+    return true;
+  });
+
+  var saidas=filtradas.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.quantidade);},0);
+  var entradas=filtradas.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.quantidade);},0);
+  document.getElementById('mov-saidas').textContent=saidas.toFixed(1);
+  document.getElementById('mov-entradas').textContent=entradas.toFixed(1);
+  document.getElementById('mov-total').textContent=filtradas.length;
+
+  var el=document.getElementById('mov-list');
+  if(!filtradas.length){el.innerHTML='<p class="empty-state">Nenhuma movimentação no período selecionado.</p>';return;}
+  el.innerHTML=filtradas.map(function(m){
+    var isS=m.tipo==='saida';
+    return '<div class="mov-grid">'+
+      '<div style="font-size:11.5px;color:var(--ink-soft);">'+fmtDt(m.criado_em)+'</div>'+
+      '<div style="font-size:13px;font-weight:600;">'+m.produto_nome+'</div>'+
+      '<div>'+
+        '<span class="pill '+(isS?'pill-red':'pill-green')+'">'+( isS?'↓ Saída':'↑ Entrada')+'</span>'+
+        (m.cliente_nome?'<div style="font-size:11px;color:var(--ink-soft);margin-top:3px;">'+m.cliente_nome+(m.procedimento_nome?' · '+m.procedimento_nome:'')+'</div>':'')+
+      '</div>'+
+      '<div class="mono" style="font-size:13px;color:'+(isS?'var(--terra)':'var(--sage-deep)')+';">'+(isS?'-':'+')+Number(m.quantidade).toFixed(1)+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ====================================================
+// RESERVA
+// ====================================================
+async function carregarReserva(){
+  var {data}=await SB.from('reserva').select('*').limit(1).single();
+  if(data)_reserva=data;renderReserva();
+}
+
+function renderReserva(){
+  var tDesp=totalDesp();var meta=tDesp*_reserva.meses_meta;
+  var tLucro=_procs.reduce(function(s,p){return s+calcM(p).lucro;},0)-tDesp;
+  var guardaMes=Math.max(0,Math.round(tLucro*(_reserva.percentual/100)));
+  var pct=meta>0?Math.min(100,Math.round((_reserva.acumulado/meta)*100)):0;
+  var meses=guardaMes>0&&meta>_reserva.acumulado?Math.ceil((meta-_reserva.acumulado)/guardaMes):0;
+  document.getElementById('reserva-content').innerHTML=
+    '<div class="kpi-grid kpi-grid-3">'+
+      '<div class="kpi"><div class="kpi-label">Meta ('+_reserva.meses_meta+'× despesas)</div><div class="kpi-value">'+R(meta)+'</div></div>'+
+      '<div class="kpi"><div class="kpi-label">Acumulado</div><div class="kpi-value" style="color:var(--sage-deep)">'+R(_reserva.acumulado)+'</div></div>'+
+      '<div class="kpi"><div class="kpi-label">Guardar / mês</div><div class="kpi-value">'+R(guardaMes)+'</div><div class="kpi-sub">'+_reserva.percentual+'% do lucro</div></div>'+
+    '</div>'+
+    '<div class="res-goal"><div class="res-label">Progresso</div>'+
+      '<div class="res-bar-wrap"><div class="res-bar-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="res-bar-info"><span>'+pct+'% da meta</span><span>'+(meses>0?'~'+meses+' meses para completar':pct>=100?'✓ Meta atingida!':'Configure as despesas')+'</span></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-head"><h2>Por que ter reserva?</h2></div>'+
+      '<div class="res-tip">📌 <strong>Meses parados</strong>: doença, reforma ou queda de clientes — a reserva paga as contas fixas.<br><br>📌 <strong>Equipamento</strong>: aparelhos quebram. Reserva evita parcelamento com juros.<br><br>📌 <strong>Sazonalidade</strong>: janeiro e julho costumam ser mais fracos.<br><br>📌 <strong>Regra prática</strong>: separe os '+_reserva.percentual+'% assim que receber, antes de qualquer outro gasto.</div></div>'+
+    '<div style="margin-top:6px;"><button class="btn btn-outline" onclick="abrirModalReserva()">Ajustar meta e percentual</button></div>';
+}
+
+function abrirModalReserva(){
+  document.getElementById('res-meses').value=_reserva.meses_meta;
+  document.getElementById('res-pct').value=_reserva.percentual;
+  document.getElementById('res-acum').value=_reserva.acumulado;
+  openModal('modal-res');
+}
+
+async function salvarReserva(){
+  var m=parseInt(document.getElementById('res-meses').value),p=parseInt(document.getElementById('res-pct').value)||20,a=parseFloat(document.getElementById('res-acum').value)||0;
+  if(_reserva.id){await SB.from('reserva').update({meses_meta:m,percentual:p,acumulado:a}).eq('id',_reserva.id);}
+  else{await SB.from('reserva').insert({meses_meta:m,percentual:p,acumulado:a});}
+  closeModal('modal-res');await carregarReserva();toast('Reserva atualizada!');
+}
+
+// ====================================================
+// DASHBOARD
+// ====================================================
+function renderDashboard(){
+  var tRec=0,tCusto=0,tAtend=0,mesAtend={};
+  _agenda.forEach(function(a){if(a.status==='confirmado'){mesAtend[a.procedimento_nome]=(mesAtend[a.procedimento_nome]||0)+1;}});
+  _procs.forEach(function(p){var m=calcM(p);var qtd=mesAtend[p.nome]||0;tRec+=p.preco*qtd;tCusto+=m.custo*qtd;tAtend+=qtd;});
+  var tDesp=totalDesp();var tLiq=tRec-tCusto-tDesp;
+  // Alerta apenas quando minimo > 0 e qtd está abaixo ou igual ao mínimo
+  var alertas=_estoque.filter(function(e){return Number(e.minimo)>0 && Number(e.qtd)<=Number(e.minimo);});
+
+  document.getElementById('dash-stats').innerHTML=
+    '<div class="kpi kpi-hero kpi-link" onclick="showTab(\'agenda\',document.querySelector(\'[data-tab=agenda]\'))"><div class="kpi-label">Receita do mês</div><div class="kpi-value">'+R(tRec)+'</div><div class="kpi-sub">'+tAtend+' atendimentos confirmados</div></div>'+
+    '<div class="kpi '+(tLiq>=0?'kpi-ok':'kpi-warn')+' kpi-link" onclick="showTab(\'financeiro\',document.querySelector(\'[data-tab=financeiro]\'))"><div class="kpi-label">Lucro líquido</div><div class="kpi-value '+(tLiq>=0?'kpi-ok-val':'kpi-warn-val')+'">'+R(tLiq)+'</div></div>'+
+    '<div class="kpi kpi-link" onclick="showTab(\'clientes\',document.querySelector(\'[data-tab=clientes]\'))"><div class="kpi-label">Clientes</div><div class="kpi-value">'+_clientes.length+'</div></div>'+
+    '<div class="kpi '+(alertas.length?'kpi-warn':'kpi-ok')+' kpi-link" onclick="showTab(\'estoque\',document.querySelector(\'[data-tab=estoque]\'))"><div class="kpi-label">Alertas estoque</div><div class="kpi-value '+(alertas.length?'kpi-warn-val':'kpi-ok-val')+'">'+alertas.length+'</div><div class="kpi-sub">'+(alertas.length?'produto(s) em alerta':'todos OK')+'</div></div>';
+
+  // agenda hoje
+  var agHoje=_agenda.filter(function(a){return a.data===hoje();}).slice(0,5);
+  document.getElementById('dash-agenda').innerHTML=agHoje.length?agHoje.map(function(a){
+    var dc=a.status==='confirmado'?'var(--sage)':a.status==='faltou'?'var(--terra)':a.status==='cancelou'?'var(--gold)':'var(--ink-soft)';
+    return '<div style="display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line);align-items:center;">'+
+      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--ink-soft);width:36px;">'+a.hora.substring(0,5)+'</span>'+
+      '<span style="width:7px;height:7px;border-radius:50%;background:'+dc+';flex-shrink:0;"></span>'+
+      '<span style="font-size:12.5px;font-weight:600;">'+a.cliente_nome+'</span>'+
+      '<span style="font-size:11.5px;color:var(--ink-soft);">'+a.procedimento_nome+'</span>'+
+    '</div>';
+  }).join(''):'<p style="color:var(--ink-soft);font-size:13px;padding:10px 0;">Nenhum agendamento hoje.</p>';
+
+  // resumo financeiro
+  document.getElementById('dash-fin').innerHTML=[
+    {l:'Receita bruta',v:tRec},{l:'(-) Insumos',v:tCusto,neg:true},{l:'(-) Despesas',v:tDesp,neg:true},{l:'= Lucro',v:tLiq,bold:true}
+  ].map(function(r){
+    var cor=r.bold?(tLiq>=0?'var(--sage)':'var(--terra)'):r.neg?'var(--terra)':'var(--ink)';
+    return '<div class="dre-row" style="'+(r.bold?'font-weight:700;':'')+'">'+'<span>'+r.l+'</span><span class="mono" style="color:'+cor+'">'+R(Math.abs(r.v))+'</span></div>';
+  }).join('');
+
+  // alertas
+  document.getElementById('dash-alertas').innerHTML=alertas.length?
+    alertas.map(function(e){return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+e.nome+'</strong> — '+e.qtd+' '+e.unidade+' (mín: '+e.minimo+')</div></div>';}).join('') :
+    '<div class="alert-box ok"><div class="alert-icon">✓</div><div class="alert-text">Todos os produtos com estoque OK.</div></div>';
+
+  // últimas movs
+  var ultMovs=_movs.slice(0,5);
+  document.getElementById('dash-movs').innerHTML=ultMovs.length?ultMovs.map(function(m){
+    var isS=m.tipo==='saida';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--line);">'+
+      '<div><div style="font-size:12.5px;font-weight:600;">'+m.produto_nome+'</div>'+(m.cliente_nome?'<div style="font-size:11px;color:var(--ink-muted);">'+m.cliente_nome+'</div>':'')+'</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+        '<span class="pill '+(isS?'pill-red':'pill-green')+'">'+(isS?'↓':'↑')+'</span>'+
+        '<span class="mono" style="font-size:13px;font-weight:500;color:'+(isS?'var(--terra)':'var(--sage)')+'">'+(isS?'−':'+')+Number(m.quantidade).toFixed(1)+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join(''):'<p class="empty-state">Nenhuma movimentação registrada.</p>';
+}
+
+// ====================================================
+// SESSÕES
+// ====================================================
+async function carregarSessoes(){
+  if(!APP.empresa.id){
+    _pacotes=[];
+    _clientePacotes=[];
+    renderSessoes();
+    atualizarSelectPacotes();
+    return;
+  }
+
+  var r1=await SB
+    .from('pacotes')
+    .select('*,procedimentos(nome)')
+    .eq('empresa_id',APP.empresa.id)
+    .order('nome');
+
+  if(r1.error){
+    console.error('Erro ao carregar pacotes:',r1.error);
+    toast(r1.error.message,'err');
+    _pacotes=[];
+  }else{
+    _pacotes=r1.data||[];
+  }
+
+  var r2=await SB
+    .from('cliente_pacotes')
+    .select('*')
+    .eq('empresa_id',APP.empresa.id)
+    .order('criado_em',{ascending:false});
+
+  if(r2.error){
+    console.error('Erro ao carregar pacotes dos clientes:',r2.error);
+    toast(r2.error.message,'err');
+    _clientePacotes=[];
+  }else{
+    _clientePacotes=r2.data||[];
+  }
+
+  renderSessoes();
+  atualizarSelectPacotes();
+}
+
+function renderSessoes(){
+  // KPIs
+  var total=_clientePacotes.length;
+  var ativos=_clientePacotes.filter(function(cp){return cp.sessoes_usadas<cp.total_sessoes&&!pacoteVencido(cp);}).length;
+  var alertas=_clientePacotes.filter(function(cp){var d=diasAte(cp.validade);return cp.sessoes_usadas<cp.total_sessoes&&!pacoteVencido(cp)&&((cp.total_sessoes-cp.sessoes_usadas)<=2||(d!==null&&d<=15));}).length;
+  var concluidos=_clientePacotes.filter(function(cp){return cp.sessoes_usadas>=cp.total_sessoes;}).length;
+  var vencidos=_clientePacotes.filter(function(cp){return pacoteVencido(cp)&&cp.sessoes_usadas<cp.total_sessoes;}).length;
+  var el=document.getElementById('ses-stats');
+  if(el)el.innerHTML=
+    '<div class="kpi kpi-hero"><div class="kpi-label">Pacotes ativos</div><div class="kpi-value">'+ativos+'</div></div>'+
+    '<div class="kpi '+(alertas?'kpi-warn':'kpi-ok')+'"><div class="kpi-label">Atenção</div><div class="kpi-value '+(alertas?'kpi-warn-val':'kpi-ok-val')+'">'+alertas+'</div></div>'+
+    '<div class="kpi"><div class="kpi-label">Concluídos</div><div class="kpi-value">'+concluidos+'</div></div>'+
+    '<div class="kpi kpi-gold"><div class="kpi-label">Total pacotes</div><div class="kpi-value kpi-gold-val">'+_pacotes.length+'</div></div>';
+
+  // Alertas banner
+  var acabando=_clientePacotes.filter(function(cp){var d=diasAte(cp.validade);return cp.sessoes_usadas<cp.total_sessoes&&((cp.total_sessoes-cp.sessoes_usadas)<=2||pacoteVencido(cp)||(d!==null&&d<=15));});
+  var alEl=document.getElementById('ses-alertas');
+  if(alEl){
+    alEl.innerHTML=acabando.map(function(cp){
+      var faltam=cp.total_sessoes-cp.sessoes_usadas;
+      var d=diasAte(cp.validade);var prazo=pacoteVencido(cp)?' · <strong>vencido em '+fmtData(cp.validade)+'</strong>':(d!==null&&d<=15?' · vence em <strong>'+d+' dia'+(d===1?'':'s')+'</strong>':'');
+      return '<div class="alert-box warn"><div class="alert-icon">⚠</div><div class="alert-text"><strong>'+cp.cliente_nome+'</strong> — '+cp.pacote_nome+': falta'+(faltam===1?'':'m')+' <strong>'+faltam+' sessão'+(faltam===1?'':'ões')+'</strong>'+prazo+'.</div></div>';
+    }).join('');
+  }
+
+  // Lista pacotes disponíveis
+  var pacEl=document.getElementById('pac-list');
+  if(pacEl){
+    if(!_pacotes.length){pacEl.innerHTML='<p class="empty-state">Nenhum pacote cadastrado.</p>';return;}
+    pacEl.innerHTML=_pacotes.map(function(p){
+      var procNome=p.procedimentos?p.procedimentos.nome:'—';
+      return '<div class="list-item">'+
+        '<div>'+
+          '<div class="li-name">'+p.nome+'</div>'+
+          '<div class="li-sub">'+procNome+' · '+p.total_sessoes+' sessões · '+R(p.preco)+' · validade '+Number(p.validade_padrao||90)+' dias</div>'+
+        '</div>'+
+        '<div class="li-actions">'+
+          '<button class="btn btn-outline btn-sm" onclick="editarPacote(\''+p.id+'\')">Editar</button>'+
+          '<button class="btn btn-danger btn-sm" onclick="deletarPacote(\''+p.id+'\')">Remover</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  renderClientePacotes();
+}
+
+function renderClientePacotes(){
+  var busca=(document.getElementById('ses-busca')||{}).value||'';
+  var lista=busca?_clientePacotes.filter(function(cp){return cp.cliente_nome&&cp.cliente_nome.toLowerCase().includes(busca.toLowerCase());}):_clientePacotes;
+  var el=document.getElementById('clipac-list');
+  if(!el)return;
+  if(!lista.length){el.innerHTML='<p class="empty-state">Nenhum pacote vinculado.</p>';return;}
+  el.innerHTML=lista.map(function(cp){
+    var usadas=cp.sessoes_usadas||0;
+    var total=cp.total_sessoes||0;
+    var restam=total-usadas;
+    var pct=Math.round((usadas/Math.max(total,1))*100);
+    var cor=restam<=2?'var(--terra)':restam<=Math.ceil(total/2)?'var(--gold)':'var(--sage)';
+    var vencido=pacoteVencido(cp);
+    var concluido=usadas>=total;
+    var dias=diasAte(cp.validade);
+    var estado=vencido?'Vencido':concluido?'Concluído':'Ativo';
+    return '<div class="list-item" style="flex-direction:column;align-items:stretch;gap:8px;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">'+
+        '<div>'+
+          '<div class="li-name">'+cp.cliente_nome+'</div>'+
+          '<div class="li-sub">'+cp.pacote_nome+(cp.preco_pago?' · '+R(cp.preco_pago):'')+'</div>'+
+          '<div class="li-sub">Início: '+fmtData(cp.data_venda||(cp.criado_em||'').split('T')[0])+' · utilização até: '+fmtData(cp.validade)+(dias!==null&&!vencido?' · '+dias+' dia'+(dias===1?'':'s')+' restante'+(dias===1?'':'s'):'')+'</div>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:8px;">'+
+          '<span class="pill '+(vencido?'pill-red':concluido?'pill-green':restam<=2?'pill-red':'pill-gold')+'">'+(vencido?'Vencido':concluido?'Concluído':restam+' restante'+(restam===1?'':'s'))+'</span>'+
+          (!concluido&&!vencido?'<button class="btn btn-outline btn-sm" onclick="abrirUsarSessao(\''+cp.id+'\')">+ Usar sessão</button>':'')+
+          '<button class="btn btn-danger btn-sm" onclick="deletarClientePacote(\''+cp.id+'\')">✕</button>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+        '<div style="flex:1;height:6px;background:var(--sage-pale);border-radius:3px;overflow:hidden;">'+
+          '<div style="width:'+pct+'%;height:100%;background:'+cor+';border-radius:3px;transition:.4s;"></div>'+
+        '</div>'+
+        '<span style="font-size:11px;color:var(--ink-muted);white-space:nowrap;">'+usadas+'/'+total+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function atualizarSelectPacotes(){
+  ['pac-proc-sel','clipac-pac-sel'].forEach(function(sid){
+    var el=document.getElementById(sid);
+    if(!el)return;
+    if(sid==='pac-proc-sel'){
+      el.innerHTML='<option value="">Selecionar procedimento...</option>'+_procs.map(function(p){return '<option value="'+p.id+'">'+p.nome+'</option>';}).join('');
+    } else {
+      el.innerHTML='<option value="">Selecionar pacote...</option>'+_pacotes.map(function(p){return '<option value="'+p.id+'">'+p.nome+' ('+p.total_sessoes+' sess.)</option>';}).join('');
+    }
+  });
+  var cliSel=document.getElementById('clipac-cli-sel');
+  if(cliSel){
+    cliSel.innerHTML='<option value="">Selecionar cliente...</option>'+_clientes.map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
+  }
+}
+
+function preencherPrecoPacote(){
+  var sel=document.getElementById('clipac-pac-sel');
+  var pac=_pacotes.find(function(p){return p.id===sel.value;});
+  var inicio=document.getElementById('clipac-data-venda');
+  if(inicio&&!inicio.value)inicio.value=hoje();
+  if(pac){
+    document.getElementById('clipac-preco').value=pac.preco||0;
+    recalcularValidadeClientePacote();
+  }
+}
+
+function recalcularValidadeClientePacote(){
+  var pacId=(document.getElementById('clipac-pac-sel')||{}).value;
+  var pac=_pacotes.find(function(p){return p.id===pacId;});
+  var inicio=(document.getElementById('clipac-data-venda')||{}).value||hoje();
+  var dias=Number((pac&&pac.validade_padrao)||90);
+  var validade=document.getElementById('clipac-validade');
+  if(validade)validade.value=addDaysISO(inicio,dias);
+  var resumo=document.getElementById('clipac-validade-resumo');
+  if(resumo&&validade&&validade.value)resumo.innerHTML='Início: <strong>'+fmtData(inicio)+'</strong> · utilização até <strong>'+fmtData(validade.value)+'</strong> ('+dias+' dias padrão).';
+}
+
+async function salvarPacote(){
+  var id=document.getElementById('pac-id-edit').value;
+  var nome=document.getElementById('pac-nome').value.trim();
+  var procId=document.getElementById('pac-proc-sel').value||null;
+  var sessoes=parseInt(document.getElementById('pac-sessoes').value)||1;
+  var preco=parseFloat(document.getElementById('pac-preco').value)||0;
+  var validadeDias=parseInt(document.getElementById('pac-validade-dias').value)||90;
+  if(!nome){toast('Preencha o nome do pacote.','err');return;}
+
+  // A tabela pacotes não possui procedimento_nome.
+  // O nome do procedimento é buscado pela relação procedimentos(nome) em carregarSessoes().
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var obj={
+    nome:nome,
+    procedimento_id:procId||null,
+    total_sessoes:sessoes,
+    preco:preco,
+    validade_padrao:validadeDias,
+    empresa_id:APP.empresa.id
+  };
+
+  var res;
+
+  if(id){
+    res=await SB
+      .from('pacotes')
+      .update(obj)
+      .eq('id',id)
+      .eq('empresa_id',APP.empresa.id);
+  }else{
+    res=await SB
+      .from('pacotes')
+      .insert(obj);
+  }
+
+  if(res.error){
+    console.error('Erro ao salvar pacote:',res.error);
+    toast(res.error.message,'err');
+    alert(res.error.message);
+    return;
+  }
+
+  closeModal('modal-pacote');limparFormPacote();
+  await carregarSessoes();toast('Pacote salvo!');
+}
+
+function limparFormPacote(){
+  document.getElementById('pac-id-edit').value='';
+  document.getElementById('pac-nome').value='';
+  document.getElementById('pac-sessoes').value='10';
+  document.getElementById('pac-preco').value='';
+  document.getElementById('pac-validade-dias').value='90';
+  var procSel=document.getElementById('pac-proc-sel');if(procSel)procSel.value='';
+  document.getElementById('modal-pacote-title').textContent='Novo pacote';
+}
+
+function editarPacote(id){
+  var p=_pacotes.find(function(x){return x.id===id;});if(!p)return;
+  document.getElementById('pac-id-edit').value=p.id;
+  document.getElementById('pac-nome').value=p.nome||'';
+  document.getElementById('pac-proc-sel').value=p.procedimento_id||'';
+  document.getElementById('pac-sessoes').value=p.total_sessoes||10;
+  document.getElementById('pac-preco').value=p.preco||0;
+  document.getElementById('pac-validade-dias').value=p.validade_padrao||90;
+  document.getElementById('modal-pacote-title').textContent='Editar pacote';
+  openModal('modal-pacote');
+}
+
+async function deletarPacote(id){
+  if(!confirm('Remover este pacote?'))return;
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('pacotes')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover pacote:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarSessoes();
+  toast('Pacote removido.');
+}
+
+async function salvarClientePacote(){
+  var cliId=document.getElementById('clipac-cli-sel').value;
+  var pacId=document.getElementById('clipac-pac-sel').value;
+  var preco=parseFloat(document.getElementById('clipac-preco').value)||0;
+  var dataVenda=(document.getElementById('clipac-data-venda')||{}).value||hoje();
+  var validade=(document.getElementById('clipac-validade')||{}).value;
+  if(!cliId||!pacId){toast('Selecione cliente e pacote.','err');return;}
+  var cli=_clientes.find(function(c){return c.id===cliId;});
+  var pac=_pacotes.find(function(p){return p.id===pacId;});
+  if(!cli||!pac){toast('Cliente ou pacote não encontrado.','err');return;}
+  var procNome=pac.procedimentos?pac.procedimentos.nome:null;
+
+  var pacoteDuplicado=_clientePacotes.find(function(cp){
+    var restante=Number(cp.total_sessoes||0)-Number(cp.sessoes_usadas||0);
+    return cp.cliente_id===cliId &&
+           cp.procedimento_id===pac.procedimento_id &&
+           cp.status==='ativo' &&
+           restante>0 &&
+           !pacoteVencido(cp);
+  });
+
+  if(pacoteDuplicado){
+    toast('Este cliente já possui um pacote ativo para este procedimento.','err');
+    return;
+  }
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var res=await SB.from('cliente_pacotes').insert({
+    cliente_id:cliId,
+    cliente_nome:cli.nome,
+    pacote_id:pacId,
+    pacote_nome:pac.nome,
+    procedimento_id:pac.procedimento_id,
+    procedimento_nome:procNome,
+    total_sessoes:pac.total_sessoes,
+    sessoes_usadas:0,
+    preco_pago:preco,
+    data_venda:dataVenda,
+    validade:validade||addDaysISO(dataVenda,Number(pac.validade_padrao||90)),
+    status:'ativo',
+    empresa_id:APP.empresa.id
+  });
+  if(res.error){
+    console.error('Erro ao vincular pacote:',res.error);
+    toast(res.error.message,'err');
+    alert(res.error.message);
+    return;
+  }
+  closeModal('modal-cli-pacote');
+  document.getElementById('clipac-data-venda').value='';
+  document.getElementById('clipac-validade').value='';
+  await carregarSessoes();toast('Pacote vinculado ao cliente com validade definida!');
+}
+
+async function deletarClientePacote(id){
+  if(!confirm('Remover este pacote do cliente?'))return;
+
+  if(!APP.empresa.id){
+    toast('Empresa não identificada. Faça login novamente.','err');
+    return;
+  }
+
+  var {error}=await SB
+    .from('cliente_pacotes')
+    .delete()
+    .eq('id',id)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao remover pacote do cliente:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  await carregarSessoes();
+  toast('Pacote removido.');
+}
+
+function abrirUsarSessao(id){
+  var cp=_clientePacotes.find(function(x){return x.id===id;});
+  if(!cp)return;
+  _usarSessaoId=id;
+  var restam=cp.total_sessoes-(cp.sessoes_usadas||0);
+  document.getElementById('usar-sessao-label').textContent=cp.cliente_nome+' · '+cp.pacote_nome+' — '+restam+' sessão(ões) restante(s). Confirmar uso de 1 sessão?';
+  document.getElementById('usar-sessao-obs').value='';
+  openModal('modal-usar-sessao');
+}
+
+async function confirmarUsarSessao(){
+  if(!_usarSessaoId)return;
+  var cp=_clientePacotes.find(function(x){return x.id===_usarSessaoId;});
+  if(!cp)return;
+  var novas=Math.min((cp.sessoes_usadas||0)+1,cp.total_sessoes);
+  var {error}=await SB
+    .from('cliente_pacotes')
+    .update({sessoes_usadas:novas})
+    .eq('id',_usarSessaoId)
+    .eq('empresa_id',APP.empresa.id);
+
+  if(error){
+    console.error('Erro ao registrar sessão:',error);
+    toast(error.message,'err');
+    return;
+  }
+
+  closeModal('modal-usar-sessao');
+  _usarSessaoId=null;
+  await carregarSessoes();
+  toast('Sessão registrada! '+(cp.total_sessoes-novas)+' restante(s).');
+}
+
+// ====================================================
+// TEMAS
+// ====================================================
+var _temas=[
+  {id:'floresta', name:'Floresta',   desc:'Natural e calmo',      swatches:['#1E2820','#4A6741','#B8922A','#F8F7F4']},
+  {id:'rosegold', name:'Rose Gold',  desc:'Luxo e feminino',      swatches:['#3D1F2D','#C4748A','#D4A96A','#FDF5F7']},
+  {id:'oceano',   name:'Oceano',     desc:'Profissional e tech',  swatches:['#0F2942','#1E6FA8','#27AE8A','#F0F6FB']},
+  {id:'carbono',  name:'Carbono',    desc:'Premium e minimal',    swatches:['#18181B','#52525B','#E4B84D','#FAFAFA']},
+  {id:'lavanda',  name:'Lavanda',    desc:'Moderno e criativo',   swatches:['#2D1B69','#6D4AE8','#3CC8A0','#F7F5FF']},
+];
+
+function renderThemeOptions(){
+  var atual=localStorage.getItem('sf_tema')||'floresta';
+  var el=document.getElementById('theme-options');
+  if(!el)return;
+  el.innerHTML=_temas.map(function(t){
+    return '<div class="theme-option'+(t.id===atual?' active':'')+'" onclick="aplicarTema(\''+t.id+'\')">'+
+      '<div class="theme-swatches">'+
+        t.swatches.map(function(s){return '<div class="theme-swatch-dot" style="background:'+s+'"></div>';}).join('')+
+      '</div>'+
+      '<div class="theme-option-name">'+t.name+'</div>'+
+      '<div class="theme-option-desc">'+t.desc+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function aplicarTema(id){
+  document.documentElement.setAttribute('data-theme', id==='floresta'?'':id);
+  localStorage.setItem('sf_tema',id);
+  renderThemeOptions();
+  var nome=(_temas.find(function(t){return t.id===id;})||{}).name||id;
+  toast('Tema '+nome+' aplicado!');
+}
+
+function toggleThemePanel(){
+  var p=document.getElementById('theme-panel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open'))renderThemeOptions();
+}
+
+// Fechar painel ao clicar fora
+document.addEventListener('click',function(e){
+  var p=document.getElementById('theme-panel');
+  var b=document.getElementById('theme-btn-toggle');
+  if(p&&b&&p.classList.contains('open')&&!p.contains(e.target)&&!b.contains(e.target)){
+    p.classList.remove('open');
+  }
+});
+
+
+// ====================================================
+// STUDIOFLOW 1.0 · CONFIGURAÇÕES, BACKUP E AJUDA
+// ====================================================
+function getConfigClinica(){
+  try{return JSON.parse(localStorage.getItem('sf_config_clinica')||'{}');}catch(e){return {};}
+}
+
+async function carregarConfigClinica(){
+  var local=getConfigClinica();
+  _configClinica=local||{};
+  if(SB){
+    try{
+      var r=await SB.from('configuracoes').select('*').order('criado_em',{ascending:true}).limit(1);
+      if(!r.error && r.data && r.data[0]){
+        _configClinica=r.data[0];
+        localStorage.setItem('sf_config_clinica',JSON.stringify(_configClinica));
+      }
+    }catch(e){console.warn('Configurações não carregadas do Supabase',e);}
+  }
+  preencherConfigClinica();
+  aplicarConfigVisual();
+}
+
+function preencherConfigClinica(){
+  var c=_configClinica&&Object.keys(_configClinica).length?_configClinica:getConfigClinica();
+  var map={
+    'cfg-nome':c.nome_clinica||c.nome,
+    'cfg-tel':c.telefone||c.tel,
+    'cfg-whats':c.whatsapp||c.whats,
+    'cfg-email':c.email,
+    'cfg-email-fin':c.email_financeiro,
+    'cfg-insta':c.instagram||c.insta,
+    'cfg-resp':c.responsavel||c.resp,
+    'cfg-end':c.endereco||c.end,
+    'cfg-horario':c.horario,
+    'cfg-slogan':c.slogan,
+    'cfg-cnpj':c.cnpj,
+    'cfg-site':c.site,
+    'cfg-cor':c.cor_primaria
+  };
+  Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el&&map[id]!=null)el.value=map[id]||'';});
+  aplicarConfigVisual();
+}
+
+async function salvarConfigClinica(){
+  var logoAtual=(_configClinica||{}).logo_url||'';
+  var logoFile=(document.getElementById('cfg-logo-file')||{}).files;
+  if(logoFile&&logoFile[0]){
+    var novaLogo=await uploadImagem(logoFile[0],'logos');
+    if(novaLogo)logoAtual=novaLogo;
+  }
+  var c={
+    nome_clinica:(document.getElementById('cfg-nome')||{}).value||'',
+    telefone:(document.getElementById('cfg-tel')||{}).value||'',
+    whatsapp:(document.getElementById('cfg-whats')||{}).value||'',
+    email:(document.getElementById('cfg-email')||{}).value||'',
+    email_financeiro:(document.getElementById('cfg-email-fin')||{}).value||'',
+    instagram:(document.getElementById('cfg-insta')||{}).value||'',
+    responsavel:(document.getElementById('cfg-resp')||{}).value||'',
+    endereco:(document.getElementById('cfg-end')||{}).value||'',
+    horario:(document.getElementById('cfg-horario')||{}).value||'',
+    slogan:(document.getElementById('cfg-slogan')||{}).value||'',
+    cnpj:(document.getElementById('cfg-cnpj')||{}).value||'',
+    site:(document.getElementById('cfg-site')||{}).value||'',
+    cor_primaria:(document.getElementById('cfg-cor')||{}).value||'#4A6741',
+    logo_url:logoAtual,
+    tema:localStorage.getItem('sf_tema')||'floresta'
+  };
+  var error=null;
+  if(SB){
+    try{
+      if((_configClinica||{}).id){
+        var r=await SB.from('configuracoes').update(c).eq('id',_configClinica.id).select().single();
+        error=r.error;if(r.data)c=r.data;
+      }else{
+        var r2=await SB.from('configuracoes').insert(c).select().single();
+        error=r2.error;if(r2.data)c=r2.data;
+      }
+    }catch(e){console.warn(e);}
+  }
+  if(error){console.error(error);toast(error.message,'err');return;}
+  _configClinica=c;
+  localStorage.setItem('sf_config_clinica',JSON.stringify(c));
+  preencherConfigClinica();toast('Configurações salvas!');
+}
+
+async function carregarEvolucoes(){
+  if(!SB)return;
+  try{
+    var r=await SB.from('evolucoes').select('*').order('criado_em',{ascending:false});
+    if(!r.error)_evolucoes=r.data||[];
+  }catch(e){_evolucoes=[];}
+}
+
+function abrirModalEvolucao(clienteId){
+  document.getElementById('evo-cliente-id').value=clienteId||'';
+  document.getElementById('evo-titulo').value='';
+  document.getElementById('evo-obs').value='';
+  document.getElementById('evo-antes-file').value='';
+  document.getElementById('evo-depois-file').value='';
+  document.getElementById('evo-antes-preview').innerHTML='Selecionar foto antes';
+  document.getElementById('evo-depois-preview').innerHTML='Selecionar foto depois';
+  var sel=document.getElementById('evo-proc-sel');
+  if(sel)sel.innerHTML='<option value="">Selecionar...</option>'+(_procs||[]).map(function(p){return '<option value="'+p.id+'">'+p.nome+'</option>';}).join('');
+  openModal('modal-evolucao');
+}
+
+async function salvarEvolucao(){
+  var clienteId=document.getElementById('evo-cliente-id').value;
+  if(!clienteId){toast('Cliente não selecionado.','err');return;}
+  var procId=document.getElementById('evo-proc-sel').value||null;
+  var proc=_procs.find(function(p){return p.id===procId;});
+  var antesFile=(document.getElementById('evo-antes-file')||{}).files;
+  var depoisFile=(document.getElementById('evo-depois-file')||{}).files;
+  var antes=antesFile&&antesFile[0]?await uploadImagem(antesFile[0],'evolucoes/'+clienteId):null;
+  var depois=depoisFile&&depoisFile[0]?await uploadImagem(depoisFile[0],'evolucoes/'+clienteId):null;
+  var obj={
+    cliente_id:clienteId,
+    procedimento_id:procId,
+    procedimento_nome:proc?proc.nome:null,
+    titulo:(document.getElementById('evo-titulo')||{}).value||'Evolução',
+    observacoes:(document.getElementById('evo-obs')||{}).value||'',
+    foto_antes_url:antes,
+    foto_depois_url:depois
+  };
+  var r=await SB.from('evolucoes').insert(obj);
+  if(r.error){console.error(r.error);toast(r.error.message,'err');return;}
+  closeModal('modal-evolucao');
+  await carregarEvolucoes();
+  var id=clienteId;renderCliente360(id);
+  toast('Evolução salva!');
+}
+
+function csvEscape(v){v=(v==null?'':String(v));return '"'+v.replace(/"/g,'""')+'"';}
+function baixarCSV(nome,linhas){
+  var csv=linhas.map(function(r){return r.map(csvEscape).join(';');}).join('\n');
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nome+'.csv';document.body.appendChild(a);a.click();a.remove();
+}
+function exportarCSV(tipo){
+  if(tipo==='clientes'){
+    var rows=[['Nome','Telefone','Email','Nascimento','Observações']].concat((_clientes||[]).map(function(c){return [c.nome,c.telefone,c.email,c.nascimento,c.observacoes];}));
+    baixarCSV('studioflow_clientes',rows);return;
+  }
+  if(tipo==='agenda'){
+    var rows=[['Data','Hora','Cliente','Procedimento','Status']].concat((_agenda||[]).map(function(a){return [a.data,a.hora,a.cliente_nome,a.procedimento_nome,a.status];}));
+    baixarCSV('studioflow_agenda',rows);return;
+  }
+  if(tipo==='estoque'){
+    var rows=[['Produto','Quantidade','Mínimo','Unidade','Custo']].concat((_estoque||[]).map(function(e){return [e.nome,e.qtd,e.minimo,e.unidade,e.custo_unitario];}));
+    baixarCSV('studioflow_estoque',rows);return;
+  }
+  if(tipo==='financeiro'){
+    var rows=[['Tipo','Nome','Valor','Vencimento','Categoria']].concat((_despesas||[]).map(function(d){return [d.tipo,d.nome,d.valor,d.vencimento,d.categoria];}));
+    baixarCSV('studioflow_financeiro',rows);return;
+  }
+}
+function toggleHelpWidget(){var p=document.getElementById('help-panel');if(p)p.classList.toggle('open');}
+function filtrarHelpWidget(){
+  var q=((document.getElementById('help-search')||{}).value||'').toLowerCase();
+  document.querySelectorAll('#help-list .help-item').forEach(function(el){el.style.display=((el.getAttribute('data-help')||'')+el.textContent).toLowerCase().indexOf(q)>-1?'block':'none';});
+}
+function filtrarAjudaPagina(){
+  var q=((document.getElementById('ajuda-busca')||{}).value||'').toLowerCase();
+  document.querySelectorAll('#ajuda-page-grid .help-page-card').forEach(function(el){el.style.display=((el.getAttribute('data-ajuda')||'')+el.textContent).toLowerCase().indexOf(q)>-1?'block':'none';});
+}
+
+// ====================================================
+// INIT
+// ====================================================
+document.addEventListener('DOMContentLoaded',function(){
+  // Aplicar tema salvo
+  var temaSalvo=localStorage.getItem('sf_tema')||'floresta';
+  document.documentElement.setAttribute('data-theme',temaSalvo==='floresta'?'':temaSalvo);
+  document.getElementById('ag-filtro-data').value=hoje();
+  document.getElementById('ag-data-input').value=hoje();
+  ['ag-proc-sel','ag-pac-total','ag-pac-preco','ag-pac-usadas','ag-pac-existente-sel','ag-pac-existente-usadas'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.addEventListener('change',atualizarCamposPacoteAgendamento);
+  });
+
+  // Restaurar estado da sidebar
+  var s=document.getElementById('sidebar');
+  var m=document.getElementById('main-content');
+  if(localStorage.getItem('sf_sidebar')==='1'){
+    s.classList.add('collapsed');
+    m.classList.add('expanded');
+  }
+
+  // Mobile sidebar toggle
+  if(window.innerWidth<=660&&s){
+    var tog=document.createElement('button');
+    tog.innerHTML='☰';
+    tog.style.cssText='position:fixed;top:16px;left:16px;z-index:60;background:var(--sidebar);color:#fff;border:none;border-radius:8px;width:36px;height:36px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+    tog.onclick=function(){s.classList.toggle('open');};
+    document.body.appendChild(tog);
+    document.getElementById('main-content').addEventListener('click',function(){s.classList.remove('open');});
+  }
+
+  if(!SB){
+    var err=document.getElementById('login-error');
+    if(err){err.textContent='⚙️ Credenciais do Supabase não configuradas.';err.style.display='block';}
+  } else {
+    SB.auth.getSession().then(function(r){if(r.data&&r.data.session)mostrarApp(r.data.session.user);});
+  }
+});
+</script>
+</body>
+</html>
