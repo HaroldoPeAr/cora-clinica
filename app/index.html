@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<div class="li-name"><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -2277,9 +2277,16 @@ async function renderCliente360(id){
     '<div class="client360-card" style="grid-column:1 / -1;">'+
       '<div class="card-head"><h2>Evoluções</h2><button class="btn btn-outline btn-sm" onclick="abrirModalEvolucao(\''+c.id+'\')">+ Nova evolução</button></div>'+
       (evos.length?evos.map(function(e){
-        return '<div class="evolucao-card">'+
-          '<div class="li-name">'+(e.titulo||e.procedimento_nome||'Evolução')+'</div>'+
-          '<div class="li-sub">'+fmtDt(e.criado_em)+'</div>'+
+        return '<div class="evolucao-card">'+'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">'+
+  '<div>'+
+    '<div class="li-name">'+(e.titulo||e.procedimento_nome||'Evolução')+'</div>'+
+    '<div class="li-sub">'+fmtDt(e.criado_em)+'</div>'+
+  '</div>'+
+  '<div style="display:flex;gap:6px;">'+
+    '<button class="btn btn-outline btn-sm" onclick="editarEvolucao(\''+e.id+'\')">Editar</button>'+
+    '<button class="btn btn-danger btn-sm" onclick="excluirEvolucao(\''+e.id+'\')">Excluir</button>'+
+  '</div>'+
+'</div>'+
           '<div class="before-after">'+
             '<div class="ba-photo">'+(e.foto_antes_url?'<img src="'+e.foto_antes_url+'" alt="Antes" onclick="window.open(this.src,\'_blank\')">':'<span class="ba-tag">Antes</span>')+'</div>'+
             '<div class="ba-photo after">'+(e.foto_depois_url?'<img src="'+e.foto_depois_url+'" alt="Depois" onclick="window.open(this.src,\'_blank\')">':'<span class="ba-tag">Depois</span>')+'</div>'+
