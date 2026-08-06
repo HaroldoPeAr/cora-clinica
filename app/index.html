@@ -4134,14 +4134,15 @@ async function salvarEvolucao(){
   var antes=antesFile&&antesFile[0]?await uploadImagem(antesFile[0],'evolucoes/'+clienteId):null;
   var depois=depoisFile&&depoisFile[0]?await uploadImagem(depoisFile[0],'evolucoes/'+clienteId):null;
   var obj={
-    cliente_id:clienteId,
-    procedimento_id:procId,
-    procedimento_nome:proc?proc.nome:null,
-    titulo:(document.getElementById('evo-titulo')||{}).value||'Evolução',
-    observacoes:(document.getElementById('evo-obs')||{}).value||'',
-    foto_antes_url:antes,
-    foto_depois_url:depois
-  };
+  cliente_id:clienteId,
+  procedimento_id:procId,
+  procedimento_nome:proc?proc.nome:null,
+  titulo:(document.getElementById('evo-titulo')||{}).value||'Evolução',
+  observacoes:(document.getElementById('evo-obs')||{}).value||'',
+  foto_antes_url:antes,
+  foto_depois_url:depois,
+  empresa_id:APP.empresa.id
+};
   var r=await SB.from('evolucoes').insert(obj);
   if(r.error){console.error(r.error);toast(r.error.message,'err');return;}
   closeModal('modal-evolucao');
